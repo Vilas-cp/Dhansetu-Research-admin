@@ -1,0 +1,5 @@
+FROM swaggerapi/swagger-ui
+
+ENV SWAGGER_JSON=/docs/openapi.json
+
+EXPOSE 8080

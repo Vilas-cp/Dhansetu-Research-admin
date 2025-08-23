@@ -1,0 +1,5 @@
+/ref
+node_modules
+build
+.env*.local
+tmp

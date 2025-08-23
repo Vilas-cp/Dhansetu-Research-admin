@@ -1,0 +1,46 @@
+CREATE TYPE "user_type" AS 
+ENUM('free', 'premium');
+
+CREATE TYPE "contact_type" AS ENUM(
+  'email id',
+  'phone no',
+  'instagram',
+  'linkedin',
+  'facebook',
+  'twitter/x',
+  'whatsapp no',
+  'others'
+);
+
+CREATE TABLE
+  "ping" ("pong" varchar(255));
+
+CREATE TABLE
+  "sessions" (
+    "clerk_id" varchar UNIQUE NOT NULL,
+    "session_id" uuid NOT NULL,
+    "created_at" timestamptz DEFAULT CURRENT_TIMESTAMP
+  );
+
+CREATE TABLE
+  "users" (
+    "id" SERIAL PRIMARY KEY,
+    "uuid" uuid NOT NULL DEFAULT gen_random_uuid(),
+    "user_name" varchar UNIQUE NOT NULL,
+    "clerk_id" varchar UNIQUE NOT NULL,
+    "first_name" varchar NOT NULL,
+    "last_name" varchar NOT NULL,
+    "img_URL" varchar NOT NULL,
+    "type" user_type NOT NULL,
+    "created_at" timestamptz DEFAULT CURRENT_TIMESTAMP
+  );
+
+CREAE TABLE "admin" (
+  "id" SERIAL PRIMARY KEY,
+  "uuid" uuid NOT NULL DEFAULT gen_random_uuid(),
+  "user_name" varchar UNIQUE NOT NULL,
+  "first_name" varchar NOT NULL,
+  "last_name" varchar NOT NULL,
+  "img_URL" varchar NOT NULL,
+  "created_at" timestamptz DEFAULT CURRENT_TIMESTAMP
+)
