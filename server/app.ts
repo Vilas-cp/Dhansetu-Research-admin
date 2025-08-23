@@ -5,16 +5,14 @@ import helmet from "helmet";
 // import { userRouter } from "./user/route";
 import cookieParser from "cookie-parser";
 // import { authMiddleWare } from "./middlewares/auth";
-// import { devRouter } from "./dev/route";
 import { hitMiddleWare } from "./middlewares/hit";
 import { envConfigs, serverConfigs } from "./configs/configs";
 import morgan from "morgan";
 import chalk from "chalk";
-// import { MemCache } from "./cache/redis";
 import { DB } from "./db/db";
 // import { rateLimitMiddleWare } from "./middlewares/rateLimiting";
 import compression from "compression";
-// import { interviewRouter } from "./interview/route";
+import { adminRoutes } from "./admin/route";
 
 const { COOKIE_SECRET } = envConfigs;
 const { CORS_ORIGIN } = serverConfigs;
@@ -47,8 +45,7 @@ app.use(hitMiddleWare);
 // Routes
 // app.use("/file", fileRouter);
 // app.use("/user", userRouter);
-// app.use("/dev", devRouter);
-// app.use("/interview", interviewRouter);
+app.use("/admin", adminRoutes);
 
 app.get("/hello", (_, res) => {
   try {
@@ -87,32 +84,29 @@ app.get("/verify", (req, res) => {
   }
 });
 
-// app.get("/", async (_, res) => {
-//   try {
-//     const db = new DB();
-//     const memCache = new MemCache();
-//     const dbRes = await db.ping();
-//     await memCache.connect();
-//     const cacheRes = await memCache.ping();
-//     res.status(200).send({
-//       status: "success",
-//       data: {
-//         dbRes,
-//         cacheRes,
-//         message: "Express JS Server is Running!",
-//         extra: `Serving form process ${process.pid}`,
-//       },
-//     });
-//   } catch (error) {
-//     console.log(error);
-//     res.status(400).send({
-//       status: "fail",
-//       error: error,
-//       data: {
-//         message: "Internal Server Error!",
-//       },
-//     });
-//   }
-// });
+app.get("/", async (_, res) => {
+  try {
+    const db = new DB();
+    const dbRes = await db.ping();
+    res.status(200).send({
+      status: "success",
+      data: {
+        dbRes,
+        // cacheRes,
+        message: "Express JS Server is Running!",
+        extra: `Serving form process ${process.pid}`,
+      },
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(400).send({
+      status: "fail",
+      error: error,
+      data: {
+        message: "Internal Server Error!",
+      },
+    });
+  }
+});
 
 export { app };

@@ -6,6 +6,7 @@ type ClerkInfo = {
 
 type AdminInfo = {
   password?: string;
+  userName?: string;
 }
 
 type UpdateNoti = {

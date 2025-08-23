@@ -563,16 +563,16 @@ class UserDBv1 extends DB {
 }
 
 class SessionDB extends DB {
-  async getSessionIdByClerkUserId(clerkUserId: string) {
-    return await this.retryQuery("getSessionIdByClerkUserId", async () => {
+  async getSessionId(userName: string) {
+    return await this.retryQuery("getSessionId", async () => {
       let pClient;
       try {
         pClient = await this.connect();
         const res = await pClient.query(
           `
            SELECT "session_id" FROM "sessions" WHERE
-           "clerk_id" = $1::varchar;`,
-          [clerkUserId]
+           "user_name" = $1::varchar;`,
+          [userName]
         );
         if (res.rowCount !== 1) {
           return -1;
@@ -593,16 +593,16 @@ class SessionDB extends DB {
       }
     });
   }
-  async createSessionIdByClerkUserId(clerkUserId: string, sessionId: string) {
-    return await this.retryQuery("createSessionIdByClerkUserId", async () => {
+  async createSessionId(userName: string, sessionId: string) {
+    return await this.retryQuery("createSessionId", async () => {
       let pClient;
       try {
         pClient = await this.connect();
         const res = await pClient.query(
           `
-            INSERT INTO "sessions" ("clerk_id","session_id") 
+            INSERT INTO "sessions" ("user_name","session_id") 
             VALUES ($1::varchar, $2::uuid) RETURNING "session_id";`,
-          [clerkUserId, sessionId]
+          [userName, sessionId]
         );
         if (res.rowCount !== 1) {
           return -1;

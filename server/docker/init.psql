@@ -17,7 +17,7 @@ CREATE TABLE
 
 CREATE TABLE
   "sessions" (
-    "clerk_id" varchar UNIQUE NOT NULL,
+    "user_name" varchar UNIQUE NOT NULL,
     "session_id" uuid NOT NULL,
     "created_at" timestamptz DEFAULT CURRENT_TIMESTAMP
   );
@@ -35,7 +35,7 @@ CREATE TABLE
     "created_at" timestamptz DEFAULT CURRENT_TIMESTAMP
   );
 
-CREAE TABLE "admin" (
+CREATE TABLE "admin" (
   "id" SERIAL PRIMARY KEY,
   "uuid" uuid NOT NULL DEFAULT gen_random_uuid(),
   "user_name" varchar UNIQUE NOT NULL,
