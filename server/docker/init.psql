@@ -53,6 +53,7 @@ CREATE TABLE "articles" (
   "article_heading" varchar NOT NULL,
   "article_detail" TEXT NOT NULL,
   "cover_img_URL" varchar NOT NULL,
+  "article_type" user_type NOT NULL,
   "created_at" timestamptz DEFAULT CURRENT_TIMESTAMP
 );
 

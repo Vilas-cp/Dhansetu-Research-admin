@@ -7,7 +7,16 @@ type ClerkInfo = {
 type AdminInfo = {
   password?: string;
   userName?: string;
-}
+};
+
+type AdminUser = {
+  userName: string;
+  firstName: string;
+  lastName: string;
+  imgURL: string;
+  id: number;
+  uuid: string;
+};
 
 type UpdateNoti = {
   notificationId?: number;
@@ -105,4 +114,5 @@ export type {
   Notification,
   UpdateNoti,
   AdminInfo,
+  AdminUser
 };

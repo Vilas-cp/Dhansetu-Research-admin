@@ -1,13 +1,12 @@
 import moment from "moment";
-import { BasicUserDetails, InterviewDetails } from "../types/interview";
 
 function interviewNotification(
-  interview: InterviewDetails,
+  interview: any,
   interviewUUID: string,
   candidateConfirmationUUID: string,
   expertConfirmationUUID: string,
-  recruiterDetails: BasicUserDetails,
-  candidateDetails: BasicUserDetails,
+  recruiterDetails: any,
+  candidateDetails: any,
   topicName: string
 ) {
   const candidateMessage = `Interview ${
