@@ -43,4 +43,18 @@ CREATE TABLE "admin" (
   "last_name" varchar NOT NULL,
   "img_URL" varchar NOT NULL,
   "created_at" timestamptz DEFAULT CURRENT_TIMESTAMP
-)
+);
+
+CREATE TABLE "articles" (
+  "id" SERIAL PRIMARY KEY,
+  "uuid" uuid NOT NULL DEFAULT gen_random_uuid(),
+  "admin_id" int NOT NULL,
+  "article_id" varchar UNIQUE NOT NULL,
+  "article_heading" varchar NOT NULL,
+  "article_detail" TEXT NOT NULL,
+  "cover_img_URL" varchar NOT NULL,
+  "created_at" timestamptz DEFAULT CURRENT_TIMESTAMP
+);
+
+ALTER TABLE "articles"
+ADD FOREIGN KEY ("admin_id") REFERENCES "admin" ("id") ON DELETE CASCADE;

@@ -18,7 +18,7 @@ v1Routes.post("/login", async (req, res) => {
     const { password, userName }: AdminInfo = req.body;
     const { sessionId } = req.signedCookies;
     if (!password || !userName) {
-      res.status(400).send({
+      res.status(401).send({
         status: "fail",
         data: {
           message: "Didnt get password or userName!",
@@ -28,7 +28,7 @@ v1Routes.post("/login", async (req, res) => {
     }
     const sessionDB = new SessionDB();
     if (ADMIN_PASS && password !== ADMIN_PASS) {
-      res.status(400).send({
+      res.status(401).send({
         status: "fail",
         data: {
           message: "Wrong password!",
@@ -104,7 +104,7 @@ v1Routes.post("/verify", async (req, res) => {
     const { sessionId, userName } = req.signedCookies;
     const sessionDB = new SessionDB();
     if (!sessionId || !userName) {
-      res.status(404).send({
+      res.status(401).send({
         status: "fail",
         data: {
           message: "SessionId not found"
@@ -130,6 +130,47 @@ v1Routes.post("/verify", async (req, res) => {
       },
     });
     console.log(chalk.yellow(`User: ${userName}, is verified!`));
+  } catch (error: any) {
+    console.log(
+      chalk.red(`Error: ${error?.message}, for user id ${req.body?.userName}`)
+    );
+    res.status(400).send({
+      status: "fail",
+      error: error,
+      data: {
+        message: "Internal Server Error!",
+      },
+    });
+  }
+});
+
+v1Routes.post("/logout", async (req, res) => {
+  try {
+    const { sessionId, userName } = req.signedCookies;
+    console.log(sessionId, userName);
+    if (sessionId && userName) {
+      res.clearCookie("sessionId", {
+        httpOnly: true,
+        secure: true,
+        signed: true,
+        path: "/",
+        sameSite: "none",
+      });
+      res.clearCookie("userName", {
+        httpOnly: true,
+        secure: true,
+        signed: true,
+        path: "/",
+        sameSite: "none",
+      });
+    }
+    res.status(200).send({
+      status: "success",
+      data: {
+        message: "Admin has logged out",
+      },
+    });
+    console.log(chalk.yellow(`User: ${userName}, is logged out as Admin!`));
   } catch (error: any) {
     console.log(
       chalk.red(`Error: ${error?.message}, for user id ${req.body?.userName}`)

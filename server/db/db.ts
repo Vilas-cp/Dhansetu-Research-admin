@@ -21,7 +21,7 @@ const {
   DB_RETRY_WAIT_MAX_SEC,
   DB_RETRY_WAIT_MIN_SEC,
 } = dbConfigs;
-const { BUCKET_NAME_IMG } = serverConfigs;
+const { BUCKET_NAME_IMG, SESSION_EXPIRE_TIME_IN_DAYS } = serverConfigs;
 const shortUUID = new ShortUniqueId({ length: 10 });
 
 class DB {
@@ -571,7 +571,8 @@ class SessionDB extends DB {
         const res = await pClient.query(
           `
            SELECT "session_id" FROM "sessions" WHERE
-           "user_name" = $1::varchar;`,
+           "user_name" = $1::varchar
+           AND "created_at" >= CURRENT_TIMESTAMP - INTERVAL '${SESSION_EXPIRE_TIME_IN_DAYS} days';`,
           [userName]
         );
         if (res.rowCount !== 1) {
