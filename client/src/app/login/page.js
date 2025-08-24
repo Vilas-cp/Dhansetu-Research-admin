@@ -18,7 +18,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { apiPost } from "@/lib/api";
 
 export default function LoginPage() {
-  const [email, setEmail] = useState("");
+  const [userName, setuserName] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -30,7 +30,7 @@ export default function LoginPage() {
     setIsLoading(true);
 
     try {
-      const res=await apiPost("/auth/login", { email, password });
+      const res=await apiPost("admin/v1/login", { userName, password });
       router.push("/dashboard");
     } catch (err) {
       setError(err.message);
@@ -92,8 +92,8 @@ export default function LoginPage() {
                     type="email"
                     placeholder="Enter your email"
                     className="pl-11 h-12 border-gray-200 focus:border-blue-500 focus:ring-blue-500 transition-all duration-200"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    value={userName}
+                    onChange={(e) => setuserName(e.target.value)}
                     disabled={isLoading}
                     required
                   />
@@ -141,7 +141,7 @@ export default function LoginPage() {
                 type="button"
                 onClick={handleSubmit}
                 className=" w-full h-12 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-medium transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] shadow-lg hover:shadow-xl"
-                disabled={isLoading || !email || !password}
+                disabled={isLoading || !userName || !password}
               >
                 {isLoading ? (
                   <>
