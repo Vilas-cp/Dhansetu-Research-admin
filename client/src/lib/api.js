@@ -1,12 +1,6 @@
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
 async function handleResponse(res) {
-  if (res.status === 401) {
-    if (typeof window !== "undefined") {
-      window.location.href = "/login"; 
-    }
-    throw new Error("Session expired");
-  }
 
   if (!res.ok) {
     const msg = await res.text();
@@ -22,6 +16,8 @@ export async function apiGet(endpoint) {
     credentials: "include",
     headers: { "Content-Type": "application/json" },
   });
+  console.log(res);
+  
   return handleResponse(res);
 }
 

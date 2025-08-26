@@ -3,6 +3,8 @@ import { useState } from "react";
 import BlockComponent from "./components/BlockComponent";
 import AddBlockButtons from "./components/AddBlockButtons";
 import PostSummary from "./components/PostSummary";
+import { apiPost } from "@/lib/api";
+
 
 export default function BlogEditor() {
   const [blocks, setBlocks] = useState([]);
@@ -28,20 +30,43 @@ export default function BlogEditor() {
   const handlePositionChange = (currentIndex, newIndex) =>
     moveBlockToPosition(currentIndex, newIndex);
 
-  const handlePost = () => {
-    const postData = {
-      title,
-      thumbnail: thumbnailUrl,
-      isPremium,
-      blocks: blocks.map((b, i) => ({ ...b, position: i + 1 })),
-    };
-    console.log(JSON.stringify(postData, null, 2));
-  };
+ const handlePost = async () => {
+  if (!title?.trim()) {
+    alert("Title is required!");
+    return;
+  }
+  if (!blocks.length) {
+    alert("At least one content block is required!");
+    return;
+  }
+
+ const postData = {
+  artHeading: title,
+  coverImgURL: thumbnailUrl || null,
+  artType: isPremium ? "premium" : "free", 
+  artDetail: JSON.stringify(
+    blocks.map((b, i) => ({ ...b, position: i + 1 }))
+  ), 
+};
+
+
+  try {
+    const res = await apiPost("admin/v1/articles/create", postData);
+
+    if (res.success) {
+      alert("Article created successfully!");
+   router
+    } else {
+      alert(res.message || "Something went wrong.");
+    }
+  } catch (err) {
+    console.error("Error creating article:", err);
+  }
+};
+
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
-      
-
       <div className="max-w-5xl mx-auto px-6 py-8">
         {/* Title Section */}
         <div className="bg-white rounded-2xl shadow-xl border border-white/50 p-8 mb-8 backdrop-blur-sm">
@@ -54,16 +79,16 @@ export default function BlogEditor() {
               <button
                 onClick={() => setIsPremium(!isPremium)}
                 className={`px-4 py-2 rounded-full text-sm font-semibold transition-all duration-200 ${
-                  isPremium 
-                    ? 'bg-gradient-to-r from-yellow-400 to-orange-500 text-white shadow-lg' 
-                    : 'bg-gray-200 text-gray-600 hover:bg-gray-300'
+                  isPremium
+                    ? "bg-gradient-to-r from-yellow-400 to-orange-500 text-white shadow-lg"
+                    : "bg-gray-200 text-gray-600 hover:bg-gray-300"
                 }`}
               >
-                {isPremium ? '⭐ Premium' : '💎 Premium'}
+                {isPremium ? "⭐ Premium" : "💎 Premium"}
               </button>
             </div>
           </div>
-          
+
           <div className="space-y-6">
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-3 items-center gap-2">
@@ -118,7 +143,11 @@ export default function BlogEditor() {
         </div>
 
         {/* Post Summary */}
-        <PostSummary title={title} thumbnailUrl={thumbnailUrl} blocks={blocks} />
+        <PostSummary
+          title={title}
+          thumbnailUrl={thumbnailUrl}
+          blocks={blocks}
+        />
 
         {/* Content Blocks Section */}
         <div className="bg-white rounded-2xl shadow-xl border border-white/50 p-8 mb-8 backdrop-blur-sm">
@@ -149,13 +178,16 @@ export default function BlogEditor() {
                 />
               </div>
             ))}
-            
+
             {blocks.length === 0 && (
               <div className="text-center py-16 border-2 border-dashed border-gray-300 rounded-2xl bg-gradient-to-br from-gray-50 to-gray-100">
                 <div className="text-6xl mb-4">📝</div>
-                <h3 className="text-xl font-semibold text-gray-700 mb-2">Ready to Create?</h3>
+                <h3 className="text-xl font-semibold text-gray-700 mb-2">
+                  Ready to Create?
+                </h3>
                 <p className="text-gray-500 mb-6 max-w-md mx-auto">
-                  Start building your blog post by adding content blocks. Mix text, images, and videos to tell your story.
+                  Start building your blog post by adding content blocks. Mix
+                  text, images, and videos to tell your story.
                 </p>
                 <div className="inline-flex items-center gap-2 bg-blue-100 px-4 py-2 rounded-full text-blue-700 text-sm font-medium">
                   <span className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></span>
@@ -177,12 +209,11 @@ export default function BlogEditor() {
             <div>
               <h3 className="text-xl font-bold mb-2">Ready to Publish?</h3>
               <p className="text-blue-100">
-                {!title.trim() 
-                  ? "Add a title to publish your blog post" 
+                {!title.trim()
+                  ? "Add a title to publish your blog post"
                   : blocks.length === 0
                   ? "Add some content blocks to complete your post"
-                  : `Your post has ${blocks.length} content blocks and is ready to go!`
-                }
+                  : `Your post has ${blocks.length} content blocks and is ready to go!`}
               </p>
             </div>
             <button
@@ -194,8 +225,6 @@ export default function BlogEditor() {
             </button>
           </div>
         </div>
-
-       
       </div>
     </div>
   );

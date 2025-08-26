@@ -4,8 +4,8 @@ import { Type, Image, Video } from "lucide-react";
 
 export default function AddBlockButtons({ onAddBlock }) {
   const buttons = [
-    { type: "text", icon: Type, label: "Text", color: "blue" },
-    { type: "image", icon: Image, label: "Image", color: "green" },
+    { type: "text", icon: Type, label: "Text", color: "red" },
+    { type: "image", icon: Image, label: "Image", color: "red" },
     { type: "video", icon: Video, label: "Video", color: "red" },
   ];
   return (
