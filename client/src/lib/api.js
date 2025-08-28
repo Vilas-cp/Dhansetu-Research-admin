@@ -14,7 +14,9 @@ export async function apiGet(endpoint) {
   const res = await fetch(`${BASE_URL}${endpoint}`, {
     method: "GET",
     credentials: "include",
-    headers: { "Content-Type": "application/json" },
+    headers: { "Content-Type": "application/json",
+        "ngrok-skip-browser-warning": "true",
+     },
   });
   console.log(res);
   
