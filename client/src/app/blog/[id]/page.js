@@ -42,6 +42,19 @@ export default function ArticlePage() {
     fetchArticle();
   }, [id]);
 
+
+  const processHtmlContent = (htmlContent) => {
+    if (!htmlContent) return "";
+    
+    // Unescape quotes and fix any escaped characters
+    let cleanHtml = htmlContent
+      .replace(/\\"/g, '"')  // Fix escaped quotes
+      .replace(/\\'/g, "'")  // Fix escaped single quotes
+      .replace(/\\\\/g, "\\"); // Fix double escapes
+    
+    return cleanHtml;
+  };
+
   if (loading) return <p className="p-8 text-center">Loading...</p>;
   if (!article) return <p className="p-8 text-center">Article not found</p>;
 
@@ -89,8 +102,10 @@ export default function ArticlePage() {
                 return (
                   <div
                     key={block.id}
-                    className="prose prose-sm sm:prose-base lg:prose-lg max-w-none"
-                    dangerouslySetInnerHTML={{ __html: block.content }}
+                    className="quill-content"
+                    dangerouslySetInnerHTML={{ 
+                      __html: processHtmlContent(block.content) 
+                    }}
                   />
                 );
               }
@@ -130,6 +145,126 @@ export default function ArticlePage() {
           </div>
         </div>
       </div>
+
+      {/* CSS for proper Quill content rendering */}
+      <style jsx global>{`
+        .quill-content {
+          font-size: 16px;
+          line-height: 1.6;
+          color: #374151;
+        }
+        
+        .quill-content p {
+          margin-bottom: 1rem;
+          font-size: 16px;
+          line-height: 1.6;
+        }
+        
+        .quill-content ol {
+          margin: 1rem 0;
+          padding-left: 1.5rem;
+          list-style-type: decimal;
+        }
+        
+        .quill-content ul {
+          margin: 1rem 0;
+          padding-left: 1.5rem;
+          list-style-type: disc;
+        }
+        
+        .quill-content li {
+          margin-bottom: 0.5rem;
+          font-size: 16px;
+          line-height: 1.6;
+          display: list-item;
+        }
+        
+        .quill-content li[data-list="ordered"] {
+          list-style-type: decimal;
+        }
+        
+        .quill-content li[data-list="bullet"] {
+          list-style-type: disc;
+        }
+        
+        .quill-content .ql-ui {
+          display: none; /* Hide Quill's internal UI elements */
+        }
+        
+        .quill-content strong {
+          font-weight: 600;
+        }
+        
+        .quill-content em {
+          font-style: italic;
+        }
+        
+        .quill-content u {
+          text-decoration: underline;
+        }
+        
+        .quill-content s {
+          text-decoration: line-through;
+        }
+        
+        .quill-content blockquote {
+          border-left: 4px solid #e5e7eb;
+          padding-left: 1rem;
+          margin: 1rem 0;
+          font-style: italic;
+          color: #6b7280;
+        }
+        
+        .quill-content code {
+          background-color: #f3f4f6;
+          padding: 0.2rem 0.4rem;
+          border-radius: 0.25rem;
+          font-family: ui-monospace, monospace;
+          font-size: 0.875rem;
+        }
+        
+        .quill-content pre {
+          background-color: #1f2937;
+          color: #f9fafb;
+          padding: 1rem;
+          border-radius: 0.5rem;
+          overflow-x: auto;
+          margin: 1rem 0;
+        }
+        
+        .quill-content pre code {
+          background: none;
+          padding: 0;
+          color: inherit;
+        }
+        
+        .quill-content h1, .quill-content h2, .quill-content h3 {
+          font-weight: 600;
+          margin: 1.5rem 0 1rem 0;
+          line-height: 1.3;
+        }
+        
+        .quill-content h1 {
+          font-size: 1.875rem;
+        }
+        
+        .quill-content h2 {
+          font-size: 1.5rem;
+        }
+        
+        .quill-content h3 {
+          font-size: 1.25rem;
+        }
+        
+        .quill-content a {
+          color: #2563eb;
+          text-decoration: underline;
+        }
+        
+        .quill-content a:hover {
+          color: #1d4ed8;
+        }
+      `}</style>
     </div>
   );
 }

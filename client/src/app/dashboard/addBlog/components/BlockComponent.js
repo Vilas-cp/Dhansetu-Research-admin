@@ -9,7 +9,7 @@ export default function BlockComponent({
 }) {
   const renderContent = () => {
     switch (block.type) {
-      case "text": return <QuillEditor content={block.content} onChange={(c) => onUpdate(block.id, c)} />;
+      case "text": return <QuillEditor content={block.content||""} onChange={(c) => onUpdate(block.id, c)} />;
       case "image": return <ImageBlock content={block.content} onChange={(c) => onUpdate(block.id, c)} />;
       case "video": return <VideoBlock content={block.content} onChange={(c) => onUpdate(block.id, c)} />;
       default: return null;

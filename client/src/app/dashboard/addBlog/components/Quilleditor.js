@@ -1,68 +1,86 @@
 "use client";
 
-import { useQuill } from "react-quilljs";
-import "quill/dist/quill.snow.css";
-import { useEffect, useRef, useCallback } from "react";
+import { useState, useEffect } from "react";
+import dynamic from "next/dynamic";
+import "react-quill-new/dist/quill.snow.css";
 
-export default function QuillEditor({ content, onChange, placeholder }) {
-  const contentRef = useRef(content);
-  const isInternalChange = useRef(false);
-  
-  const { quill, quillRef } = useQuill({
-    theme: "snow",
-    placeholder: placeholder || "Start writing...",
-    modules: {
-      toolbar: [
-        [{ header: [1, 2, 3, false] }],
-        ["bold", "italic", "underline", "strike"],
-        [{ color: [] }, { background: [] }],
-        [{ list: "ordered" }, { list: "bullet" }],
-        [{ align: [] }],
-        ["link", "blockquote", "code-block"],
-        ["clean"],
-      ],
-    },
-  });
+const ReactQuill = dynamic(() => import("react-quill-new"), { ssr: false });
 
-  // Memoized change handler
-  const handleChange = useCallback(() => {
-    if (!quill || isInternalChange.current) return;
-    
-    const html = quill.root.innerHTML;
-    const cleanHtml = html === "<p><br></p>" ? "" : html;
-    
-    if (cleanHtml !== contentRef.current) {
-      contentRef.current = cleanHtml;
-      onChange(cleanHtml);
-    }
-  }, [quill, onChange]);
+export default function QuillEditor({ content, onChange }) {
+  const [isClient, setIsClient] = useState(false);
 
-  // Single useEffect for all Quill setup
   useEffect(() => {
-    if (!quill) return;
+    setIsClient(true);
+  }, []);
 
-    // Set initial content if different
-    if (content !== contentRef.current) {
-      isInternalChange.current = true;
-      quill.root.innerHTML = content || "";
-      contentRef.current = content;
-      isInternalChange.current = false;
-    }
+  const modules = {
+    toolbar: [
+      [{ header: [1, 2, 3, false] }],
+      ["bold", "italic", "underline", "strike"],
+      [{ list: "ordered" }, { list: "bullet" }],
+      ["blockquote", "code-block"],
+      ["link"],
+      [{ align: [] }],
+      ["clean"],
+    ],
+  };
 
-    // Setup change listener
-    quill.on("text-change", handleChange);
-
-    // Cleanup function
-    return () => {
-      quill.off("text-change", handleChange);
-    };
-  }, [quill, content, handleChange]);
-
-  return (
-    <div 
-      ref={quillRef} 
-      style={{ height: "200px" }} 
-      className="bg-white border rounded-lg" 
-    />
+  return isClient ? (
+    <div className="w-full max-w-full">
+      <ReactQuill
+        value={content || ""} // controlled value from parent
+        onChange={onChange} 
+        modules={modules}
+        theme="snow"
+        style={{ 
+          height: "256px", // Fixed height (h-64 = 256px)
+          boxSizing: "border-box"
+        }}
+      />
+      
+      {/* CSS to fix overflow and scrolling issues */}
+      <style jsx global>{`
+        .ql-container {
+          height: 200px !important;
+          overflow-y: auto !important;
+          border-bottom-left-radius: 6px !important;
+          border-bottom-right-radius: 6px !important;
+        }
+        
+        .ql-editor {
+          height: 100% !important;
+          overflow-y: auto !important;
+          overflow-x: hidden !important;
+          max-height: none !important;
+          word-wrap: break-word !important;
+          overflow-wrap: break-word !important;
+        }
+        
+        .ql-toolbar {
+          border-top-left-radius: 6px !important;
+          border-top-right-radius: 6px !important;
+        }
+        
+        /* Custom scrollbar for better UX */
+        .ql-editor::-webkit-scrollbar {
+          width: 6px;
+        }
+        
+        .ql-editor::-webkit-scrollbar-track {
+          background: #f1f5f9;
+        }
+        
+        .ql-editor::-webkit-scrollbar-thumb {
+          background: #cbd5e1;
+          border-radius: 3px;
+        }
+        
+        .ql-editor::-webkit-scrollbar-thumb:hover {
+          background: #94a3b8;
+        }
+      `}</style>
+    </div>
+  ) : (
+    <div className="w-full h-64 bg-gray-50 border border-gray-200 rounded-lg" /> // better placeholder
   );
 }

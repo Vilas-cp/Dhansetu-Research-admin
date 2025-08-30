@@ -1,18 +1,54 @@
 "use client";
-import { useState } from "react";
-import BlockComponent from "./components/BlockComponent";
-import AddBlockButtons from "./components/AddBlockButtons";
-import PostSummary from "./components/PostSummary";
-import { apiPost } from "@/lib/api";
-import toast from "react-hot-toast";
+
+import { useState, useEffect } from "react";
+import { useParams, useRouter } from "next/navigation";
+import { toast, Toaster } from "react-hot-toast";
+import BlockComponent from "../../addBlog/components/BlockComponent";
+import AddBlockButtons from "../../addBlog/components/AddBlockButtons";
+import PostSummary from "../../addBlog/components/PostSummary";
+import { apiPost, apiPut, apiGet } from "@/lib/api";
 import Header from "@/components/Header";
 
-
 export default function BlogEditor() {
+  const params = useParams();
+  const router = useRouter();
+  const articleId = params?.id;
+
   const [blocks, setBlocks] = useState([]);
   const [title, setTitle] = useState("");
   const [thumbnailUrl, setThumbnailUrl] = useState("");
   const [isPremium, setIsPremium] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+ 
+  useEffect(() => {
+    if (!articleId) return;
+
+    const fetchArticle = async () => {
+      setLoading(true);
+      try {
+        const res = await apiGet(`admin/v1/article/${articleId}`);
+      
+        
+        if (res.status === "success") {
+          const article = res.data.res;
+          setTitle(article.artHeading);
+          setThumbnailUrl(article.coverImgURL);
+          setIsPremium(article.artType === "premium");
+          setBlocks(JSON.parse(article.artDetail));
+        } else {
+          toast.error("Failed to fetch article");
+        }
+      } catch (err) {
+        console.error("Error fetching article:", err);
+        toast.error("Error fetching article");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchArticle();
+  }, [articleId]);
 
   const addBlock = (type) =>
     setBlocks([...blocks, { id: Date.now(), type, content: "" }]);
@@ -32,50 +68,56 @@ export default function BlogEditor() {
   const handlePositionChange = (currentIndex, newIndex) =>
     moveBlockToPosition(currentIndex, newIndex);
 
- const handlePost = async () => {
-  if (!title?.trim()) {
-    toast.error("Title is required!");
-    return;
-  }
-   if(!thumbnailUrl){
-    toast.error("Add the image url");
-  }
-  if (!blocks.length) {
-    toast.error("At least one content block is required!");
-    return;
-  }
- 
+  const handleSubmit = async () => {
+    if (!title?.trim()) return toast.error("Title is required!");
+    if (!thumbnailUrl) return toast.error("Add the image URL!");
+    if (!blocks.length) return toast.error("Add at least one content block!");
 
- const postData = {
-  artHeading: title,
-  coverImgURL: thumbnailUrl || null,
-  artType: isPremium ? "premium" : "free", 
-  artDetail: JSON.stringify(
-    blocks.map((b, i) => ({ ...b, position: i + 1 }))
-  ), 
-};
+    const postData = {
+      artHeading: title,
+      coverImgURL: thumbnailUrl,
+      artType: isPremium ? "premium" : "free",
+      artDetail: JSON.stringify(
+        blocks.map((b, i) => ({ ...b, position: i + 1 }))
+      ),
+    };
 
+    try {
+      let res;
+      if (articleId) {
+        // Update article
+        console.log(postData);
+        
+        res = await apiPut(`admin/v1/article/${articleId}`, postData);
+      } else {
+        // Create article
+        res = await apiPost("admin/v1/article/create", postData);
+      }
 
-  try {
-    console.log(postData);
-    
-    const res = await apiPost("admin/v1/article/create", postData);
-
-    
-    if (res.status=="success") {
-      toast.success("Article created successfully!");
-    } else {
-      toast.error(res.data.message || "Something went wrong.");
+      if (res.status === "success") {
+        toast.success(articleId ? "Article updated!" : "Article created!");
+       
+      } else {
+        toast.error(res.data?.message || "Something went wrong.");
+      }
+    } catch (err) {
+      console.error("Error submitting article:", err);
+      toast.error("Error submitting article");
     }
-  } catch (err) {
-    toast.error("Error creating article:", err);
-  }
-};
+  };
 
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center text-gray-500">
+        Loading article...
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
-      <Header currentPage="addBlog"/>
+      <Header/>
+      <Toaster position="top-right" />
       <div className="max-w-5xl mx-auto px-6 py-8">
         {/* Title Section */}
         <div className="bg-white rounded-2xl shadow-xl border border-white/50 p-8 mb-8 backdrop-blur-sm">
@@ -114,7 +156,7 @@ export default function BlogEditor() {
             </div>
 
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-3  items-center gap-2">
+              <label className="block text-sm font-semibold text-gray-700 mb-3 items-center gap-2">
                 <span className="w-2 h-2 bg-purple-500 rounded-full"></span>
                 Post Thumbnail
               </label>
@@ -152,11 +194,7 @@ export default function BlogEditor() {
         </div>
 
         {/* Post Summary */}
-        <PostSummary
-          title={title}
-          thumbnailUrl={thumbnailUrl}
-          blocks={blocks}
-        />
+        <PostSummary title={title} thumbnailUrl={thumbnailUrl} blocks={blocks} />
 
         {/* Content Blocks Section */}
         <div className="bg-white rounded-2xl shadow-xl border border-white/50 p-8 mb-8 backdrop-blur-sm">
@@ -216,7 +254,9 @@ export default function BlogEditor() {
         <div className="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl shadow-2xl p-8 text-white">
           <div className="flex items-center justify-between">
             <div>
-              <h3 className="text-xl font-bold mb-2">Ready to Publish?</h3>
+              <h3 className="text-xl font-bold mb-2">
+                {articleId ? "Update Your Post" : "Ready to Publish?"}
+              </h3>
               <p className="text-blue-100">
                 {!title.trim()
                   ? "Add a title to publish your blog post"
@@ -226,11 +266,15 @@ export default function BlogEditor() {
               </p>
             </div>
             <button
-              onClick={handlePost}
+              onClick={handleSubmit}
               disabled={!title.trim()}
               className="px-8 py-4 bg-white/20 backdrop-blur-sm text-white font-bold rounded-xl hover:bg-white/30 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 disabled:transform-none border border-white/20"
             >
-              {!title.trim() ? "📝 Add Title" : "🚀 Publish Post"}
+              {!title.trim()
+                ? "📝 Add Title"
+                : articleId
+                ? "💾 Update Post"
+                : "🚀 Publish Post"}
             </button>
           </div>
         </div>
