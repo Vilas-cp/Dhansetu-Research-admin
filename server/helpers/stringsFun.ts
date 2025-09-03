@@ -4,7 +4,9 @@ function genArtId(str: string) {
     .trim()
     .replace(/[^\w\s-]/g, "")
     .replace(/\s+/g, "-")
-    .replace(/-+/g, "-");
+    .replace(/-+/g, "-")
+    .slice(0, 100)
+    .replace(/-+$/, "");
 }
 
 export { genArtId };

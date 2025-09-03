@@ -1,6 +1,9 @@
 CREATE TYPE "user_type" AS 
 ENUM('free', 'premium');
 
+CREATE TYPE "lang" AS 
+ENUM('en');
+
 CREATE TYPE "contact_type" AS ENUM(
   'email id',
   'phone no',
@@ -51,11 +54,23 @@ CREATE TABLE "articles" (
   "admin_id" int NOT NULL,
   "article_id" varchar UNIQUE NOT NULL,
   "article_heading" varchar NOT NULL,
-  "article_detail" TEXT NOT NULL,
   "cover_img_URL" varchar NOT NULL,
   "article_type" user_type NOT NULL,
   "created_at" timestamptz DEFAULT CURRENT_TIMESTAMP
 );
 
+CREATE TABLE "articles_details" (
+  "id" SERIAL PRIMARY KEY,
+  "uuid" uuid NOT NULL DEFAULT gen_random_uuid(),
+  "article_id" INT NOT NULL,
+  "article_lang" lang NOT NULL,
+  "article_detail" TEXT NOT NULL,
+  "created_at" timestamptz DEFAULT CURRENT_TIMESTAMP,
+  UNIQUE ("article_id", "article_lang")
+);
+
 ALTER TABLE "articles"
 ADD FOREIGN KEY ("admin_id") REFERENCES "admin" ("id") ON DELETE CASCADE;
+
+ALTER TABLE "articles_details"
+ADD FOREIGN KEY ("article_id") REFERENCES "articles" ("id") ON DELETE CASCADE;

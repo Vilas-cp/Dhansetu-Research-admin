@@ -1,12 +1,13 @@
 const skipRoutes = [
-  "/file/v1/download/resume/",
-  "/user/v1/login/clerk",
+  "/admin/v1/verify",
+  "/admin/v1/login",
+  "/admin/v1/create/user",
   "/hello",
-  "/interview/v1/outcome",
-  "/interview/v1/verify/",
-  "/interview/v1/review/", // dynamic route /:interviewid
-  "/dev/v1/login/user_2s8L309kJ5uwImARr5qPWm9esAv",
-  "/user/v1/candidate/profile/", // dynamic route /:username
+  "/",
+  // "/interview/v1/outcome",
+  // "/interview/v1/verify/",
+  // "/interview/v1/review/", // dynamic route /:interviewid
+  // "/user/v1/candidate/profile/", // dynamic route /:username
 ];
 
 export { skipRoutes };

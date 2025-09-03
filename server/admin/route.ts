@@ -29,7 +29,7 @@ v1Routes.post("/login", async (req, res) => {
     const adminDb = new AdminDb();
     const adminUserRes = await adminDb.getAdminUser(userName);
     if (adminUserRes === null) {
-      res.status(401).send({
+      res.status(400).send({
         status: "fail",
         data: {
           message: "Database error, or Database is offline.",
@@ -167,7 +167,7 @@ v1Routes.post("/verify", async (req, res) => {
 v1Routes.post("/logout", async (req, res) => {
   try {
     const { sessionId, userName } = req.signedCookies;
-    console.log(sessionId, userName);
+    // console.log(sessionId, userName);
     if (sessionId && userName) {
       res.clearCookie("sessionId", {
         httpOnly: true,
@@ -229,7 +229,7 @@ v1Routes.post("/create/user", async (req, res) => {
     const adminDb = new AdminDb();
     const adminCrtRes = await adminDb.createAdminUser(adFirstName, adLastName, adUserName, adImgUrl);
     if (adminCrtRes === null) {
-      res.status(401).send({
+      res.status(400).send({
         status: "fail",
         data: {
           message: "Database error, or Database is offline.",
@@ -238,7 +238,7 @@ v1Routes.post("/create/user", async (req, res) => {
       return;
     }
     if (adminCrtRes === -1) {
-      res.status(401).send({
+      res.status(400).send({
         status: "fail",
         data: {
           message: "User not created.",
@@ -268,10 +268,11 @@ v1Routes.post("/create/user", async (req, res) => {
   }
 });
 
-v1Routes.post("/articles/create", async (req, res) => {
+v1Routes.post("/article/create", async (req, res) => {
   try {
     const { artHeading, artDetail, coverImgURL, artType } =
       req.body;
+    // console.log(req.body);
     const { sessionId, userName } = req.signedCookies;
     if (!sessionId || !userName) {
       res.status(401).send({
@@ -285,7 +286,7 @@ v1Routes.post("/articles/create", async (req, res) => {
     const adminDb = new AdminDb();
     const artRes = await adminDb.createArticle(artHeading, artDetail, coverImgURL, userName, artType);
     if (artRes === null) {
-      res.status(401).send({
+      res.status(400).send({
         status: "fail",
         data: {
           message: "Database error, or Database is offline.",
@@ -294,10 +295,19 @@ v1Routes.post("/articles/create", async (req, res) => {
       return;
     }
     if (artRes === -1) {
-      res.status(401).send({
+      res.status(400).send({
         status: "fail",
         data: {
           message: "Article not created.",
+        },
+      });
+      return;
+    }
+    if (artRes === -2) {
+      res.status(400).send({
+        status: "fail",
+        data: {
+          message: "Article with the same heading already exist!",
         },
       });
       return;
@@ -309,7 +319,123 @@ v1Routes.post("/articles/create", async (req, res) => {
         artRes
       },
     });
-    console.log(chalk.yellow(`User: ${userName}, is logged out as Admin!`));
+  } catch (error: any) {
+    console.log(
+      chalk.red(`Error: ${error?.message}, for user id ${req.body?.userName}`)
+    );
+    res.status(400).send({
+      status: "fail",
+      error: error,
+      data: {
+        message: "Internal Server Error!",
+      },
+    });
+  }
+});
+
+v1Routes.put("/article/:artid", async (req, res) => {
+  try {
+    const { sessionId, userName } = req.signedCookies;
+    const { artHeading, artDetail, coverImgURL, artType } = req.body;
+    const artId = req.params.artid;
+    if (!sessionId || !userName) {
+      res.status(401).send({
+        status: "fail",
+        data: {
+          message: "SessionId not found",
+        },
+      });
+      return;
+    }
+    const adminDb = new AdminDb();
+    const artRes = await adminDb.updateArticle(artHeading, artDetail, coverImgURL, userName, artType, artId);
+    if (artRes === null) {
+      res.status(400).send({
+        status: "fail",
+        data: {
+          message: "Database error, or Database is offline.",
+        },
+      });
+      return;
+    }
+    if (artRes === -2) {
+      res.status(400).send({
+        status: "fail",
+        data: {
+          message: "Did not find the article to update.",
+        },
+      });
+      return;
+    }
+    if (artRes === -1) {
+      res.status(400).send({
+        status: "fail",
+        data: {
+          message: "Database error.",
+        },
+      });
+      return;
+    }
+    res.status(200).send({
+      status: "success",
+      data: {
+        res: artRes,
+      },
+    });
+  } catch (error: any) {
+    console.log(
+      chalk.red(`Error: ${error?.message}, for user id ${req.body?.userName}`)
+    );
+    res.status(400).send({
+      status: "fail",
+      error: error,
+      data: {
+        message: "Internal Server Error!",
+      },
+    });
+  }
+});
+
+v1Routes.delete("/article/:artid", async (req, res) => {
+  try {
+    const { sessionId, userName } = req.signedCookies;
+    const artId = req.params.artid;
+    if (!sessionId || !userName) {
+      res.status(401).send({
+        status: "fail",
+        data: {
+          message: "SessionId not found",
+        },
+      });
+      return;
+    }
+    const adminDb = new AdminDb();
+    const artRes = await adminDb.deleteArticle(artId);
+    if (artRes === null) {
+      res.status(400).send({
+        status: "fail",
+        data: {
+          message: "Database error, or Database is offline.",
+        },
+      });
+      return;
+    }
+    if (artRes === -1) {
+      res.status(400).send({
+        status: "fail",
+        data: {
+          message:
+            "Did not find the article with the given article id.",
+        },
+      });
+      return;
+    }
+    res.status(200).send({
+      status: "success",
+      data: {
+        res: artRes,
+      },
+    });
   } catch (error: any) {
     console.log(
       chalk.red(`Error: ${error?.message}, for user id ${req.body?.userName}`)
@@ -339,7 +465,7 @@ v1Routes.get("/articles/all", async (req, res) => {
     const adminDb = new AdminDb();
     const artRes = await adminDb.getAllArticles();
     if (artRes === null) {
-      res.status(401).send({
+      res.status(400).send({
         status: "fail",
         data: {
           message: "Database error, or Database is offline.",
@@ -353,7 +479,59 @@ v1Routes.get("/articles/all", async (req, res) => {
         res: artRes,
       },
     });
-    console.log(chalk.yellow(`User: ${userName}, is logged out as Admin!`));
+  } catch (error: any) {
+    console.log(
+      chalk.red(`Error: ${error?.message}, for user id ${req.body?.userName}`)
+    );
+    res.status(400).send({
+      status: "fail",
+      error: error,
+      data: {
+        message: "Internal Server Error!",
+      },
+    });
+  }
+});
+
+v1Routes.get("/article/:artid", async (req, res) => {
+  try {
+    const { sessionId, userName } = req.signedCookies;
+    const artId = req.params.artid;
+    if (!sessionId || !userName) {
+      res.status(401).send({
+        status: "fail",
+        data: {
+          message: "SessionId not found",
+        },
+      });
+      return;
+    }
+    const adminDb = new AdminDb();
+    const artRes = await adminDb.getArticle(artId);
+    if (artRes === null) {
+      res.status(400).send({
+        status: "fail",
+        data: {
+          message: "Database error, or Database is offline.",
+        },
+      });
+      return;
+    }
+    if (artRes === -1) {
+      res.status(400).send({
+        status: "fail",
+        data: {
+          message: "Did not find the article with the given article id, and for this lang.",
+        },
+      });
+      return;
+    }
+    res.status(200).send({
+      status: "success",
+      data: {
+        res: artRes,
+      },
+    });
   } catch (error: any) {
     console.log(
       chalk.red(`Error: ${error?.message}, for user id ${req.body?.userName}`)

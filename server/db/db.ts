@@ -711,7 +711,8 @@ class AdminDb extends DB {
     artDetail: string,
     artCoverImg: string,
     userName: string,
-    artType: string
+    artType: string,
+    lang: string = "en"
   ) {
     return await this.retryQuery("createArticle", async () => {
       let pClient;
@@ -724,20 +725,47 @@ class AdminDb extends DB {
           return resAdmin;
         }
         const artId = genArtId(artHeading);
+        const resCheck = await pClient.query(
+          `
+          SELECT art."id"
+          FROM 
+            "articles" as "art"
+          WHERE
+            art."article_id" = $1::varchar;
+        `,
+          [artId]
+        );
+        if (resCheck.rowCount === 1) {
+          await pClient.query("ROLLBACK");
+          return -2;
+        }
         const res = await pClient.query(
           `
           INSERT INTO 
-            "articles" ("admin_id", "article_id", "article_heading", "article_detail", "cover_img_URL", "article_type")
+            "articles" ("admin_id", "article_id", "article_heading", "cover_img_URL", "article_type")
           VALUES
-            ($1::int, $2::varchar, $3::varchar, $4::varchar, $5::varchar, $6::user_type)
+            ($1::int, $2::varchar, $3::varchar, $4::varchar, $5::user_type)
           RETURNING "id", "article_id" as "articleId";`,
-          [resAdmin.id, artId, artHeading, artDetail, artCoverImg, artType]
+          [resAdmin.id, artId, artHeading, artCoverImg, artType]
         );
         if (res.rowCount !== 1) {
           await pClient.query("ROLLBACK");
           return -1;
         }
         const updateData: { id: number } = res.rows[0];
+        const resDtl = await pClient.query(
+          `
+          INSERT INTO 
+            "articles_details" ("article_id", "article_lang", "article_detail")
+          VALUES
+            ($1::int, $2::lang, $3::text)
+          RETURNING "id", "article_id" as "articleId";`,
+          [updateData.id, lang, artDetail]
+        );
+        if (resDtl.rowCount !== 1) {
+          await pClient.query("ROLLBACK");
+          return -1;
+        }
         await pClient.query("COMMIT");
         return updateData;
       } catch (error: any) {
@@ -766,7 +794,7 @@ class AdminDb extends DB {
         const res = await pClient.query(
           `
           SELECT art."admin_id" as "adminId", art."article_id" as "artId", 
-            art."article_heading" as "artHeading", art."article_detail" as "artDetail", 
+            art."article_heading" as "artHeading", 
             art."cover_img_URL" as "coverImgURL", art."article_type" as "artType",
             art."id", art."uuid", ad."user_name" as "adUserName", ad."first_name" as "adFirstName",
             ad."last_name" as "adLastName", ad."img_URL" as "adImgURL", ad."id" as "adId", ad."uuid" as "aduuid"
@@ -778,6 +806,177 @@ class AdminDb extends DB {
         const allArt: Article[] = res.rows;
         await pClient.query("COMMIT");
         return allArt;
+      } catch (error: any) {
+        console.log(
+          chalk.red("PostgresSQL Error: "),
+          error?.message,
+          error?.code
+        );
+        if (pClient) {
+          await pClient.query("ROLLBACK");
+        }
+        return null;
+      } finally {
+        if (pClient) {
+          this.release(pClient);
+        }
+      }
+    });
+  }
+  async getArticle(artId: string, lang: string = "en") {
+    return await this.retryQuery("getAllArticles", async () => {
+      let pClient;
+      try {
+        pClient = await this.connect();
+        await pClient.query("BEGIN");
+        const res = await pClient.query(
+          `
+          SELECT art."admin_id" as "adminId", art."article_id" as "artId", 
+            art."article_heading" as "artHeading", artd."article_lang" as "artLang", 
+            artd."article_detail" as "artDetail", art."cover_img_URL" as "coverImgURL", 
+            art."article_type" as "artType", art."id", art."uuid", ad."user_name" as "adUserName", 
+            ad."first_name" as "adFirstName", ad."last_name" as "adLastName", 
+            ad."img_URL" as "adImgURL", ad."id" as "adId", ad."uuid" as "aduuid"
+          FROM 
+            "articles" as "art"
+          LEFT JOIN 
+            "admin" as ad ON art."admin_id" = ad."id"
+          LEFT JOIN 
+            "articles_details" as artd ON art."id" = artd."article_id"
+          WHERE
+            art."article_id" = $1::varchar AND artd."article_lang" = $2::lang;`,
+          [artId, lang]
+        );
+        if (res.rowCount === 0) {
+          await pClient.query("ROLLBACK");
+          return -1;
+        }
+        const art: Article = res.rows[0];
+        await pClient.query("COMMIT");
+        return art;
+      } catch (error: any) {
+        console.log(
+          chalk.red("PostgresSQL Error: "),
+          error?.message,
+          error?.code
+        );
+        if (pClient) {
+          await pClient.query("ROLLBACK");
+        }
+        return null;
+      } finally {
+        if (pClient) {
+          this.release(pClient);
+        }
+      }
+    });
+  }
+  async deleteArticle(artId: string) {
+    return await this.retryQuery("getAllArticles", async () => {
+      let pClient;
+      try {
+        pClient = await this.connect();
+        await pClient.query("BEGIN");
+        const res = await pClient.query(
+          `
+          DELETE FROM 
+            "articles" as "art"
+          WHERE
+            art."article_id" = $1::varchar
+          RETURNING *;`,
+          [artId]
+        );
+        if (res.rowCount === 0) {
+          await pClient.query("ROLLBACK");
+          return -1;
+        }
+        const art: Article = res.rows[0];
+        await pClient.query("COMMIT");
+        return art;
+      } catch (error: any) {
+        console.log(
+          chalk.red("PostgresSQL Error: "),
+          error?.message,
+          error?.code
+        );
+        if (pClient) {
+          await pClient.query("ROLLBACK");
+        }
+        return null;
+      } finally {
+        if (pClient) {
+          this.release(pClient);
+        }
+      }
+    });
+  }
+  async updateArticle(
+    artHeading: string,
+    artDetail: string,
+    artCoverImg: string,
+    userName: string,
+    artType: string,
+    artId: string,
+    lang: string = "en"
+  ) {
+    return await this.retryQuery("updateArticle", async () => {
+      let pClient;
+      try {
+        pClient = await this.connect();
+        await pClient.query("BEGIN");
+        const resAdmin = await this.getAdminUser(userName);
+        if (resAdmin == -1 || resAdmin == null) {
+          await pClient.query("ROLLBACK");
+          return resAdmin;
+        }
+        const resCheck = await pClient.query(
+          `
+          SELECT art."id"
+          FROM 
+            "articles" as "art"
+          WHERE
+            art."article_id" = $1::varchar;
+        `,
+          [artId]
+        );
+        if (resCheck.rowCount === 0) {
+          await pClient.query("ROLLBACK");
+          return -2;
+        }
+        const res = await pClient.query(
+          `
+          UPDATE
+            "articles"
+          SET
+            "article_heading" = $2::varchar,
+            "cover_img_URL" = $3::varchar, "article_type" = $4::user_type
+          WHERE
+            "article_id" = $1::varchar AND "admin_id" = $5::int
+          RETURNING "id";`,
+          [artId, artHeading, artCoverImg, artType, resAdmin.id]
+        );
+        if (res.rowCount !== 1) {
+          await pClient.query("ROLLBACK");
+          return -1;
+        }
+        const updateData: { id: number } = res.rows[0];
+        const resDtl = await pClient.query(
+          `
+          UPDATE
+            "articles_details"
+          SET
+            "article_detail" = $1::text
+          WHERE
+            "article_id" = $2::int AND "article_lang" = $3::lang
+          RETURNING "id";`,
+          [artDetail, updateData.id, lang]
+        );
+        if (resDtl.rowCount !== 1) {
+          await pClient.query("ROLLBACK");
+          return -1;
+        }
+        await pClient.query("COMMIT");
+        return updateData;
       } catch (error: any) {
         console.log(
           chalk.red("PostgresSQL Error: "),

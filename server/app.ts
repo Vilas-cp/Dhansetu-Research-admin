@@ -4,7 +4,7 @@ import helmet from "helmet";
 // import { fileRouter } from "./file/route";
 // import { userRouter } from "./user/route";
 import cookieParser from "cookie-parser";
-// import { authMiddleWare } from "./middlewares/auth";
+import { authMiddleWare } from "./middlewares/auth";
 import { hitMiddleWare } from "./middlewares/hit";
 import { envConfigs, serverConfigs } from "./configs/configs";
 import morgan from "morgan";
@@ -40,7 +40,7 @@ app.use(cookieParser(COOKIE_SECRET));
 app.use(morgan("dev"));
 app.use(hitMiddleWare);
 // app.use(rateLimitMiddleWare);
-// app.use(authMiddleWare);
+app.use(authMiddleWare);
 
 // Routes
 // app.use("/file", fileRouter);
@@ -52,26 +52,6 @@ app.get("/hello", (_, res) => {
     res
       .status(200)
       .send({ status: "success", data: { message: "Hello Tiger!" } });
-  } catch (error) {
-    console.log(error);
-    res.status(400).send({
-      status: "fail",
-      error: error,
-      data: {
-        message: "Internal Server Error!",
-      },
-    });
-  }
-});
-
-app.get("/verify", (req, res) => {
-  try {
-    const { userId } = req.signedCookies;
-    console.log(chalk.yellow(`User with ${userId} is verified!`));
-    res.status(200).send({
-      status: "success",
-      data: { message: "Yes the user is verified!" },
-    });
   } catch (error) {
     console.log(error);
     res.status(400).send({
