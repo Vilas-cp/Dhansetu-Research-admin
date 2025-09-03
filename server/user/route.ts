@@ -1,9 +1,8 @@
 import chalk from "chalk";
 import express from "express";
-import { AdminDb, SessionDB } from "../db/db";
+import { AdminDb, SessionDB, UserDB } from "../db/db";
 import { envConfigs, serverConfigs } from "../configs/configs";
 import { v4 } from "uuid";
-import { AdminInfo } from "../types/user";
 const v1Routes = express.Router();
 const userRoutes = express.Router();
 
@@ -13,20 +12,11 @@ const { ADMIN_PASS, SUPER_PASS } = envConfigs;
 
 v1Routes.post("/login", async (req, res) => {
   try {
-    const { password, userName }: AdminInfo = req.body;
+    const { emailId, clerkId, firstName, lastName, imgURL } = req.body;
     const { sessionId } = req.signedCookies;
-    if (!password || !userName) {
-      res.status(401).send({
-        status: "fail",
-        data: {
-          message: "Didnt get password or userName!",
-        },
-      });
-      return;
-    }
-    const adminDb = new AdminDb();
-    const adminUserRes = await adminDb.getAdminUser(userName);
-    if (adminUserRes === null) {
+    const userDb = new UserDB();
+    const userRes = await userDb.getClientUser(emailId);
+    if (userRes === null) {
       res.status(400).send({
         status: "fail",
         data: {
@@ -35,27 +25,39 @@ v1Routes.post("/login", async (req, res) => {
       });
       return;
     }
-    if (adminUserRes === -1) {
-      res.status(401).send({
-        status: "fail",
-        data: {
-          message: "User with username not found.",
-        },
-      });
-      return;
+    let userCreated = false;
+    if (userRes === -1) {
+      const createUserRes = await userDb.createClientUser(
+        emailId,
+        clerkId,
+        firstName,
+        lastName,
+        imgURL,
+        "free"
+      );
+      if (createUserRes === null) {
+        res.status(400).send({
+          status: "fail",
+          data: {
+            message: "Database error, or Database is offline.",
+          },
+        });
+        return;
+      }
+      if (createUserRes === -1) {
+        res.status(400).send({
+          status: "fail",
+          data: {
+            message: "Could not create user.",
+          },
+        });
+        return;
+      }
+      userCreated = true;
     }
     const sessionDB = new SessionDB();
-    if (ADMIN_PASS && password !== ADMIN_PASS) {
-      res.status(401).send({
-        status: "fail",
-        data: {
-          message: "Wrong password!",
-        },
-      });
-      return;
-    }
     if (sessionId) {
-      const sessionIdRes = await sessionDB.getSessionId(userName);
+      const sessionIdRes = await sessionDB.getSessionId(emailId);
       if (sessionIdRes === sessionId) {
         res.status(200).send({
           status: "success",
@@ -66,15 +68,15 @@ v1Routes.post("/login", async (req, res) => {
         return;
       }
     }
-    let sessionIdRes = await sessionDB.getSessionId(userName);
+    let sessionIdRes = await sessionDB.getSessionId(emailId);
     if (!sessionIdRes || sessionIdRes === -1) {
       const sessionId = v4();
-      sessionIdRes = await sessionDB.createSessionId(userName, sessionId);
+      sessionIdRes = await sessionDB.createSessionId(emailId, sessionId);
       if (!sessionIdRes || sessionIdRes === -1) {
         res.status(400).send({
           status: "fail",
           data: {
-            message: "Database is offline",
+            message: "Database is offline, or Database error",
           },
         });
         return;
@@ -88,7 +90,7 @@ v1Routes.post("/login", async (req, res) => {
       sameSite: "none",
       maxAge: 1000 * 60 * 60 * 24 * SESSION_EXPIRE_TIME_IN_DAYS,
     });
-    res.cookie("userName", userName, {
+    res.cookie("userName", emailId, {
       httpOnly: true,
       secure: true,
       signed: true,
@@ -100,12 +102,13 @@ v1Routes.post("/login", async (req, res) => {
       status: "success",
       data: {
         sessionId: sessionIdRes,
+        userCreated,
       },
     });
-    console.log(chalk.yellow(`User: ${userName}, is logged in as Admin!`));
+    console.log(chalk.yellow(`User: ${emailId}, is logged in as Admin!`));
   } catch (error: any) {
     console.log(
-      chalk.red(`Error: ${error?.message}, for user id ${req.body?.userName}`)
+      chalk.red(`Error: ${error?.message}, for user id ${req.body?.emailId}`)
     );
     res.status(400).send({
       status: "fail",
@@ -206,6 +209,7 @@ v1Routes.post("/logout", async (req, res) => {
 v1Routes.get("/articles/all", async (req, res) => {
   try {
     const { sessionId, userName } = req.signedCookies;
+    const offset = parseInt(req.query["offset"] as string) || 1;
     if (!sessionId || !userName) {
       res.status(401).send({
         status: "fail",
@@ -215,8 +219,8 @@ v1Routes.get("/articles/all", async (req, res) => {
       });
       return;
     }
-    const adminDb = new AdminDb();
-    const artRes = await adminDb.getAllArticles();
+    const userDb = new UserDB();
+    const artRes = await userDb.getAllArticles(offset);
     if (artRes === null) {
       res.status(400).send({
         status: "fail",
@@ -250,17 +254,8 @@ v1Routes.get("/article/:artid", async (req, res) => {
   try {
     const { sessionId, userName } = req.signedCookies;
     const artId = req.params.artid;
-    if (!sessionId || !userName) {
-      res.status(401).send({
-        status: "fail",
-        data: {
-          message: "SessionId not found",
-        },
-      });
-      return;
-    }
-    const adminDb = new AdminDb();
-    const artRes = await adminDb.getArticle(artId);
+    const userDb = new UserDB();
+    const artRes = await userDb.getArticle(artId);
     if (artRes === null) {
       res.status(400).send({
         status: "fail",
@@ -280,10 +275,47 @@ v1Routes.get("/article/:artid", async (req, res) => {
       });
       return;
     }
+    if (artRes.artType === "free") {
+      res.status(200).send({
+        status: "success",
+        data: {
+          res: artRes,
+          access: true,
+        },
+      });
+      return;
+    }
+    const userRes = await userDb.getClientUser(userName || "");
+    if (userRes === null) {
+      res.status(400).send({
+        status: "fail",
+        data: {
+          message: "Database error, or Database is offline.",
+        },
+      });
+      return;
+    }
+    let userLoggedIn = false;
+    if (userName) {
+      userLoggedIn = true;
+    }
+    if (userRes === -1 || userRes.type !== "premium") {
+      res.status(200).send({
+        status: "success",
+        data: {
+          message: "You need premium subscription to view this blog.",
+          access: false,
+          userLoggedIn: userLoggedIn || userRes !== -1,
+        },
+      });
+      return;
+    }
     res.status(200).send({
       status: "success",
       data: {
         res: artRes,
+        access: true,
+        userLoggedIn: userLoggedIn,
       },
     });
   } catch (error: any) {

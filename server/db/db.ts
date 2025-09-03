@@ -4,8 +4,7 @@ import { v4 } from "uuid";
 import { Ping } from "../types/db";
 import {
   AdminUser,
-  CandidateProfile,
-  GetCandidateProfile,
+  ClientUser,
   Notification,
 } from "../types/user";
 import { dbConfigs, serverConfigs } from "../configs/configs";
@@ -23,8 +22,9 @@ const {
   DB_RETRY_WAIT_MAX_SEC,
   DB_RETRY_WAIT_MIN_SEC,
 } = dbConfigs;
-const { BUCKET_NAME_IMG, SESSION_EXPIRE_TIME_IN_DAYS } = serverConfigs;
+const { SESSION_EXPIRE_TIME_IN_DAYS } = serverConfigs;
 const shortUUID = new ShortUniqueId({ length: 10 });
+const USER_ARTICLE_OFFSET = 10;
 
 class DB {
   private static client: Pool;
@@ -130,35 +130,69 @@ class DB {
     }
   }
 }
-class UserDBv1 extends DB {
-  async getIdByClerkUserId(clerkUserId: string) {
-    return await this.retryQuery("getIdByClerkUserId", async () => {
+class UserDB extends DB {
+  async getClientUser(emailId: string) {
+    return await this.retryQuery("getClientUser", async () => {
       let pClient;
       try {
         pClient = await this.connect();
         const res = await pClient.query(
           `
-          SELECT u."id", u."type", u."user_name", cm."resume_key", 
-          rm."approve_status"
-          FROM "users" AS u
-          LEFT JOIN "candidate_metadata_v1" AS cm
-          ON u."id" = cm."user_id"
-          LEFT JOIN "recruiter_metadata_v1" AS rm
-          ON u."id" = rm."user_id"
+          SELECT u."id", u."uuid", u."email_id" as "emailId",
+          u."clerk_id" as "clerkId", u."first_name" as "firstName", 
+          u."last_name" as "lastName", u."img_URL" as "imgURL", 
+          u."type", u."created_at" as "createdAt"
+          FROM 
+            "users" as u 
           WHERE
-          u."clerk_id" = $1::varchar;`,
-          [clerkUserId]
+            u."email_id" = $1::varchar;`,
+          [emailId]
         );
         if (res.rowCount !== 1) {
           return -1;
         }
-        const userData = {
-          primaryId: res.rows[0].id as number,
-          userType: res.rows[0].type as string,
-          userName: res.rows[0]["user_name"] as string,
-          resumeKey: res.rows[0]["resume_key"] as string | null,
-          approveStatus: res.rows[0]["approve_status"] as string | null,
-        };
+        const adminData: ClientUser = res.rows[0];
+        return adminData;
+      } catch (error: any) {
+        console.log(
+          chalk.red("PostgresSQL Error: "),
+          error?.message,
+          error?.code
+        );
+        return null;
+      } finally {
+        if (pClient) {
+          this.release(pClient);
+        }
+      }
+    });
+  }
+  async createClientUser(
+    emailId: string,
+    clerkId: string,
+    firstName: string,
+    lastName: string,
+    imgURL: string,
+    type: string
+  ) {
+    return await this.retryQuery("createClientUser", async () => {
+      let pClient;
+      try {
+        pClient = await this.connect();
+        const res = await pClient.query(
+          `
+          INSERT INTO
+            "users" ("email_id", "clerk_id", "first_name", "last_name", "img_URL", "type")
+          VALUES
+            ($1::varchar, $2::varchar, $3::varchar, $4::varchar, $5::varchar, $6::user_type)
+          RETURNING "id";
+            `,
+          [emailId, clerkId, firstName, lastName, imgURL, type]
+        );
+        if (res.rowCount !== 1) {
+          return -1;
+        }
+        const userData: { id: number } = res.rows[0];
         return userData;
       } catch (error: any) {
         console.log(
@@ -174,339 +208,39 @@ class UserDBv1 extends DB {
       }
     });
   }
-  // Candidate User
-  async createUserCandidate(
-    profileData: CandidateProfile,
-    userId: string,
-    emailId: string | null,
-    userName: string,
-    imgFileName: string,
-    resumeFileName: string
-  ) {
-    return await this.retryQuery("createUserCandidate", async () => {
+  async getAllArticles(offset = 1) {
+    return await this.retryQuery("getAllArticles", async () => {
       let pClient;
       try {
         pClient = await this.connect();
         await pClient.query("BEGIN");
         const res = await pClient.query(
           `
-          INSERT INTO "users" ("user_name", "clerk_id", "first_name",
-          "last_name", "img_URL", "type") VALUES ($1::varchar, $2::varchar,
-          $3::varchar, $4::varchar, $5::varchar, $6::user_type) RETURNING id;`,
-          [
-            userName,
-            userId,
-            profileData.firstName,
-            profileData.lastName,
-            `https://${BUCKET_NAME_IMG}.s3.amazonaws.com/${imgFileName}`,
-            "candidate",
-          ]
-        );
-        if (res.rowCount !== 1) {
-          await pClient.query("ROLLBACK");
-          return -1;
-        }
-        const primaryId: number = res.rows[0].id;
-        const resMetadata = await pClient.query(
-          `
-          INSERT INTO "candidate_metadata_v1" ("user_id", "linkedin_URL", "resume_URL",
-          "phone_number", "profile_note", "job_title", "resume_key") VALUES 
-          ($1::int, $2::varchar, $3::varchar, $4::varchar, 
-          $5::text, $6::varchar, $7::varchar) RETURNING id;`,
-          [
-            primaryId,
-            profileData.linkedinURL,
-            `/file/v1/download/resume/${resumeFileName}`,
-            profileData.phoneNumber,
-            profileData.profileNote,
-            profileData.jobTitle,
-            resumeFileName,
-          ]
-        );
-        if (resMetadata.rowCount !== 1) {
-          await pClient.query("ROLLBACK");
-          return -1;
-        }
-        const resContact1 = await pClient.query(
-          `
-          INSERT INTO "users_contact_details_v1" ("user_id", "contact_type", "contact_detail")
-          VALUES ($1::int, $2::contact_type, $3::varchar) RETURNING id;`,
-          [primaryId, "phone no", profileData.phoneNumber]
-        );
-        if (resContact1.rowCount !== 1) {
-          await pClient.query("ROLLBACK");
-          return -1;
-        }
-        const resContact2 = await pClient.query(
-          `
-          INSERT INTO "users_contact_details_v1" ("user_id", "contact_type", "contact_detail")
-          VALUES ($1::int, $2::contact_type, $3::varchar) RETURNING id;`,
-          [primaryId, "linkedin", profileData.linkedinURL]
-        );
-        if (resContact2.rowCount !== 1) {
-          await pClient.query("ROLLBACK");
-          return -1;
-        }
-        const resContact3 = await pClient.query(
-          `
-          INSERT INTO "users_contact_details_v1" ("user_id", "contact_type", "contact_detail")
-          VALUES ($1::int, $2::contact_type, $3::varchar) RETURNING id;`,
-          [primaryId, "email id", emailId]
-        );
-        if (resContact3.rowCount !== 1) {
-          await pClient.query("ROLLBACK");
-          return -1;
-        }
-        await pClient.query("COMMIT");
-        const userData = {
-          primaryId,
-        };
-        return userData;
-      } catch (error: any) {
-        console.log(
-          chalk.red("PostgresSQL Error: "),
-          error?.message,
-          error?.code
-        );
-        if (pClient) {
-          await pClient.query("ROLLBACK");
-        }
-        return null;
-      } finally {
-        if (pClient) {
-          this.release(pClient);
-        }
-      }
-    });
-  }
-  async updateUserCandidate(
-    profileData: CandidateProfile,
-    userId: string,
-    userType: string
-  ) {
-    return await this.retryQuery("updateUserCandidate", async () => {
-      let pClient;
-      try {
-        pClient = await this.connect();
-        await pClient.query("BEGIN");
-        let allowUpdate = false;
-        if (userType === "recruiter") {
-          // allow any candidate profile update by 'recruiter'
-          allowUpdate = true;
-        }
-        const res = await pClient.query(
-          `
-          UPDATE "users" 
-          SET 
-          "first_name" = $2::varchar,
-          "last_name" = $3::varchar
-          WHERE "user_name" = $1::varchar AND ("clerk_id" = $4::varchar OR $5::boolean)
-          RETURNING id;`,
-          [
-            profileData.userName,
-            profileData.firstName,
-            profileData.lastName,
-            userId,
-            allowUpdate,
-          ]
-        );
-        if (res.rowCount !== 1) {
-          await pClient.query("ROLLBACK");
-          return -1;
-        }
-        const primaryId: number = res.rows[0].id;
-        const resMetadata = await pClient.query(
-          `
-          UPDATE 
-          "candidate_metadata_v1" 
-          SET
-          "linkedin_URL" = $1::varchar,
-          "phone_number" = $2::varchar, 
-          "profile_note" = $3::varchar, 
-          "job_title" = $4::varchar 
-          WHERE "user_id" = $5::int
-          RETURNING id;`,
-          [
-            profileData.linkedinURL,
-            profileData.phoneNumber,
-            profileData.profileNote,
-            profileData.jobTitle,
-            primaryId,
-          ]
-        );
-        if (resMetadata.rowCount !== 1) {
-          await pClient.query("ROLLBACK");
-          return -1;
-        }
-        const resContact1 = await pClient.query(
-          `
-          UPDATE 
-          "users_contact_details_v1" 
-          SET "contact_detail" = $3::varchar
-          WHERE "user_id" = $1::int AND "contact_type" = $2::contact_type
-          RETURNING id;`,
-          [primaryId, "phone no", profileData.phoneNumber]
-        );
-        if (resContact1.rowCount !== 1) {
-          await pClient.query("ROLLBACK");
-          return -1;
-        }
-        const resContact2 = await pClient.query(
-          `
-          UPDATE 
-          "users_contact_details_v1" 
-          SET "contact_detail" = $3::varchar
-          WHERE "user_id" = $1::int AND "contact_type" = $2::contact_type
-          RETURNING id;`,
-          [primaryId, "linkedin", profileData.linkedinURL]
-        );
-        if (resContact2.rowCount !== 1) {
-          await pClient.query("ROLLBACK");
-          return -1;
-        }
-        await pClient.query("COMMIT");
-        const userData = {
-          primaryId,
-        };
-        return userData;
-      } catch (error: any) {
-        console.log(
-          chalk.red("PostgresSQL Error: "),
-          error?.message,
-          error?.code
-        );
-        if (pClient) {
-          await pClient.query("ROLLBACK");
-        }
-        return null;
-      } finally {
-        if (pClient) {
-          this.release(pClient);
-        }
-      }
-    });
-  }
-  async deleteUserCandidate(
-    profileData: { userName: string },
-    userId: string,
-    userType: string
-  ) {
-    return await this.retryQuery("deleteUserCandidate", async () => {
-      let pClient;
-      try {
-        pClient = await this.connect();
-        await pClient.query("BEGIN");
-        let allowUpdate = false;
-        if (userType === "recruiter") {
-          // allow any candidate profile delete by 'recruiter'
-          allowUpdate = true;
-        }
-        const res = await pClient.query(
-          `
-          DELETE FROM "users" 
-          WHERE "user_name" = $1::varchar AND ("clerk_id" = $2::varchar OR $3::boolean)
-          RETURNING id;`,
-          [profileData.userName, userId, allowUpdate]
-        );
-        if (res.rowCount !== 1) {
-          await pClient.query("ROLLBACK");
-          return -1;
-        }
-        const primaryId: number = res.rows[0].id;
-        await pClient.query("COMMIT");
-        const userData = {
-          primaryId,
-        };
-        return userData;
-      } catch (error: any) {
-        console.log(
-          chalk.red("PostgresSQL Error: "),
-          error?.message,
-          error?.code
-        );
-        if (pClient) {
-          await pClient.query("ROLLBACK");
-        }
-        return null;
-      } finally {
-        if (pClient) {
-          this.release(pClient);
-        }
-      }
-    });
-  }
-  async getUserCandidate(userName: string, userId: string) {
-    return await this.retryQuery("getUserCandidate", async () => {
-      let pClient;
-      try {
-        pClient = await this.connect();
-        const res = await pClient.query(
-          `
-          SELECT u."id", u."user_name" as "userName",
-          u."first_name" as "firstName", u."last_name" as "lastName", u."img_URL" as "imgURL",
-          u."type", u."created_at" as "createdAt", cm."linkedin_URL" as "linkedinURL", 
-          cm."phone_number" as "phoneNumber", cm."resume_URL" as "resumeURL", cm."job_title" as "jobTitle",
-          cm."profile_note" as "profileNote", cm."candidate_star" as "candidateStar",
-          CASE WHEN u."id" IN (SELECT "candidate_id" FROM "interview_v1") OR cm."candidate_star" IS NOT NULL THEN FALSE ELSE TRUE
-          END as "setInterview", CASE WHEN u."id" IN (SELECT "candidate_id" FROM "interview_v1") AND cm."candidate_star" IS NULL THEN TRUE ELSE FALSE
-          END as "scheduled", 'Active' as "status", floor(random() * 10 + 1)::varchar as "workExperience",
-          CASE WHEN u."clerk_id" = $2::varchar THEN TRUE ELSE FALSE
-          END as "edit",
-          CASE WHEN u."clerk_id" = $2::varchar THEN TRUE ELSE FALSE
-          END as "canSignOut" 
-          FROM "users" as u 
-          INNER JOIN 
-          "candidate_metadata_v1" as cm ON u."id" = cm."user_id"
-          WHERE u."user_name" = $1::varchar AND u."type" = $3::user_type;`,
-          [userName, userId, "candidate"]
-        );
-        if (res.rowCount !== 1) {
-          return -1;
-        }
-        const profileData: GetCandidateProfile = res.rows[0];
-        return profileData;
-      } catch (error: any) {
-        console.log(
-          chalk.red("PostgresSQL Error: "),
-          error?.message,
-          error?.code
-        );
-        return null;
-      } finally {
-        if (pClient) {
-          this.release(pClient);
-        }
-      }
-    });
-  }
-  async getNotificationsCandidate(clerkUserId: string) {
-    return await this.retryQuery("getNotificationsCandidate", async () => {
-      let pClient;
-      try {
-        pClient = await this.connect();
-        const res = await pClient.query(
-          `
-          SELECT n."id", n."message", n."action", n."seen", n."timestamp"
+          SELECT art."admin_id" as "adminId", art."article_id" as "artId", 
+            art."article_heading" as "artHeading", 
+            art."cover_img_URL" as "coverImgURL", art."article_type" as "artType",
+            art."id", art."uuid", ad."user_name" as "adUserName", ad."first_name" as "adFirstName",
+            ad."last_name" as "adLastName", ad."img_URL" as "adImgURL", ad."id" as "adId", ad."uuid" as "aduuid"
           FROM 
-            "notifications_v1" as n  
-          INNER JOIN 
-            "users" as u
-          ON n."user_id" = u."id"
-          WHERE 
-            u."clerk_id" = $1::varchar AND u."type" = 'candidate'
-          ORDER BY 
-            n."timestamp" DESC
-          LIMIT 15`,
-          [clerkUserId]
+            "articles" as "art"
+          LEFT JOIN 
+            "admin" as ad ON art."admin_id" = ad."id"
+          LIMIT $1::int
+          OFFSET $2::int;`,
+          [USER_ARTICLE_OFFSET, offset]
         );
-        const candidateNotifications: Notification[] = res.rows;
-        return candidateNotifications;
+        const allArt: Article[] = res.rows;
+        await pClient.query("COMMIT");
+        return allArt;
       } catch (error: any) {
         console.log(
           chalk.red("PostgresSQL Error: "),
           error?.message,
           error?.code
         );
+        if (pClient) {
+          await pClient.query("ROLLBACK");
+        }
         return null;
       } finally {
         if (pClient) {
@@ -515,36 +249,37 @@ class UserDBv1 extends DB {
       }
     });
   }
-  async updateNotificationCandidate(
-    notificationId: number,
-    clerkUserId: string
-  ) {
-    return await this.retryQuery("updateNotificationCandidate", async () => {
+  async getArticle(artId: string, lang: string = "en") {
+    return await this.retryQuery("getAllArticles", async () => {
       let pClient;
       try {
         pClient = await this.connect();
-
         await pClient.query("BEGIN");
         const res = await pClient.query(
           `
-          UPDATE "notifications_v1" as n
-          SET 
-            n."seen" = TRUE
+          SELECT art."admin_id" as "adminId", art."article_id" as "artId", 
+            art."article_heading" as "artHeading", artd."article_lang" as "artLang", 
+            artd."article_detail" as "artDetail", art."cover_img_URL" as "coverImgURL", 
+            art."article_type" as "artType", art."id", art."uuid", ad."user_name" as "adUserName", 
+            ad."first_name" as "adFirstName", ad."last_name" as "adLastName", 
+            ad."img_URL" as "adImgURL", ad."id" as "adId", ad."uuid" as "aduuid"
           FROM 
-            "users" as u
-          WHERE 
-            u."clerk_id" = $1::varchar AND 
-            u."type" = 'candidate' AND n."id" = $2::int
-            AND n."user_id" = u."id" AND n."seen" = FALSE
-          RETURNING n."id"`,
-          [clerkUserId, notificationId]
+            "articles" as "art"
+          LEFT JOIN 
+            "admin" as ad ON art."admin_id" = ad."id"
+          LEFT JOIN 
+            "articles_details" as artd ON art."id" = artd."article_id"
+          WHERE
+            art."article_id" = $1::varchar AND artd."article_lang" = $2::lang;`,
+          [artId, lang]
         );
-        if (res.rowCount !== 1) {
+        if (res.rowCount === 0) {
           await pClient.query("ROLLBACK");
-          return false;
+          return -1;
         }
+        const art: Article = res.rows[0];
         await pClient.query("COMMIT");
-        return true;
+        return art;
       } catch (error: any) {
         console.log(
           chalk.red("PostgresSQL Error: "),
@@ -996,4 +731,4 @@ class AdminDb extends DB {
   }
 }
 
-export { DB, UserDBv1, SessionDB, AdminDb };
+export { DB, UserDB, SessionDB, AdminDb };

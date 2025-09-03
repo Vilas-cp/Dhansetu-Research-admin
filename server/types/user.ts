@@ -18,29 +18,22 @@ type AdminUser = {
   uuid: string;
 };
 
-type UpdateNoti = {
-  notificationId?: number;
-};
+type UserType = "free" | "premium";
 
-type RecruiterProfile = {
+type ClientUser = {
+  emailId: string;
+  type: UserType;
+  clerkId: string;
   firstName: string;
   lastName: string;
-  phoneNumber: string;
-  companyName: string;
-  companyWebAddress: string;
-  companyEmail: string;
-  industry: string;
-  companySize: string;
+  imgURL: string;
+  id: number;
+  uuid: string;
 };
 
-type GetRecruiterProfile = RecruiterProfile & {
-  id: number;
-  userName: string;
-  edit: boolean;
-  imgURL: string;
-  type: string;
-  approveStatus: string;
-  createdAt: string;
+
+type UpdateNoti = {
+  notificationId?: number;
 };
 
 const recruiterProfileSchema = z.object({
@@ -55,34 +48,6 @@ const recruiterProfileSchema = z.object({
   companySize: z.string(),
 });
 
-type CandidateProfile = {
-  firstName: string;
-  lastName: string;
-  phoneNumber: string;
-  jobTitle: string;
-  linkedinURL: string;
-  resumeURL?: string;
-  emailId?: string;
-  profileNote: string;
-  userName?: string;
-};
-
-type GetCandidateProfile = CandidateProfile & {
-  id: number;
-  userName: string;
-  imgURL: string;
-  candidateStar: number | null;
-  setInterview: boolean;
-  scheduled: boolean;
-  status: string;
-  workExperience: string;
-  type: string;
-  createdAt: string;
-  reviewID: string | null;
-  expertUUID: string | null;
-  edit?: boolean;
-  canSignOut?: boolean;
-};
 
 type Notification = {
   message: string;
@@ -107,11 +72,8 @@ const candidateProfileSchema = z.object({
 export { recruiterProfileSchema, candidateProfileSchema };
 export type {
   ClerkInfo,
-  RecruiterProfile,
-  CandidateProfile,
-  GetRecruiterProfile,
-  GetCandidateProfile,
   Notification,
+  ClientUser,
   UpdateNoti,
   AdminInfo,
   AdminUser
