@@ -1,54 +1,52 @@
 import chalk from "chalk";
 import express from "express";
-import { AdminCache, ClerkCache } from "../cache/redis";
-import { AdminDbv1, SessionDB, UserDBv1 } from "../db/db";
-import { clerkClient } from "@clerk/express";
+import { AdminDb, SessionDB } from "../db/db";
 import { envConfigs, serverConfigs } from "../configs/configs";
 import { v4 } from "uuid";
-import { Cookies, SessionId } from "../types/auth";
-import {
-  AdminInfo,
-  candidateProfileSchema,
-  ClerkInfo,
-  GetRecruiterProfile,
-  recruiterProfileSchema,
-  UpdateNoti,
-} from "../types/user";
-import fileUpload, { UploadedFile } from "express-fileupload";
-import { getBufferFromImgURL } from "../helpers/fetchURL";
-const userRouter = express.Router();
+import { AdminInfo } from "../types/user";
 const v1Routes = express.Router();
+const userRoutes = express.Router();
 
 // Macros
 const { SESSION_EXPIRE_TIME_IN_DAYS } = serverConfigs;
-const { ADMIN_PASS } = envConfigs;
+const { ADMIN_PASS, SUPER_PASS } = envConfigs;
 
-
-v1Routes.post("/login/admin", async (req, res) => {
+v1Routes.post("/login", async (req, res) => {
   try {
-    const { password }: AdminInfo = req.body;
-    const { userId, sessionId }: Cookies = req.signedCookies;
-    if (!userId || !sessionId) {
-      res.status(400).send({
+    const { password, userName }: AdminInfo = req.body;
+    const { sessionId } = req.signedCookies;
+    if (!password || !userName) {
+      res.status(401).send({
         status: "fail",
         data: {
-          message: "Didnt get clerk userId, please login in!",
-          redirectPage: "/sign-in",
+          message: "Didnt get password or userName!",
         },
       });
       return;
     }
-    if (!password) {
+    const adminDb = new AdminDb();
+    const adminUserRes = await adminDb.getAdminUser(userName);
+    if (adminUserRes === null) {
       res.status(400).send({
         status: "fail",
         data: {
-          message: "Didnt get password!",
+          message: "Database error, or Database is offline.",
         },
       });
       return;
     }
+    if (adminUserRes === -1) {
+      res.status(401).send({
+        status: "fail",
+        data: {
+          message: "User with username not found.",
+        },
+      });
+      return;
+    }
+    const sessionDB = new SessionDB();
     if (ADMIN_PASS && password !== ADMIN_PASS) {
-      res.status(400).send({
+      res.status(401).send({
         status: "fail",
         data: {
           message: "Wrong password!",
@@ -56,30 +54,58 @@ v1Routes.post("/login/admin", async (req, res) => {
       });
       return;
     }
-    const mClient = new AdminCache();
-    let sessionIdRes: SessionId = await mClient.getAdminByClerkUserId(userId);
-    if (!sessionIdRes) {
-      res.status(400).send({
-        status: "fail",
-        data: {
-          message: "Redis DB is offline!",
-        },
-      });
-      return;
+    if (sessionId) {
+      const sessionIdRes = await sessionDB.getSessionId(userName);
+      if (sessionIdRes === sessionId) {
+        res.status(200).send({
+          status: "success",
+          data: {
+            sessionId: sessionIdRes,
+          },
+        });
+        return;
+      }
     }
-    if (sessionIdRes === -1) {
-      sessionIdRes = await mClient.createAdminByClerkUserId(userId, sessionId);
+    let sessionIdRes = await sessionDB.getSessionId(userName);
+    if (!sessionIdRes || sessionIdRes === -1) {
+      const sessionId = v4();
+      sessionIdRes = await sessionDB.createSessionId(userName, sessionId);
+      if (!sessionIdRes || sessionIdRes === -1) {
+        res.status(400).send({
+          status: "fail",
+          data: {
+            message: "Database is offline",
+          },
+        });
+        return;
+      }
     }
+    res.cookie("sessionId", sessionIdRes, {
+      httpOnly: true,
+      secure: true,
+      signed: true,
+      path: "/",
+      sameSite: "none",
+      maxAge: 1000 * 60 * 60 * 24 * SESSION_EXPIRE_TIME_IN_DAYS,
+    });
+    res.cookie("userName", userName, {
+      httpOnly: true,
+      secure: true,
+      signed: true,
+      path: "/",
+      sameSite: "none",
+      maxAge: 1000 * 60 * 60 * 24 * SESSION_EXPIRE_TIME_IN_DAYS,
+    });
     res.status(200).send({
       status: "success",
       data: {
         sessionId: sessionIdRes,
       },
     });
-    console.log(chalk.yellow(`User: ${userId}, is logged in as Admin!`));
+    console.log(chalk.yellow(`User: ${userName}, is logged in as Admin!`));
   } catch (error: any) {
     console.log(
-      chalk.red(`Error: ${error?.message}, for user id ${req.body?.userId}`)
+      chalk.red(`Error: ${error?.message}, for user id ${req.body?.userName}`)
     );
     res.status(400).send({
       status: "fail",
@@ -91,36 +117,25 @@ v1Routes.post("/login/admin", async (req, res) => {
   }
 });
 
-v1Routes.get("/onboarding/admin", async (req, res) => {
+v1Routes.post("/verify", async (req, res) => {
   try {
-    const { userId, sessionId }: Cookies = req.signedCookies;
-    if (!userId || !sessionId) {
-      res.status(400).send({
+    const { sessionId, userName } = req.signedCookies;
+    const sessionDB = new SessionDB();
+    if (!sessionId || !userName) {
+      res.status(401).send({
         status: "fail",
         data: {
-          message: "Didnt get clerk userId, please login in!",
-          redirectPage: "/sign-in",
+          message: "SessionId not found",
         },
       });
       return;
     }
-    const mClient = new AdminCache();
-    let sessionIdRes: SessionId = await mClient.getAdminByClerkUserId(userId);
-    if (!sessionIdRes) {
-      res.status(400).send({
+    const sessionIdRes = await sessionDB.getSessionId(userName);
+    if (sessionIdRes !== sessionId) {
+      res.status(401).send({
         status: "fail",
         data: {
-          message: "Redis DB is offline!",
-        },
-      });
-      return;
-    }
-    if (sessionIdRes === -1) {
-      res.status(200).send({
-        status: "success",
-        data: {
-          message: "Need to login!",
-          onboarding: false,
+          message: "Invalid Credentials : sessionId",
         },
       });
       return;
@@ -128,14 +143,14 @@ v1Routes.get("/onboarding/admin", async (req, res) => {
     res.status(200).send({
       status: "success",
       data: {
+        message: "User is verified",
         sessionId: sessionIdRes,
-        onboarding: true,
       },
     });
-    console.log(chalk.yellow(`User: ${userId}, is logged in as Admin!`));
+    console.log(chalk.yellow(`User: ${userName}, is verified!`));
   } catch (error: any) {
     console.log(
-      chalk.red(`Error: ${error?.message}, for user id ${req.body?.userId}`)
+      chalk.red(`Error: ${error?.message}, for user id ${req.body?.userName}`)
     );
     res.status(400).send({
       status: "fail",
@@ -147,37 +162,36 @@ v1Routes.get("/onboarding/admin", async (req, res) => {
   }
 });
 
-v1Routes.post("/signout", async (req, res) => {
+v1Routes.post("/logout", async (req, res) => {
   try {
-    const { userId }: Cookies = req.signedCookies;
-    res.clearCookie("sessionId", {
-      httpOnly: true,
-      secure: true,
-      signed: true,
-      path: "/",
-      sameSite: "none",
-    });
-    res.clearCookie("userId", {
-      httpOnly: true,
-      secure: true,
-      signed: true,
-      path: "/",
-      sameSite: "none",
-    });
+    const { sessionId, userName } = req.signedCookies;
+    // console.log(sessionId, userName);
+    if (sessionId && userName) {
+      res.clearCookie("sessionId", {
+        httpOnly: true,
+        secure: true,
+        signed: true,
+        path: "/",
+        sameSite: "none",
+      });
+      res.clearCookie("userName", {
+        httpOnly: true,
+        secure: true,
+        signed: true,
+        path: "/",
+        sameSite: "none",
+      });
+    }
     res.status(200).send({
       status: "success",
       data: {
-        message: "Signout successfull, cookies cleared.",
+        message: "Admin has logged out",
       },
     });
-    console.log(chalk.yellow(`User: ${userId}, is logged out!`));
+    console.log(chalk.yellow(`User: ${userName}, is logged out as Admin!`));
   } catch (error: any) {
     console.log(
-      chalk.red(
-        `Error: ${error?.message}, for user id ${
-          req.body?.userId || req.signedCookies?.userId
-        }`
-      )
+      chalk.red(`Error: ${error?.message}, for user id ${req.body?.userName}`)
     );
     res.status(400).send({
       status: "fail",
@@ -189,37 +203,79 @@ v1Routes.post("/signout", async (req, res) => {
   }
 });
 
-v1Routes.get("/onboarding", async (req, res) => {
+v1Routes.get("/articles/all", async (req, res) => {
   try {
-    const { userId }: Cookies = req.signedCookies;
-    if (!userId) {
-      res.status(400).send({
+    const { sessionId, userName } = req.signedCookies;
+    if (!sessionId || !userName) {
+      res.status(401).send({
         status: "fail",
         data: {
-          message: "Didnt find cookies, please login in!",
-          redirectPage: "/sign-in",
+          message: "SessionId not found",
         },
       });
       return;
     }
-    const userDb = new UserDBv1();
-    const dbRes = await userDb.getIdByClerkUserId(userId);
-    if (!dbRes) {
+    const adminDb = new AdminDb();
+    const artRes = await adminDb.getAllArticles();
+    if (artRes === null) {
       res.status(400).send({
         status: "fail",
         data: {
-          message: "PostgresSQL Database is offline, please try again later!",
+          message: "Database error, or Database is offline.",
         },
       });
       return;
     }
-    if (dbRes === -1) {
-      res.status(200).send({
-        status: "success",
+    res.status(200).send({
+      status: "success",
+      data: {
+        res: artRes,
+      },
+    });
+  } catch (error: any) {
+    console.log(
+      chalk.red(`Error: ${error?.message}, for user id ${req.body?.userName}`)
+    );
+    res.status(400).send({
+      status: "fail",
+      error: error,
+      data: {
+        message: "Internal Server Error!",
+      },
+    });
+  }
+});
+
+v1Routes.get("/article/:artid", async (req, res) => {
+  try {
+    const { sessionId, userName } = req.signedCookies;
+    const artId = req.params.artid;
+    if (!sessionId || !userName) {
+      res.status(401).send({
+        status: "fail",
+        data: {
+          message: "SessionId not found",
+        },
+      });
+      return;
+    }
+    const adminDb = new AdminDb();
+    const artRes = await adminDb.getArticle(artId);
+    if (artRes === null) {
+      res.status(400).send({
+        status: "fail",
+        data: {
+          message: "Database error, or Database is offline.",
+        },
+      });
+      return;
+    }
+    if (artRes === -1) {
+      res.status(400).send({
+        status: "fail",
         data: {
           message:
-            "Didnt find any data for the given clerk user id. Please onboard!",
-          onboarding: true,
+            "Did not find the article with the given article id, and for this lang.",
         },
       });
       return;
@@ -227,13 +283,12 @@ v1Routes.get("/onboarding", async (req, res) => {
     res.status(200).send({
       status: "success",
       data: {
-        userData: dbRes,
-        onboarding: false,
+        res: artRes,
       },
     });
   } catch (error: any) {
     console.log(
-      chalk.red(`Error: ${error?.message}, for user id ${req.body?.userId}`)
+      chalk.red(`Error: ${error?.message}, for user id ${req.body?.userName}`)
     );
     res.status(400).send({
       status: "fail",
@@ -245,32 +300,6 @@ v1Routes.get("/onboarding", async (req, res) => {
   }
 });
 
+userRoutes.use("/v1", v1Routes);
 
-v1Routes.post("/test", async (req, res) => {
-  // An Api for Testing
-  try {
-    const { userId } = req.body;
-    const user = await clerkClient.users.getUser(userId);
-    console.log(user);
-    user.emailAddresses[0].verification?.status;
-    res.status(200).send({
-      status: "success",
-      data: {
-        user,
-      },
-    });
-  } catch (error) {
-    console.log(error);
-    res.status(400).send({
-      status: "fail",
-      error: error,
-      data: {
-        message: "Internal Server Error!",
-      },
-    });
-  }
-});
-
-userRouter.use("/v1", v1Routes);
-
-export { userRouter };
+export { userRoutes };

@@ -13,6 +13,7 @@ import { DB } from "./db/db";
 // import { rateLimitMiddleWare } from "./middlewares/rateLimiting";
 import compression from "compression";
 import { adminRoutes } from "./admin/route";
+import { userRoutes } from "./user/route";
 
 const { COOKIE_SECRET } = envConfigs;
 const { CORS_ORIGIN } = serverConfigs;
@@ -46,6 +47,7 @@ app.use(authMiddleWare);
 // app.use("/file", fileRouter);
 // app.use("/user", userRouter);
 app.use("/admin", adminRoutes);
+app.use("/user", userRoutes);
 
 app.get("/hello", (_, res) => {
   try {
