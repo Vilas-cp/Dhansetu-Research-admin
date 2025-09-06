@@ -1,18 +1,18 @@
 import chalk from "chalk";
 import express from "express";
-import { AdminDb, SessionDB, UserDB } from "../db/db";
-import { envConfigs, serverConfigs } from "../configs/configs";
+import { SessionDB, UserDB } from "../db/db";
+import { serverConfigs } from "../configs/configs";
 import { v4 } from "uuid";
 const v1Routes = express.Router();
 const userRoutes = express.Router();
 
 // Macros
 const { SESSION_EXPIRE_TIME_IN_DAYS } = serverConfigs;
-const { ADMIN_PASS, SUPER_PASS } = envConfigs;
 
 v1Routes.post("/login", async (req, res) => {
   try {
     const { emailId, clerkId, firstName, lastName, imgURL } = req.body;
+    // console.log(req.body);
     const { sessionId } = req.signedCookies;
     const userDb = new UserDB();
     const userRes = await userDb.getClientUser(emailId);
@@ -63,6 +63,7 @@ v1Routes.post("/login", async (req, res) => {
           status: "success",
           data: {
             sessionId: sessionIdRes,
+            userCreated,
           },
         });
         return;
@@ -105,7 +106,7 @@ v1Routes.post("/login", async (req, res) => {
         userCreated,
       },
     });
-    console.log(chalk.yellow(`User: ${emailId}, is logged in as Admin!`));
+    console.log(chalk.yellow(`User: ${emailId}, is logged in as user!`));
   } catch (error: any) {
     console.log(
       chalk.red(`Error: ${error?.message}, for user id ${req.body?.emailId}`)
@@ -191,7 +192,7 @@ v1Routes.post("/logout", async (req, res) => {
         message: "Admin has logged out",
       },
     });
-    console.log(chalk.yellow(`User: ${userName}, is logged out as Admin!`));
+    console.log(chalk.yellow(`User: ${userName}, is logged out as user!`));
   } catch (error: any) {
     console.log(
       chalk.red(`Error: ${error?.message}, for user id ${req.body?.userName}`)
@@ -208,17 +209,7 @@ v1Routes.post("/logout", async (req, res) => {
 
 v1Routes.get("/articles/all", async (req, res) => {
   try {
-    const { sessionId, userName } = req.signedCookies;
-    const offset = parseInt(req.query["offset"] as string) || 1;
-    if (!sessionId || !userName) {
-      res.status(401).send({
-        status: "fail",
-        data: {
-          message: "SessionId not found",
-        },
-      });
-      return;
-    }
+    const offset = parseInt(req.query["offset"] as string) || 0;
     const userDb = new UserDB();
     const artRes = await userDb.getAllArticles(offset);
     if (artRes === null) {
@@ -285,7 +276,20 @@ v1Routes.get("/article/:artid", async (req, res) => {
       });
       return;
     }
-    const userRes = await userDb.getClientUser(userName || "");
+    const sessionDB = new SessionDB();
+    const sessionIdRes = await sessionDB.getSessionId(userName || "");
+    if (!sessionId || sessionIdRes !== sessionId) {
+      res.status(200).send({
+        status: "success",
+        data: {
+          message: "Please login!",
+        },
+        access: false,
+        userLoggedIn: false,
+      });
+      return;
+    }
+    const userRes = await userDb.getClientUser(userName);
     if (userRes === null) {
       res.status(400).send({
         status: "fail",
@@ -295,17 +299,13 @@ v1Routes.get("/article/:artid", async (req, res) => {
       });
       return;
     }
-    let userLoggedIn = false;
-    if (userName) {
-      userLoggedIn = true;
-    }
     if (userRes === -1 || userRes.type !== "premium") {
       res.status(200).send({
         status: "success",
         data: {
           message: "You need premium subscription to view this blog.",
           access: false,
-          userLoggedIn: userLoggedIn || userRes !== -1,
+          userLoggedIn: userRes !== -1,
         },
       });
       return;
@@ -315,7 +315,7 @@ v1Routes.get("/article/:artid", async (req, res) => {
       data: {
         res: artRes,
         access: true,
-        userLoggedIn: userLoggedIn,
+        userLoggedIn: true,
       },
     });
   } catch (error: any) {

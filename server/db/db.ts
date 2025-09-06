@@ -208,7 +208,7 @@ class UserDB extends DB {
       }
     });
   }
-  async getAllArticles(offset = 1) {
+  async getAllArticles(offset = 0) {
     return await this.retryQuery("getAllArticles", async () => {
       let pClient;
       try {
@@ -227,7 +227,7 @@ class UserDB extends DB {
             "admin" as ad ON art."admin_id" = ad."id"
           LIMIT $1::int
           OFFSET $2::int;`,
-          [USER_ARTICLE_OFFSET, offset]
+          [USER_ARTICLE_OFFSET, offset * USER_ARTICLE_OFFSET]
         );
         const allArt: Article[] = res.rows;
         await pClient.query("COMMIT");
