@@ -42,7 +42,7 @@ const Header = () => {
   const navigationItems = [
     { href: "/", label: "Home", icon: Home },
 
-    { href: "/dashboard/blogs", label: "Blogs", icon: FileText },
+    { href: "/blogs", label: "Blogs", icon: FileText },
 
     { href: "/dashboard/analytics", label: "Analytics", icon: BarChart3 },
     { href: "/subscription", label: "Subscription", icon: CircleDollarSign },
