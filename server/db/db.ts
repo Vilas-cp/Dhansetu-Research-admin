@@ -2,11 +2,7 @@ import chalk from "chalk";
 import { Pool, PoolClient } from "pg";
 import { v4 } from "uuid";
 import { Ping } from "../types/db";
-import {
-  AdminUser,
-  ClientUser,
-  Notification,
-} from "../types/user";
+import { AdminUser, ClientUser, Notification } from "../types/user";
 import { dbConfigs, serverConfigs } from "../configs/configs";
 import ShortUniqueId from "short-unique-id";
 // import { interviewNotification } from "../helpers/notifications";
@@ -14,6 +10,7 @@ import { waitForNSeconds } from "../helpers/wait";
 import { randNum } from "../helpers/random";
 import { genArtId } from "../helpers/stringsFun";
 import { Article } from "../types/articles";
+import { Sub } from "../types/sub";
 
 // Macros
 const {
@@ -141,7 +138,7 @@ class UserDB extends DB {
           SELECT u."id", u."uuid", u."email_id" as "emailId",
           u."clerk_id" as "clerkId", u."first_name" as "firstName", 
           u."last_name" as "lastName", u."img_URL" as "imgURL", 
-          u."type", u."created_at" as "createdAt"
+          u."created_at" as "createdAt"
           FROM 
             "users" as u 
           WHERE
@@ -151,8 +148,23 @@ class UserDB extends DB {
         if (res.rowCount !== 1) {
           return -1;
         }
-        const adminData: ClientUser = res.rows[0];
-        return adminData;
+        const userData: ClientUser = res.rows[0];
+        const resSub = await pClient.query(
+          `
+          SELECT us."id", us."expire"
+          FROM 
+            "users_subs" as us
+          WHERE
+            us."user_id" = $1::int;`,
+          [userData.id]
+        );
+        if (resSub.rowCount === 0) {
+          userData.sub = {type: "free"};
+          return userData;
+        }
+        const expireDate: string = resSub.rows[0]["expire"];
+        userData.sub = {type: "premium", expire: expireDate};
+        return userData;
       } catch (error: any) {
         console.log(
           chalk.red("PostgresSQL Error: "),
@@ -172,8 +184,7 @@ class UserDB extends DB {
     clerkId: string,
     firstName: string,
     lastName: string,
-    imgURL: string,
-    type: string
+    imgURL: string
   ) {
     return await this.retryQuery("createClientUser", async () => {
       let pClient;
@@ -182,12 +193,12 @@ class UserDB extends DB {
         const res = await pClient.query(
           `
           INSERT INTO
-            "users" ("email_id", "clerk_id", "first_name", "last_name", "img_URL", "type")
+            "users" ("email_id", "clerk_id", "first_name", "last_name", "img_URL")
           VALUES
-            ($1::varchar, $2::varchar, $3::varchar, $4::varchar, $5::varchar, $6::user_type)
+            ($1::varchar, $2::varchar, $3::varchar, $4::varchar, $5::varchar)
           RETURNING "id";
             `,
-          [emailId, clerkId, firstName, lastName, imgURL, type]
+          [emailId, clerkId, firstName, lastName, imgURL]
         );
         if (res.rowCount !== 1) {
           return -1;
@@ -250,7 +261,7 @@ class UserDB extends DB {
     });
   }
   async getArticle(artId: string, lang: string = "en") {
-    return await this.retryQuery("getAllArticles", async () => {
+    return await this.retryQuery("getArticle", async () => {
       let pClient;
       try {
         pClient = await this.connect();
@@ -280,6 +291,280 @@ class UserDB extends DB {
         const art: Article = res.rows[0];
         await pClient.query("COMMIT");
         return art;
+      } catch (error: any) {
+        console.log(
+          chalk.red("PostgresSQL Error: "),
+          error?.message,
+          error?.code
+        );
+        if (pClient) {
+          await pClient.query("ROLLBACK");
+        }
+        return null;
+      } finally {
+        if (pClient) {
+          this.release(pClient);
+        }
+      }
+    });
+  }
+  async getSubInfo(subId: string) {
+    return await this.retryQuery("getSubInfo", async () => {
+      let pClient;
+      try {
+        pClient = await this.connect();
+        await pClient.query("BEGIN");
+        const res = await pClient.query(
+          `
+          SELECT 
+            sub."id", sub."sub_id" as "subId", sub."sub_name" as "subName",
+            sub."sub_time" as "subTime", sub."amount"
+            FROM "subscriptions" as sub
+          WHERE
+            sub."sub_id" = $1::varchar;`,
+          [subId]
+        );
+        if (res.rowCount === 0) {
+          await pClient.query("ROLLBACK");
+          return -1;
+        }
+        const art: Sub = res.rows[0];
+        await pClient.query("COMMIT");
+        return art;
+      } catch (error: any) {
+        console.log(
+          chalk.red("PostgresSQL Error: "),
+          error?.message,
+          error?.code
+        );
+        if (pClient) {
+          await pClient.query("ROLLBACK");
+        }
+        return null;
+      } finally {
+        if (pClient) {
+          this.release(pClient);
+        }
+      }
+    });
+  }
+  async createOrder(userId: number, subId: number, txnId: string) {
+    return await this.retryQuery("createOrder", async () => {
+      let pClient;
+      try {
+        pClient = await this.connect();
+        await pClient.query("BEGIN");
+        const res = await pClient.query(
+          `
+          INSERT INTO 
+            "orders" ("user_id", "sub_id", "txn_id")
+          VALUES
+            ($1::int, $2::int, $3::varchar)
+          RETURNING id;`,
+          [userId, subId, txnId]
+        );
+        if (res.rowCount === 0) {
+          await pClient.query("ROLLBACK");
+          return -1;
+        }
+        const resInsert: { id: number } = res.rows[0];
+        await pClient.query("COMMIT");
+        return resInsert;
+      } catch (error: any) {
+        console.log(
+          chalk.red("PostgresSQL Error: "),
+          error?.message,
+          error?.code
+        );
+        if (pClient) {
+          await pClient.query("ROLLBACK");
+        }
+        return null;
+      } finally {
+        if (pClient) {
+          this.release(pClient);
+        }
+      }
+    });
+  }
+  async verifyOrder(txnId: string) {
+    return await this.retryQuery("verifyOrder", async () => {
+      let pClient;
+      try {
+        pClient = await this.connect();
+        await pClient.query("BEGIN");
+        const res = await pClient.query(
+          `
+          UPDATE
+            "orders"
+          SET "status" = 'success'
+          WHERE "txn_id" = $1::varchar
+          RETURNING id;`,
+          [txnId]
+        );
+        if (res.rowCount === 0) {
+          await pClient.query("ROLLBACK");
+          return -1;
+        }
+        const resCheck: { id: number } = res.rows[0];
+        await pClient.query("COMMIT");
+        return resCheck;
+      } catch (error: any) {
+        console.log(
+          chalk.red("PostgresSQL Error: "),
+          error?.message,
+          error?.code
+        );
+        if (pClient) {
+          await pClient.query("ROLLBACK");
+        }
+        return null;
+      } finally {
+        if (pClient) {
+          this.release(pClient);
+        }
+      }
+    });
+  }
+  async getOrder(txnId: string) {
+    return await this.retryQuery("getOrder", async () => {
+      let pClient;
+      try {
+        pClient = await this.connect();
+        const res = await pClient.query(
+          `
+          SELECT 
+            "id", "uuid", "status", "created_at" as "createdAt"
+          FROM "orders"
+          WHERE "txn_id" = $1::varchar;`,
+          [txnId]
+        );
+        if (res.rowCount === 0) {
+          return -1;
+        }
+        const resCheck: { id: number; status: string; createdAt: string } =
+          res.rows[0];
+        return resCheck;
+      } catch (error: any) {
+        console.log(
+          chalk.red("PostgresSQL Error: "),
+          error?.message,
+          error?.code
+        );
+        return null;
+      } finally {
+        if (pClient) {
+          this.release(pClient);
+        }
+      }
+    });
+  }
+  async addUserSub(txnId: string) {
+    return await this.retryQuery("addUserSub", async () => {
+      let pClient;
+      try {
+        pClient = await this.connect();
+        await pClient.query("BEGIN");
+        const res = await pClient.query(
+          `
+          SELECT 
+            "id", "uuid", "status", "created_at" as "createdAt",
+            "user_id" as "userId", "sub_id" as "subId"
+          FROM "orders"
+          WHERE "txn_id" = $1::varchar;`,
+          [txnId]
+        );
+        if (res.rowCount === 0) {
+          await pClient.query("ROLLBACK");
+          return -1;
+        }
+        const resCheck: {
+          id: number;
+          status: string;
+          userId: number;
+          subId: number;
+        } = res.rows[0];
+        if (resCheck.status !== "success") {
+          await pClient.query("ROLLBACK");
+          return -1;
+        }
+        const resSub = await pClient.query(
+          `
+          SELECT 
+            sub."id", sub."sub_id" as "subId", sub."sub_name" as "subName",
+            sub."sub_time" as "subTime", sub."amount"
+            FROM "subscriptions" as sub
+          WHERE
+            sub."id" = $1::int;`,
+          [resCheck.subId]
+        );
+        if (resSub.rowCount === 0) {
+          await pClient.query("ROLLBACK");
+          return -1;
+        }
+        const sub: Sub = resSub.rows[0];
+        const resUser = await pClient.query(
+          `
+          SELECT u."id", u."uuid", u."email_id" as "emailId",
+          u."clerk_id" as "clerkId", u."first_name" as "firstName", 
+          u."last_name" as "lastName", u."img_URL" as "imgURL", 
+          u."created_at" as "createdAt"
+          FROM 
+            "users" as u 
+          WHERE
+            u."id" = $1::int;`,
+          [resCheck.userId]
+        );
+        if (resUser.rowCount === 0) {
+          await pClient.query("ROLLBACK");
+          return -1;
+        }
+        const user: ClientUser = resUser.rows[0];
+        const extendTime = sub.subTime;
+        const userId = resCheck.userId;
+        const subId = resCheck.subId;
+        const resUserSub = await pClient.query(
+          `
+          SELECT us."expire"
+          FROM 
+            "users_subs" as us
+          WHERE
+            us."user_id" = $1::int;`,
+          [userId]
+        );
+        if (resUserSub.rowCount === 0) {
+          const newUserSub = await pClient.query(
+            `
+          INSERT INTO "users_subs" ("user_id", "expire")
+          VALUES
+          ($1::int, $2::int, CURRENT_DATE + INTERVAL '${extendTime} month')
+          RETURNING id;`,
+            [userId]
+          );
+          if (newUserSub.rowCount === 0) {
+            await pClient.query("ROLLBACK");
+            return -1;
+          }
+          const resInsertSub: {id: number} = newUserSub.rows[0];
+          await pClient.query("COMMIT");
+          return resInsertSub;
+        }
+        const updateUserSub = await pClient.query(
+          `
+          UPDATE "users_subs"
+          SET "expire" = CURRENT_DATE + INTERVAL '${extendTime} month';
+          WHERE
+          "user_id" = $1::int
+          RETURNING id;`,
+          [userId]
+        );
+        if (updateUserSub.rowCount === 0) {
+          await pClient.query("ROLLBACK");
+          return -1;
+        }
+        const resUpdateSub: { id: number } = updateUserSub.rows[0];
+        await pClient.query("COMMIT");
+        return resUpdateSub;
       } catch (error: any) {
         console.log(
           chalk.red("PostgresSQL Error: "),

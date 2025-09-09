@@ -1,6 +1,10 @@
 CREATE TYPE "user_type" AS 
 ENUM('free', 'premium');
 
+CREATE TYPE "payment_status" AS 
+ENUM('pending', 'success', 'fail');
+
+
 CREATE TYPE "lang" AS 
 ENUM('en');
 
@@ -25,6 +29,16 @@ CREATE TABLE
     "created_at" timestamptz DEFAULT CURRENT_TIMESTAMP
   );
 
+CREATE TABLE 
+  "subscriptions" (
+    "id" SERIAL PRIMARY KEY,
+    "sub_id" varchar UNIQUE NOT NULL,
+    "sub_name" varchar NOT NULL,
+    "sub_time" varchar NOT NULL,
+    "amount" varchar NOT NULL DEFAULT '0',
+    "created_at" timestamptz DEFAULT CURRENT_TIMESTAMP
+);
+
 CREATE TABLE
   "users" (
     "id" SERIAL PRIMARY KEY,
@@ -34,9 +48,37 @@ CREATE TABLE
     "first_name" varchar NOT NULL,
     "last_name" varchar NOT NULL,
     "img_URL" varchar NOT NULL,
-    "type" user_type NOT NULL,
     "created_at" timestamptz DEFAULT CURRENT_TIMESTAMP
   );
+
+CREATE TABLE 
+  "orders" (
+    "id" SERIAL PRIMARY KEY,
+    "uuid" uuid NOT NULL DEFAULT gen_random_uuid(),
+    "user_id" int NOT NULL,
+    "sub_id" int NOT NULL,
+    "txn_id" varchar UNIQUE NOT NULL,
+    "status" payment_status NOT NULL DEFAULT 'pending',
+    "created_at" timestamptz DEFAULT CURRENT_TIMESTAMP
+);
+
+ALTER TABLE "orders"
+ADD FOREIGN KEY ("user_id") REFERENCES "users" ("id") ON DELETE CASCADE;
+
+ALTER TABLE "orders"
+ADD FOREIGN KEY ("sub_id") REFERENCES "subscriptions" ("id") ON DELETE CASCADE;
+
+CREATE TABLE 
+  "users_subs" (
+    "id" SERIAL PRIMARY KEY,
+    "user_id" int UNIQUE NOT NULL,
+    "expire" date NOT NULL,
+    "created_at" timestamptz DEFAULT CURRENT_TIMESTAMP
+);
+
+ALTER TABLE "users_subs"
+ADD FOREIGN KEY ("user_id") REFERENCES "users" ("id") ON DELETE CASCADE;
+
 
 CREATE TABLE "admin" (
   "id" SERIAL PRIMARY KEY,

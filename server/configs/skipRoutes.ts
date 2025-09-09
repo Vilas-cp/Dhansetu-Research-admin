@@ -7,6 +7,9 @@ const skipRoutes = [
   "/user/v1/login",
   "/user/v1/articles/all",
   "/user/v1/article",
+  "/user/v1/buy/verify/success",
+  "/user/v1/buy/verify/fail",
+  "/user/v1/test",
   // "/interview/v1/outcome",
   // "/interview/v1/verify/",
   // "/interview/v1/review/", // dynamic route /:interviewid

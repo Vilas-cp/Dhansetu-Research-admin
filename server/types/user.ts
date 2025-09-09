@@ -22,13 +22,16 @@ type UserType = "free" | "premium";
 
 type ClientUser = {
   emailId: string;
-  type: UserType;
   clerkId: string;
   firstName: string;
   lastName: string;
   imgURL: string;
   id: number;
   uuid: string;
+  sub?: {
+    type: "free" | "premium",
+    expire?: string
+  }
 };
 
 

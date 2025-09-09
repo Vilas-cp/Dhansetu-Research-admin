@@ -1,13 +1,18 @@
 import chalk from "chalk";
 import express from "express";
 import { SessionDB, UserDB } from "../db/db";
-import { serverConfigs } from "../configs/configs";
+import { envConfigs, serverConfigs } from "../configs/configs";
 import { v4 } from "uuid";
+import { generateOrder } from "../helpers/orders";
+import { PayUBody } from "../types/sub";
+import { getPaymentDetails } from "../helpers/fetchURL";
+import { MailHandler } from "../helpers/notifications";
 const v1Routes = express.Router();
 const userRoutes = express.Router();
 
 // Macros
 const { SESSION_EXPIRE_TIME_IN_DAYS } = serverConfigs;
+const { PAYU_MERCHANT_ID, PAYU_SALT } = envConfigs;
 
 v1Routes.post("/login", async (req, res) => {
   try {
@@ -32,8 +37,7 @@ v1Routes.post("/login", async (req, res) => {
         clerkId,
         firstName,
         lastName,
-        imgURL,
-        "free"
+        imgURL
       );
       if (createUserRes === null) {
         res.status(400).send({
@@ -166,6 +170,82 @@ v1Routes.post("/verify", async (req, res) => {
   }
 });
 
+v1Routes.get("/info", async (req, res) => {
+  try {
+    const { sessionId, userName } = req.signedCookies;
+    if (!sessionId || !userName) {
+      res.status(400).send({
+        status: "fail",
+        data: {
+          message: "SessionId not found",
+        },
+      });
+      return;
+    }
+    const userDb = new UserDB();
+    const userInfo = await userDb.getClientUser(userName);
+    if (userInfo === null) {
+      res.status(400).send({
+        status: "fail",
+        data: {
+          message: "Database error, or Database is offline.",
+        },
+      });
+      return;
+    }
+    if (userInfo === -1) {
+      res.status(400).send({
+        status: "fail",
+        data: {
+          message: "Did not find the user with the given emailid.",
+        },
+      });
+      return;
+    }
+    res.status(200).send({
+      status: "success",
+      data: {
+        userInfo,
+      },
+    });
+  } catch (error: any) {
+    console.log(
+      chalk.red(`Error: ${error?.message}, for user id ${req.body?.userName}`)
+    );
+    res.status(400).send({
+      status: "fail",
+      error: error,
+      data: {
+        message: "Internal Server Error!",
+      },
+    });
+  }
+});
+
+v1Routes.post("/test", async (req, res) => {
+  try {
+    const { sessionId, userName } = req.signedCookies;
+  //  const mailHand = new MailHandler();
+    res.status(200).send({
+      status: "success",
+      data: {
+         message: "Hello Tiger!",
+      },
+    });
+  } catch (error: any) {
+    console.log(
+      chalk.red(`Error: ${error?.message}, for user id ${req.body?.userName}`)
+    );
+    res.status(400).send({
+      status: "fail",
+      error: error,
+      data: {
+        message: "Internal Server Error!",
+      },
+    });
+  }
+});
+
 v1Routes.post("/logout", async (req, res) => {
   try {
     const { sessionId, userName } = req.signedCookies;
@@ -189,7 +269,7 @@ v1Routes.post("/logout", async (req, res) => {
     res.status(200).send({
       status: "success",
       data: {
-        message: "Admin has logged out",
+        message: "User has logged out",
       },
     });
     console.log(chalk.yellow(`User: ${userName}, is logged out as user!`));
@@ -299,13 +379,25 @@ v1Routes.get("/article/:artid", async (req, res) => {
       });
       return;
     }
-    if (userRes === -1 || userRes.type !== "premium") {
+    if (userRes === -1) {
       res.status(200).send({
         status: "success",
         data: {
-          message: "You need premium subscription to view this blog.",
+          message: "You need premium subscription accont to view this blog.",
           access: false,
           userLoggedIn: userRes !== -1,
+        },
+      });
+      return;
+    }
+    const expireDate: string = userRes?.sub?.expire || new Date().toUTCString();
+    if (userRes?.sub?.type === "free" || (userRes?.sub?.type === "premium" && Date.now() > new Date(expireDate).getTime())) {
+      res.status(200).send({
+        status: "success",
+        data: {
+          message: "Your subscription has expired, please renew it.",
+          access: false,
+          userLoggedIn: true,
         },
       });
       return;
@@ -316,6 +408,210 @@ v1Routes.get("/article/:artid", async (req, res) => {
         res: artRes,
         access: true,
         userLoggedIn: true,
+      },
+    });
+  } catch (error: any) {
+    console.log(
+      chalk.red(`Error: ${error?.message}, for user id ${req.body?.userName}`)
+    );
+    res.status(400).send({
+      status: "fail",
+      error: error,
+      data: {
+        message: "Internal Server Error!",
+      },
+    });
+  }
+});
+
+v1Routes.post("/buy/verify/success", async (req, res) => {
+  try {
+    console.log(req.body);
+    const payUBody: PayUBody = req.body;
+    const userDb = new UserDB();
+    const txnId: string = payUBody.txnid;
+    if (!PAYU_MERCHANT_ID || !PAYU_SALT) {
+      res.redirect("http://localhost:3000/failure");
+      return;
+    }
+    const payUId = payUBody.mihpayid;
+    const payRes = await getPaymentDetails(payUId, PAYU_MERCHANT_ID, PAYU_SALT);
+    const payResTxnId: string =
+      payRes["transaction_details"]?.["txnid"]?.toString();
+    console.log(payResTxnId);
+    if (payResTxnId !== txnId) {
+      res.redirect("http://localhost:3000/failure");
+      return;
+    }
+    const orderInfo = await userDb.getOrder(txnId);
+    if (orderInfo === null || orderInfo === -1) {
+      res.redirect("http://localhost:3000/failure");
+      return;
+    }
+    if (orderInfo.status === "success") {
+      res.redirect("http://localhost:3000/success");
+      return;
+    }
+    const orderUpdate = await userDb.verifyOrder(txnId);
+    if (orderUpdate === null || orderUpdate === -1) {
+      res.redirect("http://localhost:3000/failure");
+      return;
+    }
+    const addUserSub = await userDb.addUserSub(txnId);
+    if (addUserSub === null || addUserSub === -1) {
+      res.redirect("http://localhost:3000/failure");
+      return;
+    }
+    res.redirect("http://localhost:3000/success");
+    const emailId = payUBody.email;
+    console.log(chalk.yellow(`User: ${emailId}, payment verified!`));
+  } catch (error: any) {
+    console.log(
+      chalk.red(`Error: ${error?.message}, for user id ${req.body?.userName}`)
+    );
+    res.status(400).send({
+      status: "fail",
+      error: error,
+      data: {
+        message: "Internal Server Error!",
+      },
+    });
+  }
+});
+
+v1Routes.post("/buy/verify/fail", async (req, res) => {
+  try {
+    const { sessionId, userName } = req.signedCookies;
+    console.log(req.body);
+    // res.status(200).send({
+    //   status: "success",
+    //   data: {
+    //     message: "Payment fail",
+    //   },
+    // });
+    res.redirect("http://localhost:3000/fail");
+    console.log(chalk.yellow(`User: ${userName}, payment fail!`));
+  } catch (error: any) {
+    console.log(
+      chalk.red(`Error: ${error?.message}, for user id ${req.body?.userName}`)
+    );
+    res.status(400).send({
+      status: "fail",
+      error: error,
+      data: {
+        message: "Internal Server Error!",
+      },
+    });
+  }
+});
+
+v1Routes.post("/buy/order/:subId", async (req, res) => {
+  try {
+    const { sessionId, userName } = req.signedCookies;
+    if (!sessionId || !userName) {
+      res.status(400).send({
+        status: "fail",
+        data: {
+          message: "SessionId not found",
+        },
+      });
+      return;
+    }
+    if (!PAYU_MERCHANT_ID || !PAYU_SALT) {
+      res.status(400).send({
+        status: "fail",
+        data: {
+          message: "PayU credentials not found",
+        },
+      });
+      return;
+    }
+    const userDb = new UserDB();
+    const userInfo = await userDb.getClientUser(userName);
+    if (userInfo === null) {
+      res.status(400).send({
+        status: "fail",
+        data: {
+          message: "Database error, or Database is offline.",
+        },
+      });
+      return;
+    }
+    if (userInfo === -1) {
+      res.status(400).send({
+        status: "fail",
+        data: {
+          message: "User does not exists.",
+        },
+      });
+      return;
+    }
+    const dummyPhone = "no_phone_number";
+    const backendLink = `https://profound-adequate-salmon.ngrok-free.app`;
+    const sUrl = backendLink + "/user/v1/buy/verify/success";
+    const fUrl = backendLink + "/user/v1/buy/verify/fail";
+    const subId = req.params.subId;
+    const subInfo = await userDb.getSubInfo(subId);
+    if (subInfo === null) {
+      res.status(400).send({
+        status: "fail",
+        data: {
+          message: "Database error, or Database is offline.",
+        },
+      });
+      return;
+    }
+    if (subInfo == -1) {
+      res.status(400).send({
+        status: "fail",
+        data: {
+          message: "Wrong subId given.",
+        },
+      });
+      return;
+    }
+    const params = generateOrder(
+      PAYU_MERCHANT_ID,
+      PAYU_SALT,
+      userInfo.id,
+      userInfo.emailId,
+      userInfo.firstName,
+      userInfo.lastName,
+      dummyPhone,
+      sUrl,
+      fUrl,
+      subInfo.amount,
+      subInfo.subName
+    );
+    const createOrder = await userDb.createOrder(
+      userInfo.id,
+      subInfo.id,
+      params.txnid
+    );
+    if (createOrder === null) {
+      res.status(400).send({
+        status: "fail",
+        data: {
+          message: "Database error, or Database is offline.",
+        },
+      });
+      return;
+    }
+    if (createOrder == -1) {
+      res.status(400).send({
+        status: "fail",
+        data: {
+          message: "Failed to create order.",
+        },
+      });
+      return;
+    }
+    res.status(200).send({
+      status: "success",
+      data: {
+        message: "Order created",
+        params: params,
+        order: createOrder,
       },
     });
   } catch (error: any) {

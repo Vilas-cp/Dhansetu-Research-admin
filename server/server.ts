@@ -6,15 +6,14 @@ import { app } from "./app";
 import { envConfigs, serverConfigs } from "./configs/configs";
 import fs from "fs";
 import path from "path";
+import { MailHandler } from "./helpers/notifications";
 
 async function main() {
   try {
     const {
       DB_CONNECTION_URL,
-      CACHE_CONNECTION_URL,
-      AWS_ACCESS_KEY,
-      AWS_SECRET_KEY,
-      AWS_REGION,
+      MAIL_ID,
+      MAIL_PASS
     } = envConfigs;
     const PORT = process.env?.PORT || 9000;
 
@@ -31,6 +30,7 @@ async function main() {
       console.log(chalk.yellow(`Initially Connected to PostgresSQL DB!`));
       // console.log(dbRes.rows?.[0]);
     }
+    new MailHandler(MAIL_ID || "need mail id", MAIL_PASS || "need pass");
 
     // Redis
     // const memCache = new MemCache(
@@ -42,7 +42,7 @@ async function main() {
     //   console.log(chalk.yellow(`Initially Cannot Connect to Redis Cache DB!`));
     // } else {
     //   console.log(chalk.yellow(`Initially Connected to Redis Cache DB!`));
-      // console.log(redisRes);
+    // console.log(redisRes);
     // }
 
     // S3
