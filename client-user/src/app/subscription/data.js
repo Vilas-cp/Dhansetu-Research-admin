@@ -1,7 +1,7 @@
 const pricingData = {
     monthly: {
       essential: {
-        subscriptionId: 'quarterly',
+        subscriptionId: 'pre-quarterly',
         price: 1295,
         features: {
           charts: 2,
@@ -34,7 +34,7 @@ const pricingData = {
         }
       },
       plus: {
-        subscriptionId: 'plus_monthly_002',
+        subscriptionId: 'pre-monthly',
         price: 2495,
         features: {
           charts: 4,
@@ -67,7 +67,7 @@ const pricingData = {
         }
       },
       premium: {
-        subscriptionId: 'premium_monthly_003',
+        subscriptionId: 'pre-half-yearly',
         price: 4995,
         features: {
           charts: 8,
@@ -100,7 +100,7 @@ const pricingData = {
         }
       },
       expert: {
-        subscriptionId: 'expert_monthly_004',
+        subscriptionId: 'pre-yearly',
         price: 10399,
         features: {
           charts: 10,

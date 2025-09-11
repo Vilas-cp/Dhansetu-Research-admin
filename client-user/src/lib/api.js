@@ -13,7 +13,7 @@ export async function apiGet(endpoint) {
         "ngrok-skip-browser-warning": "true",
      },
   });
-  console.log(res);
+ 
   
   return handleResponse(res);
 }

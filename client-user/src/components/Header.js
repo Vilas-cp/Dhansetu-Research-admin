@@ -34,7 +34,7 @@ const Header = () => {
   const { signOut } = useClerk();
 
   const pathname = usePathname();
-  const currentPage = pathname?.split("/").pop() || "dashboard";
+  const currentPage = pathname?.split("/").pop();
 
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
@@ -44,7 +44,7 @@ const Header = () => {
 
     { href: "/blogs", label: "Blogs", icon: FileText },
 
-    { href: "/dashboard/analytics", label: "Analytics", icon: BarChart3 },
+    { href: "/dashboard", label: "Dashboard", icon: BarChart3 },
     { href: "/subscription", label: "Subscription", icon: CircleDollarSign },
   ];
 
