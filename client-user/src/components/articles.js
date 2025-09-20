@@ -257,7 +257,7 @@ const ArticlesGrid = () => {
     const getAllArticles = async () => {
       try {
         const res = await apiGet("user/v1/articles/all");
-        console.log(res);
+      
         
         setArticles(res?.data.res || []);
       } catch (err) {

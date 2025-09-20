@@ -5,6 +5,12 @@ import { useParams, useRouter } from "next/navigation";
 import { Lock, Crown, Star, Sparkles, ArrowRight, X, Shield, Zap, Users, BookOpen } from "lucide-react";
 import { apiGet } from "@/lib/api";
 import Link from "next/link";
+import Header from "@/components/Header";
+import { Lora } from "next/font/google";
+const lora = Lora({
+  subsets: ["latin"],
+  weight: ["700"],
+});
 
 export default function ArticlePage() {
   const router=useRouter();
@@ -326,7 +332,8 @@ export default function ArticlePage() {
 
   return (
     <div className="min-h-screen  pt-2">
-      <div className="max-w-4xl mx-auto  shadow-xl  overflow-hidden">
+      <Header/>
+      <div className=" mx-auto  shadow-xl  overflow-hidden pt-2">
         {/* Premium Badge */}
         {/* <div className="px-4 sm:px-6 lg:px-8 pt-6">
           <div className="flex items-center justify-between mb-6">
@@ -355,7 +362,10 @@ export default function ArticlePage() {
         <div className="px-4 sm:px-6 lg:px-8 py-8">
           {/* Heading */}
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-light text-slate-900 mb-8 leading-tight">
-            {article.artHeading}
+            <span className={lora.className}>
+                {article.artHeading}
+            </span>
+          
           </h1>
 
           {/* Author Info */}

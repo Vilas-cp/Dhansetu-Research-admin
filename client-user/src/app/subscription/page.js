@@ -9,10 +9,11 @@ import {
   ShieldCheck,
   Clock,
   Star,
+  Crown,
 } from "lucide-react";
 import pricingData from "./data";
 import Header from "@/components/Header";
-import { apiPost } from "@/lib/api";
+import { apiPost, apiGet } from "@/lib/api";
 
 const PricingTable = () => {
   const [billingCycle, setBillingCycle] = useState("monthly");
@@ -23,6 +24,8 @@ const PricingTable = () => {
   const [dialogError, setDialogError] = useState(null);
   const [selectedPlan, setSelectedPlan] = useState(null);
   const [payuParams, setPayuParams] = useState(null);
+  const [userInfo, setUserInfo] = useState(null);
+  const [userInfoLoading, setUserInfoLoading] = useState(true);
 
   const plans = ["essential", "plus", "premium", "expert", "ultimate"];
   const planNames = {
@@ -33,7 +36,36 @@ const PricingTable = () => {
     ultimate: "Ultimate",
   };
 
+  // Fetch user info on component mount
+  useEffect(() => {
+    const fetchUserInfo = async () => {
+      try {
+        setUserInfoLoading(true);
+        const data = await apiGet("user/v1/info");
+        if (data.status === "success") {
+          setUserInfo(data.data.userInfo);
+        }
+      } catch (error) {
+        console.error("Failed to fetch user info:", error);
+      } finally {
+        setUserInfoLoading(false);
+      }
+    };
+
+    fetchUserInfo();
+  }, []);
+
   const handlePurchase = async (planType) => {
+    // Check if user already has premium subscription
+    if (userInfo?.sub?.type !== 'free') {
+      setSelectedPlan(planType);
+      setDialogOpen(true);
+      setDialogError(null);
+      setDialogData(null);
+      setDialogLoading(false);
+      return;
+    }
+
     setLoading(planType);
     setSelectedPlan(planType);
     const planData = pricingData[billingCycle][planType];
@@ -82,14 +114,25 @@ const PricingTable = () => {
       maximumFractionDigits: 0,
     }).format(price);
 
+  const formatDate = (dateString) => {
+    return new Date(dateString).toLocaleDateString('en-IN', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+  };
+
   const getButtonText = (planType) => {
-    // if (planType === "essential" || planType === "plus") return "Downgrade";
-    // if (planType === "premium") return "Extend";
-    // return "Upgrade";
+    if (userInfo?.sub?.type !== 'free') {
+      return "Already Premium";
+    }
     return "Buy";
   };
 
   const getButtonStyle = (planType) => {
+    if (userInfo?.sub?.type !== 'free') {
+      return "bg-gray-600 border border-gray-500 text-gray-300 cursor-not-allowed";
+    }
     if (planType === "essential" || planType === "plus")
       return "bg-gray-800 border border-gray-600 text-gray-300 hover:bg-gray-700";
     if (planType === "premium")
@@ -197,6 +240,20 @@ const PricingTable = () => {
     );
   };
 
+  if (userInfoLoading) {
+    return (
+      <div>
+        <Header />
+        <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center">
+          <div className="text-center">
+            <Loader2 className="w-8 h-8 animate-spin mx-auto text-white mb-4" />
+            <p className="text-white text-lg">Loading your account information...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div>
       <Header />
@@ -204,6 +261,26 @@ const PricingTable = () => {
         <div className="max-w-7xl mx-auto">
           {/* Header */}
           <div className="text-center mb-8 sm:mb-12">
+            {/* Premium Status Banner */}
+            {userInfo?.sub?.type !== 'free' && (
+              <div className="mb-6 mx-auto max-w-md">
+                <div className="bg-gradient-to-r from-amber-500/20 to-yellow-500/20 border border-amber-500/30 rounded-2xl p-6">
+                  <div className="flex items-center justify-center mb-3">
+                    <Crown className="w-6 h-6 text-amber-400 mr-2" />
+                    <span className="text-amber-400 font-semibold text-lg">Premium Active</span>
+                  </div>
+                  <p className="text-white text-sm mb-2">
+                    You currently have a <span className="font-semibold capitalize">{userInfo.sub.type}</span> subscription
+                  </p>
+                  {userInfo.sub.expire && (
+                    <p className="text-amber-300 text-xs">
+                      Expires on {formatDate(userInfo.sub.expire)}
+                    </p>
+                  )}
+                </div>
+              </div>
+            )}
+
             <h1 className="text-3xl sm:text-5xl font-bold text-white mb-4 sm:mb-6">
               Plans for every level
               <br className="hidden sm:block" />
@@ -243,6 +320,7 @@ const PricingTable = () => {
             {plans.map((planType) => {
               const plan = pricingData[billingCycle][planType];
               const isPopular = planType === "premium";
+              const isPremiumUser = userInfo?.sub?.type !== 'free';
 
               return (
                 <div
@@ -251,7 +329,7 @@ const PricingTable = () => {
                     isPopular
                       ? "border-blue-400 ring-1 ring-blue-400/20"
                       : "border-gray-700"
-                  }`}
+                  } ${isPremiumUser ? 'opacity-75' : ''}`}
                 >
                   {isPopular && (
                     <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
@@ -280,7 +358,7 @@ const PricingTable = () => {
 
                     <button
                       onClick={() => handlePurchase(planType)}
-                      disabled={loading === planType}
+                      disabled={loading === planType || isPremiumUser}
                       className={`w-full py-2 sm:py-3 px-3 sm:px-4 rounded-lg font-medium transition-all text-sm sm:text-base ${getButtonStyle(
                         planType
                       )} ${
@@ -366,18 +444,51 @@ const PricingTable = () => {
 
               {/* Dialog Content */}
               <div className="relative p-8">
-                {/* Header with icon */}
-                <div className="text-center mb-8">
-                  <h3 className="text-2xl font-bold text-white mb-2">
-                    {selectedPlan && `${planNames[selectedPlan]} Plan`}
-                  </h3>
-                  <p className="text-gray-400 text-sm">
-                    Complete your subscription
-                  </p>
-                </div>
+                {/* Already Premium State */}
+                {userInfo?.sub?.type !== 'free' && !dialogData && !dialogError && !dialogLoading && (
+                  <div className="py-12 text-center">
+                    <div className="mx-auto w-16 h-16 rounded-full bg-amber-500/10 flex items-center justify-center mb-6">
+                      <Crown className="w-8 h-8 text-amber-400" />
+                    </div>
+                    <h4 className="text-2xl font-bold text-white mb-3">
+                      You Already Have Premium!
+                    </h4>
+                    <p className="text-gray-300 mb-4 text-sm leading-relaxed">
+                      You currently have a <span className="font-semibold capitalize text-amber-400">{userInfo.sub.type}</span> subscription.
+                    </p>
+                    {userInfo.sub.expire && (
+                      <div className="bg-amber-500/10 border border-amber-500/20 rounded-xl p-4 mb-6">
+                        <div className="flex items-center justify-center gap-2">
+                          <Clock className="w-4 h-4 text-amber-400" />
+                          <span className="text-amber-300 text-sm">
+                            Expires on {formatDate(userInfo.sub.expire)}
+                          </span>
+                        </div>
+                      </div>
+                    )}
+                    <button
+                      onClick={closeDialog}
+                      className="px-6 py-3 bg-gray-800 border border-gray-600 text-gray-300 rounded-xl hover:bg-gray-700 hover:border-gray-500 transition-all duration-200"
+                    >
+                      Got it!
+                    </button>
+                  </div>
+                )}
+
+                {/* Header with icon - Only show if not premium user */}
+                {userInfo?.sub?.type === 'free' && (
+                  <div className="text-center mb-8">
+                    <h3 className="text-2xl font-bold text-white mb-2">
+                      {selectedPlan && `${planNames[selectedPlan]} Plan`}
+                    </h3>
+                    <p className="text-gray-400 text-sm">
+                      Complete your subscription
+                    </p>
+                  </div>
+                )}
 
                 {/* Loading State */}
-                {dialogLoading && !dialogError && !dialogData && (
+                {dialogLoading && !dialogError && !dialogData && userInfo?.sub?.type === 'free' && (
                   <div className="py-12 text-center">
                     <div className="relative inline-flex items-center justify-center">
                       <div className="w-12 h-12 border-4 border-blue-200 border-t-blue-500 rounded-full animate-spin"></div>
@@ -392,7 +503,7 @@ const PricingTable = () => {
                 )}
 
                 {/* Error State */}
-                {dialogError && (
+                {dialogError && userInfo?.sub?.type === 'free' && (
                   <div className="py-12 text-center">
                     <div className="mx-auto w-16 h-16 rounded-full bg-red-500/10 flex items-center justify-center mb-6">
                       <AlertCircle className="w-8 h-8 text-red-400" />
@@ -413,7 +524,7 @@ const PricingTable = () => {
                 )}
 
                 {/* Success State with Subscription Details */}
-                {dialogData && !dialogError && (
+                {dialogData && !dialogError && userInfo?.sub?.type === 'free' && (
                   <div>
                     {/* Subscription Summary Card */}
                     <div className="bg-gradient-to-br from-gray-800/80 to-gray-700/40 backdrop-blur-sm rounded-2xl p-6 mb-8 border border-gray-600/30">
@@ -492,8 +603,6 @@ const PricingTable = () => {
             </div>
           </div>
         )}
-
-        {/* PayU Form - Hidden, auto-submits when params are ready */}
       </div>
     </div>
   );

@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { User, Mail, Calendar, Shield, Crown } from "lucide-react";
-import { apiGet, apiPost } from "@/lib/api";
+import { apiGet } from "@/lib/api";
 import Header from "@/components/Header";
 
 const UserProfilePage = () => {
@@ -14,7 +14,8 @@ const UserProfilePage = () => {
       try {
         setLoading(true);
         const data = await apiGet("user/v1/info");
-
+        console.log(data);
+        
         if (data.status === "success") {
           setUserInfo(data.data.userInfo);
         } else {
