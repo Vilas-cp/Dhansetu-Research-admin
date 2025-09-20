@@ -88,12 +88,8 @@ export default function ArticlePage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50 flex items-center justify-center relative overflow-hidden">
-        {/* Background decorations */}
-        <div className="absolute inset-0">
-          <div className="absolute top-1/4 left-1/4 w-72 h-72 bg-gradient-to-r from-blue-200/30 to-purple-200/30 rounded-full blur-3xl animate-pulse"></div>
-          <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-gradient-to-r from-pink-200/20 to-blue-200/20 rounded-full blur-3xl animate-pulse delay-1000"></div>
-        </div>
+      <div className="min-h-screen flex items-center justify-center relative overflow-hidden">
+       
         
         <div className="text-center space-y-8 relative z-10">
           {/* Elegant spinner */}
@@ -329,8 +325,8 @@ export default function ArticlePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50/30 pt-2">
-      <div className="max-w-4xl mx-auto bg-white shadow-xl rounded-t-3xl overflow-hidden">
+    <div className="min-h-screen  pt-2">
+      <div className="max-w-4xl mx-auto  shadow-xl  overflow-hidden">
         {/* Premium Badge */}
         {/* <div className="px-4 sm:px-6 lg:px-8 pt-6">
           <div className="flex items-center justify-between mb-6">
@@ -367,13 +363,13 @@ export default function ArticlePage() {
             <img
               src={article.adImgURL}
               alt={article.adFirstName}
-              className="w-14 h-14 sm:w-16 sm:h-16 rounded-full mr-5 flex-shrink-0 ring-4 ring-white shadow-lg"
+              className="w-10 h-10 sm:w-10 sm:h-10 rounded-full mr-5 flex-shrink-0 ring-4 ring-white shadow-lg"
             />
             <div>
-              <p className="text-lg sm:text-xl font-semibold text-slate-900">
+              <p className="text-xl font-semibold text-slate-900">
                 {article.adFirstName} {article.adLastName}
               </p>
-              <p className="text-sm sm:text-base text-slate-500">
+              <p className="text-base text-slate-500">
                 @{article.adUserName}
               </p>
             </div>

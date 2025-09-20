@@ -200,7 +200,6 @@ const pricingData = {
           prioritySupport: false
         }
       },
-      // Similar structure for other annual plans...
       plus: {
         subscriptionId: 'plus_annual_002',
         price: 20709,

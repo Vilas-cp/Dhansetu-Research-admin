@@ -14,7 +14,6 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-
 import { apiPost } from "@/lib/api";
 
 export default function LoginPage() {
@@ -25,19 +24,55 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
 
-  async function handleSubmit() {
+  async function handleSubmit(e) {
+    e.preventDefault();
     setError("");
+    
+    // Basic validation
+    if (!userName.trim() || !password.trim()) {
+      setError("Please enter both username and password");
+      return;
+    }
+    
     setIsLoading(true);
 
     try {
-      const res=await apiPost("admin/v1/login", { userName, password });
-      router.push("/dashboard");
+      const response = await apiPost("admin/v1/login", { userName, password });
+      
+
+      if (response.status === 'success') {
+        
+        
+        // Redirect to dashboard
+        router.push("/dashboard");
+      } else if (response.status === 'fail') {
+        // Handle failed login with specific error message
+        setError(response.data?.message || "Login failed. Please check your credentials.");
+      } else {
+        // Handle unexpected response format
+        setError("Unexpected response from server. Please try again.");
+      }
     } catch (err) {
-      setError(err.message);
+      // Handle different types of errors
+      if (err.response?.data) {
+        // API returned an error response
+        const errorData = err.response.data;
+        if (errorData.status === 'fail') {
+          setError(errorData.data?.message || "Login failed. Please check your credentials.");
+        } else {
+          setError(errorData.message || "An error occurred during login.");
+        }
+      } else if (err.message) {
+        // Network or other error
+        setError(err.message);
+      } else {
+        setError("An unexpected error occurred. Please try again.");
+      }
     } finally {
       setIsLoading(false);
     }
   }
+
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
@@ -77,20 +112,20 @@ export default function LoginPage() {
               </Alert>
             )}
 
-            <div className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
                 <Label
-                  htmlFor="email"
+                  htmlFor="username"
                   className="text-sm font-medium text-gray-700"
                 >
-                  Email Address
+                  Username
                 </Label>
                 <div className="relative">
                   <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
                   <Input
-                    id="email"
-                    type="email"
-                    placeholder="Enter your email"
+                    id="username"
+                    type="text"
+                    placeholder="Enter your username"
                     className="pl-11 h-12 border-gray-200 focus:border-blue-500 focus:ring-blue-500 transition-all duration-200"
                     value={userName}
                     onChange={(e) => setuserName(e.target.value)}
@@ -108,7 +143,6 @@ export default function LoginPage() {
                   >
                     Password
                   </Label>
-
                 </div>
                 <div className="relative">
                   <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
@@ -138,9 +172,8 @@ export default function LoginPage() {
               </div>
 
               <Button
-                type="button"
-                onClick={handleSubmit}
-                className=" w-full h-12 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-medium transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] shadow-lg hover:shadow-xl"
+                type="submit"
+                className="w-full h-12 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-medium transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] shadow-lg hover:shadow-xl"
                 disabled={isLoading || !userName || !password}
               >
                 {isLoading ? (
@@ -155,7 +188,7 @@ export default function LoginPage() {
                   </>
                 )}
               </Button>
-            </div>
+            </form>
           </CardContent>
         </Card>
       </div>

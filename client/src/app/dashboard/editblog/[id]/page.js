@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { toast, Toaster } from "react-hot-toast";
 import BlockComponent from "../../addBlog/components/BlockComponent";
@@ -20,7 +20,6 @@ export default function BlogEditor() {
   const [isPremium, setIsPremium] = useState(false);
   const [loading, setLoading] = useState(false);
 
- 
   useEffect(() => {
     if (!articleId) return;
 
@@ -29,7 +28,6 @@ export default function BlogEditor() {
       try {
         const res = await apiGet(`admin/v1/article/${articleId}`);
       
-        
         if (res.status === "success") {
           const article = res.data.res;
           setTitle(article.artHeading);
@@ -50,23 +48,41 @@ export default function BlogEditor() {
     fetchArticle();
   }, [articleId]);
 
-  const addBlock = (type) =>
-    setBlocks([...blocks, { id: Date.now(), type, content: "" }]);
-  const updateBlock = (id, content) =>
-    setBlocks(blocks.map((b) => (b.id === id ? { ...b, content } : b)));
-  const deleteBlock = (id) => setBlocks(blocks.filter((b) => b.id !== id));
-  const moveBlockToPosition = (currentIndex, newIndex) => {
+  // Use useCallback to memoize functions that are passed to child components
+  const addBlock = useCallback((type) => {
+    setBlocks(prevBlocks => [...prevBlocks, { id: Date.now(), type, content: "" }]);
+  }, []);
+
+  const updateBlock = useCallback((id, content) => {
+    setBlocks(prevBlocks => prevBlocks.map((b) => (b.id === id ? { ...b, content } : b)));
+  }, []);
+
+  const deleteBlock = useCallback((id) => {
+    setBlocks(prevBlocks => prevBlocks.filter((b) => b.id !== id));
+  }, []);
+
+  const moveBlockToPosition = useCallback((currentIndex, newIndex) => {
     if (newIndex < 0 || newIndex >= blocks.length || currentIndex === newIndex)
       return;
-    const newBlocks = [...blocks];
-    const [movedBlock] = newBlocks.splice(currentIndex, 1);
-    newBlocks.splice(newIndex, 0, movedBlock);
-    setBlocks(newBlocks);
-  };
-  const moveBlockUp = (i) => moveBlockToPosition(i, i - 1);
-  const moveBlockDown = (i) => moveBlockToPosition(i, i + 1);
-  const handlePositionChange = (currentIndex, newIndex) =>
+    setBlocks(prevBlocks => {
+      const newBlocks = [...prevBlocks];
+      const [movedBlock] = newBlocks.splice(currentIndex, 1);
+      newBlocks.splice(newIndex, 0, movedBlock);
+      return newBlocks;
+    });
+  }, [blocks.length]);
+
+  const moveBlockUp = useCallback((index) => {
+    moveBlockToPosition(index, index - 1);
+  }, [moveBlockToPosition]);
+
+  const moveBlockDown = useCallback((index) => {
+    moveBlockToPosition(index, index + 1);
+  }, [moveBlockToPosition]);
+
+  const handlePositionChange = useCallback((currentIndex, newIndex) => {
     moveBlockToPosition(currentIndex, newIndex);
+  }, [moveBlockToPosition]);
 
   const handleSubmit = async () => {
     if (!title?.trim()) return toast.error("Title is required!");
