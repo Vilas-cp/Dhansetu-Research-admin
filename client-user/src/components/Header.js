@@ -16,6 +16,7 @@ import {
   DollarSign,
   CircleDollarSign,
 } from "lucide-react";
+import { Lora } from "next/font/google";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -27,6 +28,11 @@ import {
 import toast from "react-hot-toast";
 import { useUser, useClerk } from "@clerk/nextjs";
 import { apiPost } from "@/lib/api";
+
+const lora = Lora({
+  subsets: ["latin"],
+  weight: ["700"],
+});
 
 const Header = () => {
   const { user } = useUser();
@@ -73,10 +79,9 @@ const Header = () => {
           {/* Centered Logo/Brand */}
           <div className="flex items-center absolute left-1/2 transform -translate-x-1/2">
             <Link href="/dashboard" className="flex items-center space-x-2">
-              <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-sm">D</span>
-              </div>
-              <span className="text-xl font-bold text-gray-900">Dhansetu</span>
+              <span className="text-4xl font-bold text-gray-900">
+                <span className={lora.className}>Dhansetu</span>
+              </span>
             </Link>
           </div>
 
@@ -161,11 +166,11 @@ const Header = () => {
                   variant={isActive ? "default" : "ghost"}
                   className={`flex items-center space-x-2 ${
                     isActive
-                      ? "bg-blue-100 text-blue-700 hover:bg-blue-200"
+                      ? "bg-[#fdeee9] text-[#f99d1d] hover:bg-blue-200"
                       : "text-gray-600 hover:text-gray-900"
                   }`}
                 >
-                  <Icon className="w-4 h-4" />
+                  {/* <Icon className="w-4 h-4" /> */}
                   <span>{item.label}</span>
                 </Button>
               </Link>
