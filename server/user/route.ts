@@ -173,6 +173,7 @@ v1Routes.post("/verify", async (req, res) => {
 v1Routes.get("/info", async (req, res) => {
   try {
     const { sessionId, userName } = req.signedCookies;
+    // console.log(userName, sessionId);
     if (!sessionId || !userName) {
       res.status(400).send({
         status: "fail",
@@ -225,11 +226,12 @@ v1Routes.get("/info", async (req, res) => {
 v1Routes.post("/test", async (req, res) => {
   try {
     const { sessionId, userName } = req.signedCookies;
-  //  const mailHand = new MailHandler();
+     const mailHand = new MailHandler();
+    // await mailHand.sendMail("vilaspgowda1000@gmail.com", "", "", "");
     res.status(200).send({
       status: "success",
       data: {
-         message: "Hello Tiger!",
+        message: "Hello Tiger!",
       },
     });
   } catch (error: any) {
@@ -379,25 +381,13 @@ v1Routes.get("/article/:artid", async (req, res) => {
       });
       return;
     }
-    if (userRes === -1) {
+    if (userRes === -1 || userRes?.sub?.type === "free") {
       res.status(200).send({
         status: "success",
         data: {
-          message: "You need premium subscription accont to view this blog.",
+          message: "You need premium subscription accont to view this blog. Please buy it, or renew it.",
           access: false,
           userLoggedIn: userRes !== -1,
-        },
-      });
-      return;
-    }
-    const expireDate: string = userRes?.sub?.expire || new Date().toUTCString();
-    if (userRes?.sub?.type === "free" || (userRes?.sub?.type === "premium" && Date.now() > new Date(expireDate).getTime())) {
-      res.status(200).send({
-        status: "success",
-        data: {
-          message: "Your subscription has expired, please renew it.",
-          access: false,
-          userLoggedIn: true,
         },
       });
       return;
@@ -426,7 +416,7 @@ v1Routes.get("/article/:artid", async (req, res) => {
 
 v1Routes.post("/buy/verify/success", async (req, res) => {
   try {
-    console.log(req.body);
+    // console.log(req.body);
     const payUBody: PayUBody = req.body;
     const userDb = new UserDB();
     const txnId: string = payUBody.txnid;
@@ -452,6 +442,10 @@ v1Routes.post("/buy/verify/success", async (req, res) => {
       res.redirect("http://localhost:3000/success");
       return;
     }
+    if (orderInfo.status === "fail") {
+      res.redirect("http://localhost:3000/failure");
+      return;
+    }
     const orderUpdate = await userDb.verifyOrder(txnId);
     if (orderUpdate === null || orderUpdate === -1) {
       res.redirect("http://localhost:3000/failure");
@@ -464,6 +458,16 @@ v1Routes.post("/buy/verify/success", async (req, res) => {
     }
     res.redirect("http://localhost:3000/success");
     const emailId = payUBody.email;
+    const mailHelp = new MailHandler();
+    await mailHelp.sendMail(
+      emailId,
+      payUBody.amount,
+      payUBody.productinfo,
+      payUBody.addedon,
+      payUBody.mode,
+      txnId,
+      payUBody.firstname + payUBody.lastname,
+    );
     console.log(chalk.yellow(`User: ${emailId}, payment verified!`));
   } catch (error: any) {
     console.log(

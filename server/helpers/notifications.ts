@@ -1,5 +1,6 @@
 import moment from "moment";
 import nodemailer from "nodemailer";
+import { mailTemplate } from "./email";
 
 function interviewNotification(
   interview: any,
@@ -72,26 +73,14 @@ class MailHandler {
     console.log(`MailHandler has configured to mail id: ${mailId}`);
   }
 
-  async sendMail(senderMailId: string, amount: string, subName: string, expire: string) {
-    const emailHTML = `
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Thank You for Registering - ADVAYA HACKATHON</title>
-    </head>
-    <body>
-        <div>Hello</div>
-    </body>
-    </html>
-    `;
+  async sendMail(senderMailId: string, amount: string, subName: string, paymentDate: string, paymentMethod: string, txnId: string, userName: string) {
+    const emailHTML = mailTemplate(userName, amount, subName, txnId, paymentDate, paymentMethod);
 
     const mailOptions = {
       from: `Dhansetu <${MailHandler.mailId}>`,
-      to: "manojadkc2004@gmail.com",
-      subject: "Registration Successful",
-      text: `Hello ,\n\nYour registration was successful. Welcome aboard!\n\nBest Regards,\nHackathon Team`,
+      to: senderMailId,
+      subject: "Payment Successful",
+      text: `Hello ,\n\nYour Payment was successful. Welcome aboard!\n\nBest Regards,\nHackathon Team`,
       html: emailHTML,
     };
 

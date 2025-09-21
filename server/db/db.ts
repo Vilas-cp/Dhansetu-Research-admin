@@ -159,11 +159,14 @@ class UserDB extends DB {
           [userData.id]
         );
         if (resSub.rowCount === 0) {
-          userData.sub = {type: "free"};
+          userData.sub = { type: "free", expire: null };
           return userData;
         }
         const expireDate: string = resSub.rows[0]["expire"];
-        userData.sub = {type: "premium", expire: expireDate};
+        userData.sub = { type: "premium", expire: expireDate };
+        if (Date.now() > new Date(expireDate).getTime()) {
+          userData.sub.type = "free";
+        }
         return userData;
       } catch (error: any) {
         console.log(
@@ -426,6 +429,45 @@ class UserDB extends DB {
       }
     });
   }
+  async declineOrder(txnId: string) {
+    return await this.retryQuery("declineOrder", async () => {
+      let pClient;
+      try {
+        pClient = await this.connect();
+        await pClient.query("BEGIN");
+        const res = await pClient.query(
+          `
+          UPDATE
+            "orders"
+          SET "status" = 'fail'
+          WHERE "txn_id" = $1::varchar
+          RETURNING id;`,
+          [txnId]
+        );
+        if (res.rowCount === 0) {
+          await pClient.query("ROLLBACK");
+          return -1;
+        }
+        const resCheck: { id: number } = res.rows[0];
+        await pClient.query("COMMIT");
+        return resCheck;
+      } catch (error: any) {
+        console.log(
+          chalk.red("PostgresSQL Error: "),
+          error?.message,
+          error?.code
+        );
+        if (pClient) {
+          await pClient.query("ROLLBACK");
+        }
+        return null;
+      } finally {
+        if (pClient) {
+          this.release(pClient);
+        }
+      }
+    });
+  }
   async getOrder(txnId: string) {
     return await this.retryQuery("getOrder", async () => {
       let pClient;
@@ -537,15 +579,16 @@ class UserDB extends DB {
             `
           INSERT INTO "users_subs" ("user_id", "expire")
           VALUES
-          ($1::int, $2::int, CURRENT_DATE + INTERVAL '${extendTime} month')
-          RETURNING id;`,
+          ($1::int, CURRENT_DATE + INTERVAL '${extendTime} month')
+          RETURNING id, expire;`,
             [userId]
           );
           if (newUserSub.rowCount === 0) {
             await pClient.query("ROLLBACK");
             return -1;
           }
-          const resInsertSub: {id: number} = newUserSub.rows[0];
+          const resInsertSub: { id: number; expire: string } =
+            newUserSub.rows[0];
           await pClient.query("COMMIT");
           return resInsertSub;
         }
@@ -555,14 +598,15 @@ class UserDB extends DB {
           SET "expire" = CURRENT_DATE + INTERVAL '${extendTime} month';
           WHERE
           "user_id" = $1::int
-          RETURNING id;`,
+          RETURNING id, expire;`,
           [userId]
         );
         if (updateUserSub.rowCount === 0) {
           await pClient.query("ROLLBACK");
           return -1;
         }
-        const resUpdateSub: { id: number } = updateUserSub.rows[0];
+        const resUpdateSub: { id: number; expire: string } =
+          updateUserSub.rows[0];
         await pClient.query("COMMIT");
         return resUpdateSub;
       } catch (error: any) {
@@ -621,6 +665,16 @@ class SessionDB extends DB {
       let pClient;
       try {
         pClient = await this.connect();
+        const res1 = await pClient.query(
+          `
+            UPDATE "sessions" SET "session_id" = $2::uuid
+            WHERE "user_name" = $1::varchar
+            RETURNING "session_id";`,
+          [userName, sessionId]
+        );
+        if (res1.rowCount === 1) {
+          return sessionId;
+        }
         const res = await pClient.query(
           `
             INSERT INTO "sessions" ("user_name","session_id") 

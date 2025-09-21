@@ -1,11 +1,9 @@
 import chalk from "chalk";
 import express from "express";
-import { AdminDb, SessionDB } from "../db/db";
+import { AdminDb, SessionDB, UserDB } from "../db/db";
 import { envConfigs, serverConfigs } from "../configs/configs";
 import { v4 } from "uuid";
-import {
-  AdminInfo,
-} from "../types/user";
+import { AdminInfo } from "../types/user";
 const v1Routes = express.Router();
 const adminRoutes = express.Router();
 
@@ -17,8 +15,9 @@ v1Routes.post("/login", async (req, res) => {
   try {
     const { password, userName }: AdminInfo = req.body;
     const { sessionId } = req.signedCookies;
+    console.log(password, userName, sessionId);
     if (!password || !userName) {
-      res.status(401).send({
+      res.status(400).send({
         status: "fail",
         data: {
           message: "Didnt get password or userName!",
@@ -38,7 +37,7 @@ v1Routes.post("/login", async (req, res) => {
       return;
     }
     if (adminUserRes === -1) {
-      res.status(401).send({
+      res.status(400).send({
         status: "fail",
         data: {
           message: "User with username not found.",
@@ -48,7 +47,7 @@ v1Routes.post("/login", async (req, res) => {
     }
     const sessionDB = new SessionDB();
     if (ADMIN_PASS && password !== ADMIN_PASS) {
-      res.status(401).send({
+      res.status(400).send({
         status: "fail",
         data: {
           message: "Wrong password!",
@@ -76,7 +75,7 @@ v1Routes.post("/login", async (req, res) => {
         res.status(400).send({
           status: "fail",
           data: {
-            message: "Database is offline"
+            message: "Database is offline",
           },
         });
         return;
@@ -127,7 +126,7 @@ v1Routes.post("/verify", async (req, res) => {
       res.status(401).send({
         status: "fail",
         data: {
-          message: "SessionId not found"
+          message: "SessionId not found",
         },
       });
       return;
@@ -207,7 +206,8 @@ v1Routes.post("/logout", async (req, res) => {
 
 v1Routes.post("/create/user", async (req, res) => {
   try {
-    const { superPass, adFirstName, adLastName, adUserName, adImgUrl } = req.body;
+    const { superPass, adFirstName, adLastName, adUserName, adImgUrl } =
+      req.body;
     if (!superPass) {
       res.status(401).send({
         status: "fail",
@@ -227,7 +227,12 @@ v1Routes.post("/create/user", async (req, res) => {
       return;
     }
     const adminDb = new AdminDb();
-    const adminCrtRes = await adminDb.createAdminUser(adFirstName, adLastName, adUserName, adImgUrl);
+    const adminCrtRes = await adminDb.createAdminUser(
+      adFirstName,
+      adLastName,
+      adUserName,
+      adImgUrl
+    );
     if (adminCrtRes === null) {
       res.status(400).send({
         status: "fail",
@@ -250,7 +255,7 @@ v1Routes.post("/create/user", async (req, res) => {
       status: "success",
       data: {
         message: "Admin has been created",
-        adminCrtRes
+        adminCrtRes,
       },
     });
     console.log(chalk.yellow(`User: ${adUserName}, is logged out as Admin!`));
@@ -268,10 +273,117 @@ v1Routes.post("/create/user", async (req, res) => {
   }
 });
 
+v1Routes.get("/userinfo/:emailId", async (req, res) => {
+  try {
+    const { sessionId, userName } = req.signedCookies;
+    if (!sessionId || !userName) {
+      res.status(400).send({
+        status: "fail",
+        data: {
+          message: "SessionId not found",
+        },
+      });
+      return;
+    }
+    const emailId = req.params.emailId;
+    const userDb = new UserDB();
+    const userInfo = await userDb.getClientUser(emailId);
+    if (userInfo === null) {
+      res.status(400).send({
+        status: "fail",
+        data: {
+          message: "Database error, or Database is offline.",
+        },
+      });
+      return;
+    }
+    if (userInfo === -1) {
+      res.status(200).send({
+        status: "success",
+        data: {
+          message: "Did not find the user with the given emailid.",
+          userInfo: null,
+        },
+      });
+      return;
+    }
+    res.status(200).send({
+      status: "success",
+      data: {
+        userInfo,
+      },
+    });
+  } catch (error: any) {
+    console.log(
+      chalk.red(`Error: ${error?.message}, for user id ${req.body?.userName}`)
+    );
+    res.status(400).send({
+      status: "fail",
+      error: error,
+      data: {
+        message: "Internal Server Error!",
+      },
+    });
+  }
+});
+
+v1Routes.post("/givesub", async (req, res) => {
+  try {
+    const { sessionId, userName } = req.signedCookies;
+    if (!sessionId || !userName) {
+      res.status(400).send({
+        status: "fail",
+        data: {
+          message: "SessionId not found",
+        },
+      });
+      return;
+    }
+    const { emailId, subId } = req.body;
+    const userDb = new UserDB();
+    const userInfo = await userDb.getClientUser(emailId);
+    if (userInfo === null) {
+      res.status(400).send({
+        status: "fail",
+        data: {
+          message: "Database error, or Database is offline.",
+        },
+      });
+      return;
+    }
+    if (userInfo === -1) {
+      res.status(200).send({
+        status: "success",
+        data: {
+          message: "Did not find the user with the given emailid.",
+          userInfo: null,
+        },
+      });
+      return;
+    }
+    res.status(200).send({
+      status: "success",
+      data: {
+        userInfo,
+      },
+    });
+  } catch (error: any) {
+    console.log(
+      chalk.red(`Error: ${error?.message}, for user id ${req.body?.userName}`)
+    );
+    res.status(400).send({
+      status: "fail",
+      error: error,
+      data: {
+        message: "Internal Server Error!",
+      },
+    });
+  }
+});
+
 v1Routes.post("/article/create", async (req, res) => {
   try {
-    const { artHeading, artDetail, coverImgURL, artType } =
-      req.body;
+    const { artHeading, artDetail, coverImgURL, artType } = req.body;
     // console.log(req.body);
     const { sessionId, userName } = req.signedCookies;
     if (!sessionId || !userName) {
@@ -284,7 +396,13 @@ v1Routes.post("/article/create", async (req, res) => {
       return;
     }
     const adminDb = new AdminDb();
-    const artRes = await adminDb.createArticle(artHeading, artDetail, coverImgURL, userName, artType);
+    const artRes = await adminDb.createArticle(
+      artHeading,
+      artDetail,
+      coverImgURL,
+      userName,
+      artType
+    );
     if (artRes === null) {
       res.status(400).send({
         status: "fail",
@@ -316,7 +434,7 @@ v1Routes.post("/article/create", async (req, res) => {
       status: "success",
       data: {
         message: "Article has been created",
-        artRes
+        artRes,
       },
     });
   } catch (error: any) {
@@ -348,7 +466,14 @@ v1Routes.put("/article/:artid", async (req, res) => {
       return;
     }
     const adminDb = new AdminDb();
-    const artRes = await adminDb.updateArticle(artHeading, artDetail, coverImgURL, userName, artType, artId);
+    const artRes = await adminDb.updateArticle(
+      artHeading,
+      artDetail,
+      coverImgURL,
+      userName,
+      artType,
+      artId
+    );
     if (artRes === null) {
       res.status(400).send({
         status: "fail",
@@ -424,8 +549,7 @@ v1Routes.delete("/article/:artid", async (req, res) => {
       res.status(400).send({
         status: "fail",
         data: {
-          message:
-            "Did not find the article with the given article id.",
+          message: "Did not find the article with the given article id.",
         },
       });
       return;
@@ -521,7 +645,8 @@ v1Routes.get("/article/:artid", async (req, res) => {
       res.status(400).send({
         status: "fail",
         data: {
-          message: "Did not find the article with the given article id, and for this lang.",
+          message:
+            "Did not find the article with the given article id, and for this lang.",
         },
       });
       return;

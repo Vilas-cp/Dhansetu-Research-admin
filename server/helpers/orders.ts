@@ -61,7 +61,7 @@ function generateOrder(
     phone: phone,
     surl: surl,
     furl: furl,
-    udf1: "",
+    udf1: "1",
     udf2: "",
     udf3: "",
     udf4: "",

@@ -30,7 +30,7 @@ type ClientUser = {
   uuid: string;
   sub?: {
     type: "free" | "premium",
-    expire?: string
+    expire: string | null,
   }
 };
 
