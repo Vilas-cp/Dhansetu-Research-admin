@@ -1,0 +1,64 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* :root {
+  --foreground-rgb: 0, 0, 0;
+  --background-start-rgb: 214, 219, 220;
+  --background-end-rgb: 255, 255, 255;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --foreground-rgb: 255, 255, 255;
+    --background-start-rgb: 0, 0, 0;
+    --background-end-rgb: 0, 0, 0;
+  }
+} */
+/* 
+body {
+  color: rgb(var(--foreground-rgb));
+  background: linear-gradient(
+      to bottom,
+      transparent,
+      rgb(var(--background-end-rgb))
+    )
+    rgb(var(--background-start-rgb));
+} */
+
+html {
+  /* scroll-snap-type: y proximity; */
+  scroll-behavior: smooth;
+  overflow-x: hidden !important;
+}
+
+@layer utilities{
+  .textdesign{
+    @apply relative tracking-[1px] text-[#1f3a68] font-sans font-bold
+  }
+  .textdesign::after{
+    @apply content-[''] bg-[#ff3221] h-[3px] w-[0%] left-0 -bottom-[5px] rounded-xl absolute duration-300
+  }
+  .textdesign:hover::after{
+    @apply w-[100%]
+  }
+  .animation-delay-2000 {
+    animation-delay: 2s;
+  }
+  .animation-delay-4000 {
+    animation-delay: 4s;
+  }
+}
+
+@keyframes scroll {
+  0% {
+    transform: translateX(60%);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
+.animate-scroll {
+  animation: scroll 40s linear infinite;
+}

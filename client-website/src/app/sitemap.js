@@ -1,0 +1,136 @@
+export default function sitemap() {
+  return [
+    {
+      url: "https://brainautotech.com",
+      lastModified: new Date(),
+      changeFrequency: "monthly",
+      priority: 1,
+    },
+    {
+      url: "https://brainautotech.com/contact",
+      lastModified: new Date(),
+      changeFrequency: "monthly",
+      priority: 0.8,
+    },
+    {
+      url: "https://brainautotech.com/about",
+      lastModified: new Date(),
+      changeFrequency: "yearly",
+      priority: 0.8,
+    },
+    {
+      url: "https://brainautotech.com/disclaimer",
+      lastModified: new Date(),
+      changeFrequency: "yearly",
+      priority: 0.8,
+    },
+    {
+      url: "https://brainautotech.com/payment",
+      lastModified: new Date(),
+      changeFrequency: "yearly",
+      priority: 0.8,
+    },
+    {
+      url: "https://brainautotech.com/pricing",
+      lastModified: new Date(),
+      changeFrequency: "yearly",
+      priority: 0.8,
+    },
+    {
+      url: "https://brainautotech.com/privacy",
+      lastModified: new Date(),
+      changeFrequency: "yearly",
+      priority: 0.8,
+    },
+    {
+      url: "https://brainautotech.com/refund",
+      lastModified: new Date(),
+      changeFrequency: "yearly",
+      priority: 0.8,
+    },
+    {
+      url: "https://brainautotech.com/terms",
+      lastModified: new Date(),
+      changeFrequency: "yearly",
+      priority: 0.8,
+    },
+    {
+      url: "https://brainautotech.com/thankyou",
+      lastModified: new Date(),
+      changeFrequency: "yearly",
+      priority: 0.8,
+    },
+    {
+      url: "https://brainautotech.com/algo-services",
+      lastModified: new Date(),
+      changeFrequency: "yearly",
+      priority: 0.8,
+    },
+    {
+      url: "https://brainautotech.com/algo-services/algo-trading",
+      lastModified: new Date(),
+      changeFrequency: "yearly",
+      priority: 0.8,
+    },
+    {
+      url: "https://brainautotech.com/algo-services/api-bridge",
+      lastModified: new Date(),
+      changeFrequency: "yearly",
+      priority: 0.8,
+    },
+    {
+      url: "https://brainautotech.com/algo-services/auto-buy-and-sell-signal",
+      lastModified: new Date(),
+      changeFrequency: "yearly",
+      priority: 0.8,
+    },
+    {
+      url: "https://brainautotech.com/algo-services/strategy-development",
+      lastModified: new Date(),
+      changeFrequency: "yearly",
+      priority: 0.8,
+    },
+    {
+      url: "https://brainautotech.com/it-services",
+      lastModified: new Date(),
+      changeFrequency: "yearly",
+      priority: 0.8,
+    },
+    {
+      url: "https://brainautotech.com/it-services/digital-marketing",
+      lastModified: new Date(),
+      changeFrequency: "yearly",
+      priority: 0.8,
+    },
+    {
+      url: "https://brainautotech.com/it-services/game-development",
+      lastModified: new Date(),
+      changeFrequency: "yearly",
+      priority: 0.8,
+    },
+    {
+      url: "https://brainautotech.com/it-services/graphic-video-design",
+      lastModified: new Date(),
+      changeFrequency: "yearly",
+      priority: 0.8,
+    },
+    {
+      url: "https://brainautotech.com/it-services/mobile-app-development",
+      lastModified: new Date(),
+      changeFrequency: "yearly",
+      priority: 0.8,
+    },
+    {
+      url: "https://brainautotech.com/it-services/software-development",
+      lastModified: new Date(),
+      changeFrequency: "yearly",
+      priority: 0.8,
+    },
+    {
+      url: "https://brainautotech.com/it-services/web-development",
+      lastModified: new Date(),
+      changeFrequency: "yearly",
+      priority: 0.8,
+    },
+  ];
+}

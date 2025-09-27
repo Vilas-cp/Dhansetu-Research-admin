@@ -1,0 +1,49 @@
+{
+  "name": "nanosoft-app",
+  "version": "4.1.1",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@fortawesome/fontawesome-svg-core": "^6.5.1",
+    "@fortawesome/free-brands-svg-icons": "^6.5.1",
+    "@fortawesome/free-regular-svg-icons": "^6.5.1",
+    "@fortawesome/free-solid-svg-icons": "^6.5.1",
+    "@fortawesome/react-fontawesome": "^0.2.0",
+    "@gsap/react": "^2.1.0",
+    "@headlessui/react": "^1.7.18",
+    "@heroicons/react": "^2.1.1",
+    "@next/third-parties": "^14.1.4",
+    "@nextui-org/react": "^2.2.10",
+    "font-awesome": "^4.7.0",
+    "framer-motion": "^11.0.13",
+    "gsap": "^3.12.5",
+    "html2canvas": "^1.4.1",
+    "leaflet": "^1.9.4",
+    "nanosoft-app": "file:",
+    "next": "^14.1.4",
+    "randomstring": "^1.3.0",
+    "react": "^18",
+    "react-dom": "^18",
+    "react-hot-toast": "^2.4.1",
+    "react-leaflet": "^4.2.1",
+    "react-moving-text": "^0.0.7",
+    "react-select": "^5.9.0",
+    "react-text-transition": "^3.1.0",
+    "react-type-animation": "^3.2.0",
+    "swiper": "^11.0.7",
+    "tailwind-scrollbar": "^3.1.0",
+    "tailwind-scrollbar-hide": "^1.1.7"
+  },
+  "devDependencies": {
+    "autoprefixer": "^10.0.1",
+    "eslint": "^8",
+    "eslint-config-next": "14.1.3",
+    "postcss": "^8",
+    "tailwindcss": "^3.3.0"
+  }
+}
