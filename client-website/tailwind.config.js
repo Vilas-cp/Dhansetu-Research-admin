@@ -36,12 +36,17 @@ module.exports = {
           "100%": {
             transform: "tranlate(0px, 0px) scale(1)",
           },
+          marquee: {
+            "0%": { transform: "translateX(100%)" },   
+            "100%": { transform: "translateX(-100%)" }, 
+          },
         },
       },
       animation: {
         wiggle: "wiggle 1s ease-out infinite",
         spinaround: "spinaround 0.5s ease-in-out infinite",
         blob: "blob 7s infinite",
+        marquee: "marquee 15s linear infinite", // Add custom animation
       },
     },
   },

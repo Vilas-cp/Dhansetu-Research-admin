@@ -16,6 +16,7 @@ import { useEffect, useState } from "react";
 import LoadGoogleAdsScript from "@/components/LoadGoogleAdsScript";
 import LoadGoogleAdsIframe from "@/components/LoadGoogleAdsIframe";
 import AppFormComp from "@/components/FormComp/AppFormComp";
+import StockMarque from "@/components/StockMarket/StockMarque";
 
 export default function Home() {
   const [loading, setLoading] = useState([
@@ -62,6 +63,7 @@ export default function Home() {
         </AnimatePresence>
 
         <SlidingHeroSection setLoading={setLoading} indexLoad={0} />
+        <StockMarque />
         <PurpleCardSection setLoading={setLoading} indexLoad={1} />
 
         <OurServicesSection setLoading={setLoading} indexLoad={2} />
@@ -70,6 +72,7 @@ export default function Home() {
         <AppFormComp />
         <Testimonials setLoading={setLoading} indexLoad={5} />
         <ContactUsSection setLoading={setLoading} indexLoad={6} />
+        
         <Footer />
       </main>
     </>

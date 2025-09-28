@@ -5,87 +5,85 @@ import PricingCard from "./PricingComp/PaymentCard";
 const paymentData = {
   basic: {
     monthly: {
-      price: "6,000",
+      price: "3,999",
       planData: [
-        { text: "2 STRATEGIES" },
-        { text: "NO OF Accounts 2" },
-        { text: "LIMITED SIGNALS" },
-        { text: "FULLY AUTOMATIC" },
-        { text: "CALL AND TEXT SUPPORT" },
-        { text: "1000 Rs.Maintenance Charges For Every Month" },
+        { text: "5 Research Calls/Week" },
+        { text: "Basic Algo (Intraday)" },
+        { text: "2 Broker Accounts" },
+        { text: "Telegram Updates" },
+        { text: "WhatsApp Support" },
       ],
     },
-    quarterly: { price: "15,000", planData: null },
-    halfYearly: { price: "25,000", planData: null },
+    quarterly: { price: "10,000", planData: null },
+    halfYearly: { price: "18,000", planData: null },
   },
   premium: {
     monthly: {
-      price: "15,000",
+      price: "7,999",
       planData: [
-        { text: "5 STRATEGIES" },
-        { text: "NO OF Accounts 4" },
-        { text: "3-10 SIGNALS PER DAY" },
-        { text: "FULLY AUTOMATIC" },
-        { text: "CALL AND TEXT SUPPORT" },
-        { text: "1000 Rs.Maintenance Charges For Every Month" },
+        { text: "10+ Research Calls/Week" },
+        { text: "Advanced Algo (Multiple Strategies)" },
+        { text: "2 Broker Accounts" },
+        { text: "SMA Alerts & Risk Management" },
+        { text: "Weekly Market Report" },
+        { text: "Call & Telegram Support" },
       ],
     },
-    quarterly: { price: "44,000", planData: null },
-    halfYearly: { price: "77,000", planData: null },
+    quarterly: { price: "20,000", planData: null },
+    halfYearly: { price: "36,000", planData: null },
   },
   hni: {
     monthly: {
-      price: "30,000",
+      price: "15,999",
       planData: [
-        { text: "7-8 STRATEGIES" },
-        { text: "NO OF Accounts 5" },
-        { text: "4-10 SIGNALS PER DAY" },
-        { text: "MULTIPLE Categories" },
-        { text: "FULLY AUTOMATIC" },
-        { text: "CALL AND TEXT SUPPORT" },
-        { text: "1000 Rs.Maintenance Charges For Every Month" },
+        { text: "Unlimited Research Calls" },
+        { text: "Customized Algo Strategies" },
+        { text: "Unlimited Broker Accounts" },
+        { text: "Portfolio Optimization" },
+        { text: "Personal RM + Zoom Review Calls" },
+        { text: "Priority 24x7 Support" },
       ],
     },
-    quarterly: { price: "70,000", planData: null },
-    halfYearly: { price: "100,000", planData: null },
+    quarterly: { price: "42,000", planData: null },
+    halfYearly: { price: "75,000", planData: null },
   },
-  stockOptions: {
-    monthly: {
-      price: "10,000",
-      planData: [
-        { text: "2 STRATEGIES" },
-        { text: "NO OF Accounts 2" },
-        { text: "LIMITED SIGNALS" },
-        { text: "FULLY AUTOMATIC" },
-        { text: "CALL AND TEXT SUPPORT" },
-        { text: "1000 Rs.Maintenance Charges For Every Month " },
-      ],
-    },
-    quarterly: {
-      price: "25,000",
-      planData: [
-        { text: "5 STRATEGIES" },
-        { text: "NO OF Accounts 4" },
-        { text: "3-10 SIGNALS PER DAY" },
-        { text: "FULLY AUTOMATIC" },
-        { text: "CALL AND TEXT SUPPORT" },
-        { text: "1000 Rs.Maintenance Charges For Every Month " },
-      ],
-    },
-    halfYearly: {
-      price: "45,000",
-      planData: [
-        { text: "7-8 STRATEGIES" },
-        { text: "NO OF Accounts 5" },
-        { text: "4-10 SIGNALS PER DAY" },
-        { text: "MULTIPLE Categories" },
-        { text: "FULLY AUTOMATIC" },
-        { text: "CALL AND TEXT SUPPORT" },
-        { text: "1000 Rs.Maintenance Charges For Every Month " },
-      ],
-    },
-  },
-  equityFuture : null,
+  // stockOptions: {
+  //   monthly: {
+  //     price: "10,000",
+  //     planData: [
+  //       { text: "2 STRATEGIES" },
+  //       { text: "NO OF Accounts 2" },
+  //       { text: "LIMITED SIGNALS" },
+  //       { text: "FULLY AUTOMATIC" },
+  //       { text: "CALL AND TEXT SUPPORT" },
+  //       { text: "1000 Rs.Maintenance Charges For Every Month " },
+  //     ],
+  //   },
+  //   quarterly: {
+  //     price: "25,000",
+  //     planData: [
+  //       { text: "5 STRATEGIES" },
+  //       { text: "NO OF Accounts 4" },
+  //       { text: "3-10 SIGNALS PER DAY" },
+  //       { text: "FULLY AUTOMATIC" },
+  //       { text: "CALL AND TEXT SUPPORT" },
+  //       { text: "1000 Rs.Maintenance Charges For Every Month " },
+  //     ],
+  //   },
+  //   halfYearly: {
+  //     price: "45,000",
+  //     planData: [
+  //       { text: "7-8 STRATEGIES" },
+  //       { text: "NO OF Accounts 5" },
+  //       { text: "4-10 SIGNALS PER DAY" },
+  //       { text: "MULTIPLE Categories" },
+  //       { text: "FULLY AUTOMATIC" },
+  //       { text: "CALL AND TEXT SUPPORT" },
+  //       { text: "1000 Rs.Maintenance Charges For Every Month " },
+  //     ],
+  //   },
+  // },
+  // equityFuture : null,
 };
 
 paymentData.basic.quarterly.planData = paymentData.basic.monthly.planData;
@@ -126,7 +124,7 @@ const PricingSectionComp = () => {
           >
             HNI PLATFORM
           </button>
-          <button
+          {/* <button
             className={`block text-lg ${
               selectPricing === "stockOptions" ? "text-red-500" : "text-black"
             } font-bold`}
@@ -141,7 +139,7 @@ const PricingSectionComp = () => {
             onClick={() => setSelectPricing("equityFuture")}
           >
             {`EQUITY & FUTURE`}
-          </button>
+          </button> */}
         </div>
         <h2 className="text-4xl text-black py-8 text-center font-semibold">
           Choose a Plan That <span className="text-red-500">Works for You</span>

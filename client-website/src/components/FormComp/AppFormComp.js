@@ -37,11 +37,11 @@ function AppFormComp() {
                 <a href="tel:9179042673"> : +91 9179042673</a>
               </li>
               <li className="text-left text-[#555555]  p1 pt-[30px] font-medium ">
-                <a href="mailto:Braintechintelligence@gmail.com">
+                <a href="mailto:support@dhansetu.in">
                   <span className="text-red-500 font-bold">
                     <FontAwesomeIcon icon={faEnvelope} />
                   </span>{" "}
-                  : brainautotech1902@gmail.com
+                  : support@dhansetu.in
                 </a>
               </li>
               <li className="text-left text-[#555555]  p1 pt-[30px] font-medium ">

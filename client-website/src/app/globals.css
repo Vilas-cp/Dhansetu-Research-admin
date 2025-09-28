@@ -62,3 +62,18 @@ html {
 .animate-scroll {
   animation: scroll 40s linear infinite;
 }
+
+@keyframes marquee {
+    0% {
+      transform: translateX(0%);
+    }
+    100% {
+      transform: translateX(-50%);
+    }
+  }
+  
+.animate-marquee {
+  display: flex;
+  width: max-content; /* Ensures the width is dynamic based on content */
+  animation: marquee 35s linear infinite;
+}

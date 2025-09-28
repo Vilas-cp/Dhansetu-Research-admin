@@ -13,8 +13,9 @@ function FormComp() {
   });
   const [yourName, setYourName] = useState("");
   const [email, setEmail] = useState("");
-  const [mobileNumber, setMobileNumber] = useState("");
-  const [investment, setInvestment] = useState("");
+  const [mobile, setMobile] = useState("");
+  const [brokerName, setBrokerName] = useState("");
+  const [message, setMessage] = useState("");
   const thankYouPageRedirect = useRef(null);
 
   const handleCheckboxChange = (event) => {
@@ -42,7 +43,7 @@ function FormComp() {
 
       const mobileRegex = /^\+?\d{2}?\s?\d{6,10}$/;
 
-      if (!mobileRegex.test(mobileNumber)) {
+      if (!mobileRegex.test(mobile)) {
         toast.error("Please enter a valid mobile number.", {
           duration: 4000,
         });
@@ -55,10 +56,10 @@ function FormComp() {
       });
       const newRow = {
         Name: yourName,
-        Mobile: mobileNumber,
+        Mobile: mobile,
         Email: email,
-        Investment: investment,
-        Services: "",
+        Message: message,
+        Broker: brokerName,
       };
       let serviceString = "";
       for (let key in checkboxes) {
@@ -171,8 +172,8 @@ function FormComp() {
               Mobile
             </label>
             <input
-              value={mobileNumber}
-              onChange={(e) => setMobileNumber(e.target.value)}
+              value={mobile}
+              onChange={(e) => setMobile(e.target.value)}
               name="Mobile"
               id="Mobile"
               placeholder="+91 123456789"
@@ -183,108 +184,39 @@ function FormComp() {
           </div>
           <div className="mb-4">
             <label
-              htmlFor="investment"
               className="block text-[#1f3a68] text-sm font-semibold mb-2"
+              htmlFor="Broker"
             >
-              {"Investment (Optional)"}
+              Broker
             </label>
-            <textarea
-              name="investment"
-              id="investment"
-              value={investment}
-              onChange={(e) => setInvestment(e.target.value)}
-              rows="4"
-              placeholder="Investment"
+            <input
+              value={brokerName}
+              onChange={(e) => setBrokerName(e.target.value)}
+              name="Broker"
+              id="Broker"
+              placeholder="Broker Name"
               className="w-full px-3 py-3 border rounded-lg  text-sm"
+              required
               type="text"
             />
           </div>
-          <div className="mb-8">
-            <label className="block text-sm font-semibold mb-4 text-[#1f3a68]">
-              Services
+          <div className="mb-4">
+            <label
+              htmlFor="message"
+              className="block text-[#1f3a68] text-sm font-semibold mb-2"
+            >
+              {"Message (Optional)"}
             </label>
-
-            <div className="flex gap-[41px] text-sm  text-[#9ca3af]">
-              <label>
-                <input
-                  type="checkbox"
-                  name="algo_software"
-                  checked={checkboxes.algo_software}
-                  onChange={handleCheckboxChange}
-                />
-                <span
-                  className={`ml-2 ${
-                    checkboxes.algo_software === true && "text-[#414347]"
-                  }`}
-                >
-                  Algo Software
-                </span>
-              </label>
-              <label>
-                <input
-                  type="checkbox"
-                  name="option_strategy"
-                  checked={checkboxes.option_strategy}
-                  onChange={handleCheckboxChange}
-                />
-                <span
-                  className={`ml-2 ${
-                    checkboxes.option_strategy === true && "text-[#414347]"
-                  }`}
-                >
-                  Option Strategy
-                </span>
-              </label>
-            </div>
-            <div className="flex justify-start gap-[34px] text-sm  text-[#9ca3af] mt-4">
-              <label>
-                <input
-                  type="checkbox"
-                  name="equality_strategy"
-                  checked={checkboxes.equality_strategy}
-                  onChange={handleCheckboxChange}
-                />
-                <span
-                  className={`ml-2 ${
-                    checkboxes.equality_strategy === true && "text-[#414347]"
-                  }`}
-                >
-                  Equity Strategy
-                </span>
-              </label>
-              <label>
-                <input
-                  type="checkbox"
-                  name="future_strategy"
-                  checked={checkboxes.future_strategy}
-                  onChange={handleCheckboxChange}
-                />
-                <span
-                  className={`ml-2 ${
-                    checkboxes.future_strategy === true && "text-[#414347]"
-                  }`}
-                >
-                  Future Strategy
-                </span>
-              </label>
-            </div>
-            <div className=" text-sm  text-[#9ca3af] mt-4">
-              <label>
-                <input
-                  type="checkbox"
-                  name="other_services"
-                  checked={checkboxes.other_services}
-                  onChange={handleCheckboxChange}
-                />
-                <span
-                  className={`ml-2 ${
-                    checkboxes.other_services === true && "text-[#414347]"
-                  }`}
-                >
-                  Other web solutions services
-                </span>
-              </label>
-            </div>
+            <textarea
+              name="message"
+              id="message"
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+              rows="4"
+              placeholder="Your Message"
+              className="w-full px-3 py-3 border rounded-lg  text-sm"
+              type="text"
+            />
           </div>
 
           <div className="flex justify-center">

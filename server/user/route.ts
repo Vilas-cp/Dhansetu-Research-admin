@@ -360,6 +360,7 @@ v1Routes.get("/article/:artid", async (req, res) => {
     }
     const sessionDB = new SessionDB();
     const sessionIdRes = await sessionDB.getSessionId(userName || "");
+    // console.log(sessionId, sessionIdRes);
     if (!sessionId || sessionIdRes !== sessionId) {
       res.status(200).send({
         status: "success",
