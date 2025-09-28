@@ -19,7 +19,6 @@ const poppinsFont = Poppins({ subsets: ["latin"], weight: "300" });
 const poppinsFont1 = Poppins({ subsets: ["latin"], weight: "700" });
 const poppinsFont2 = Poppins({ subsets: ["latin"], weight: "500" });
 
-
 const Header1 = () => {
   return (
     <>
@@ -54,7 +53,10 @@ const Header1 = () => {
             <a href="/about" className="textdesign hover:cursor-pointer">
               About
             </a>
-            <Dropdown>
+              <a href="/services" className="textdesign hover:cursor-pointer">
+              Services
+            </a>
+            {/* <Dropdown>
               <DropdownTrigger>
                 <Button
                   disableRipple
@@ -96,7 +98,7 @@ const Header1 = () => {
                   </a>
                 </DropdownItem>
               </DropdownMenu>
-            </Dropdown>
+            </Dropdown> */}
             <a href="/pricing" className="textdesign cursor-pointer">
               Pricing
             </a>

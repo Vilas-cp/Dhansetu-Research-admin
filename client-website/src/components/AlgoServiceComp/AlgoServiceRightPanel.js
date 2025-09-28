@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import Algoservicescontent from "@/data/AlgoServices/algoserviesdata";
+import Algoservicescontent from "@/data/Services/servicesdata";
 
 const ATagComp = ({ title, imgSrc, routing }) => (
   <a

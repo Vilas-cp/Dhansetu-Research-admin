@@ -13,7 +13,7 @@ const data = [
     title: `Our`,
     title1: `Mission`,
     desc: `Our mission is simple – to make high-quality research and automation accessible to everyone, not just HNIs and big institutions.`,
-    href: `/contact-us`,
+    href: `/contact`,
     icon: "🎯",
     bgColor: "bg-blue-50",
   },
