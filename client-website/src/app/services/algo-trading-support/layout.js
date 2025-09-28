@@ -4,8 +4,8 @@ import { Inter } from "next/font/google";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {
-  title: metadataProps.algoServices.algoTrading.title,
-  description: metadataProps.algoServices.algoTrading.description,
+  title: metadataProps.algoServices.algotrading.title,
+  description: metadataProps.algoServices.algotrading.description,
   alternates: {
     canonical: "https://brainautotech.com/algo-services/algo-trading/",
   },

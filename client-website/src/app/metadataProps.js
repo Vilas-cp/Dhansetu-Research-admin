@@ -8,39 +8,40 @@ const metadataProps = {
     success in your investments with BrainAutoTech. &#128222; +91 9179042673`,
   },
   algoServices: {
-    title:
-      "Best Algo Trading Software & Algorithmic Trading Platform | BrainAutoTech",
-    description: `We offer powerful algorithmic trading strategies, 
-    free options, and seamless integration across brokers. Explore our 
-    algo trading service and simple indicators for successful stock trading. 
-    Check our prices and find the best algo trading solution today!`,
-    apiBridge: {
-      title:
-        "API Bridge - Seamless Algo Trading Integration with Amibroker, MT4, TradingView, and More - BrainAutoTech",
-      description: `Explore API Bridge for seamless algo trading 
-      with Amibroker, MT4, TradingView, Python, and more. Start 
-      trading efficiently across multiple platforms and markets with 
-      BrainAutoTech's API Bridge.`,
+    title: "Dhansetu",
+    description: `Comprehensive trading solutions covering Equity & Options research, MCX commodity coverage,
+  backtested algo trading support, and a Premium RA + Algo combo — research, execution and performance
+  tracking for traders of all styles.`,
+
+    commodity: {
+      title: "Commodity (MCX) Research - Bullion, Energy & Metals - Dhansetu",
+      description: `Bullion coverage with Gold & Silver intraday and positional calls. Detailed levels for
+    energy & metals including Crude Oil, Natural Gas and Copper. Live alerts for stop-loss / target changes
+    and multiple strategies for conservative and aggressive traders.`,
     },
-    algoTrading: {
+
+    equity: {
       title:
-        "Best Algo Trading Platform - Automated & Error-Free Trading - BrainAutoTech",
-      description: `Experience the best algo trading with automated, 
-      error-free execution. Save time and money with our platform, 
-      using MetaTrader4 & MetaTrader5 for efficient trading.`,
+        "Equity & Options Research - Daily Calls & Weekly Market Outlook - Dhansetu",
+      description: `Daily stock recommendations (BTST, Swing, Positional). Weekly market outlook with key
+    levels for Nifty, BankNifty and sector guidance. Options strategies including safe spreads,
+    hedged positions and intraday opportunities, plus educational notes explaining the rationale.`,
     },
-    autoBuyAndSell: {
+
+    algotrading: {
       title:
-        "Accurate Auto Buy Sell Signal Software for Trading - BrainAutoTech",
-      description: `Get accurate auto buy sell signal software for MCX, NSE, 
-      and more. Easy to install, customizable, and supported by AI for 
-      high-accuracy trading signals.`,
+        "Algo Trading Support - Backtested Strategies & Broker Integration - Dhansetu",
+      description: `Pre-built, backtested strategies for intraday and positional trading. Seamless broker
+    integration (Zerodha, Angel One, Fyers, Dhan, Alice Blue). Fully automated execution (entry, target,
+    SL) with trailing stop-loss and smart risk filters for capital protection.`,
     },
-    strategyDevelopment: {
-      title: "Expert Trading Strategy Development & Automation - BrainAutoTech",
-      description: `Develop automated trading strategies on MT4, 
-      MT5, Tradingview, and more. Enjoy expert advisor auto trading, 
-      custom indicators, and secure, stress-free trading.`,
+
+    premiumra: {
+      title:
+        "Premium RA + Algo Combo - End-to-End Research & Execution - Dhansetu",
+      description: `End-to-end solution combining research, execution and risk management. Portfolio
+    customization across Stocks, Options or MCX to match your risk profile. Includes performance
+    tracking dashboard (monthly & cumulative reports) and priority support with a dedicated RM.`,
     },
   },
   itServices: {
@@ -130,8 +131,10 @@ function removeNewLineCharAndExtraSpaces(metadataObj) {
     if (typeof element === "object") {
       removeNewLineCharAndExtraSpaces(element);
     } else if (typeof element === "string" && metadataKey === "description") {
-    //   console.log(element);
-    metadataObj[metadataKey] = element.replace(/\n/g, "").replace(/\s+/g, " ");
+      //   console.log(element);
+      metadataObj[metadataKey] = element
+        .replace(/\n/g, "")
+        .replace(/\s+/g, " ");
     }
   }
 }

@@ -237,17 +237,12 @@ const Header1 = () => {
                       About
                     </a>
                     <a
-                      href="/it-services"
+                      href="/services"
                       className="focus:outline-none focus:ring-2 !text-[#102b5c] focus:ring-inset focus:ring-gray-500 px-2"
                     >
-                      IT-Services
+                      Services
                     </a>
-                    <a
-                      href="/algo-services"
-                      className="focus:outline-none focus:ring-2 !text-[#102b5c] focus:ring-inset focus:ring-gray-500 px-2"
-                    >
-                      Algo-Services
-                    </a>
+                   
                     <a
                       href="/indicator"
                       className="focus:outline-none focus:ring-2 !text-[#102b5c] focus:ring-inset focus:ring-gray-500 px-2"

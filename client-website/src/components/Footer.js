@@ -79,73 +79,25 @@ function Footer() {
             </div>
           </div>
           <div className="flex justify-center gap-[4vh] ">
+           
             <div className="pl-[5px]">
               <ul className="hover:cursor-pointer">
                 <li className="font-semibold text-[17px] text-[#00c2e0]">
-                  ✧ IT services ✧
-                </li>
-
-                <div className="text-[#566a8d] pt-[15px] flex-col font-medium">
-                  <a
-                    href="/it-services/web-development"
-                    className="hover:underline block"
-                  >
-                    ➠ Web Development
-                  </a>
-                  <a
-                    href="/it-services/mobile-app-development"
-                    className="hover:underline block"
-                  >
-                    ➠ Mobile App development
-                  </a>
-                  <a
-                    href="/it-services/graphic-video-design"
-                    className="hover:underline block"
-                  >
-                    ➠ Graphic & Video Design
-                  </a>
-                  <a
-                    href="/it-services/software-development"
-                    className="hover:underline block"
-                  >
-                    ➠ Software Development
-                  </a>
-                  <a
-                    href="/it-services/game-development"
-                    className="hover:underline block"
-                  >
-                    ➠ Game Development
-                  </a>
-                  <a
-                    href="/it-services/digital-marketing"
-                    className="hover:underline block"
-                  >
-                    ➠ Digital Marketing
-                  </a>
-                  <li className="hover:underline" onClick={() => setIsOpen(6)}>
-                    ➠ Partners
-                  </li>
-                </div>
-              </ul>
-            </div>
-            <div className="pl-[5px]">
-              <ul className="hover:cursor-pointer">
-                <li className="font-semibold text-[17px] text-[#00c2e0]">
-                  ✧ Algo Services ✧
+                  ✧ Services ✧
                 </li>
 
                 <div className="text-[#566a8d] pt-[15px]  flex-col font-medium">
                   <li className="hover:underline">
-                    <a href="/api-bridge">➠ Api Bridge</a>
+                    <a href="/services/algo-trading-support">➠ Algo Trading Support</a>
                   </li>
                   <li className="hover:underline">
-                    <a href="/algo">➠ Algo software</a>
+                    <a href="/services/commodity-research">➠ Commodity Research</a>
                   </li>
                   <li className="hover:underline">
-                    <a href="/auto">➠ Auto Buy & Sell signals</a>
+                    <a href="/services/equity-options-research">➠ Equity & Options Research</a>
                   </li>
                   <li className="hover:underline">
-                    <a href="/strategy">➠ Strategy Development</a>
+                    <a href="/services/premium-ra-algo-support">➠  Premium RA + Algo Combo</a>
                   </li>
                 </div>
               </ul>

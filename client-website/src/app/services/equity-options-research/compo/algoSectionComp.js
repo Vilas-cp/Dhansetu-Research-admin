@@ -24,42 +24,31 @@ efficiency and precision in executing trades. Here are some algo trading service
 
 const SectionCompParaData1 = [
   {
-    text: `At Brain Auto Tech, we are committed to helping you transform the way you trade. Contact us today to
+    text: `At Dhansetu, we are committed to helping you transform the way you trade. Contact us today to
 learn how you can unlock full trading potential and achieve your desired financial goals.`,
   },
 ];
 
 const UlLiCompData = [
   {
-    title: `Automated Algo Trading :`,
-    description: `Our algorithms automatically perform buy and sell orders based on predefined criteria, such as price,
-quantity and timing, without or with minimal human intervention.`,
+    title: `Equity & Options Research :`,
+    description: `Daily stock recommendations including BTST, Swing, and Positional trades to help you capture
+opportunities across time horizons.`,
   },
   {
-    title: `Strategies :`,
-    description: `Our algo trading services include using common strategies, such as trend following, scalping, statistical
-arbitrage, market monitoring and so on. Each strategy has its own rules and objectives.`,
+    title: `Weekly Market Outlook :`,
+    description: `Detailed analysis with key levels for Nifty, BankNifty, and important sectors, helping you stay
+ahead of market trends.`,
   },
   {
-    title: `Fast and Reliable :`,
-    description: `Our algorithms are designed to process market data and execute trade in fractions of a second, which is
-faster than manual trading.`,
+    title: `Options Strategies :`,
+    description: `Safe spreads, hedged positions, and intraday opportunities curated to manage risk while optimizing
+returns.`,
   },
   {
-    title: `Customization and Flexibility :`,
-    description: `Our algorithms can be easily customized to suit specific trading preferences, goals and strategies of the
-traders. The flexibility enables the creation of tailored approaches based on different market conditions.`,
-  },
-  {
-    title: `Seamless Integration with Trading Platforms :`,
-    description: `Our algo trading services can be integrated with trading platforms to facilitate direct market access
-(DMA) and smooth order execution.`,
-  },
-  {
-    title: `Backtesting :`,
-    description: `Our algo trading algorithms are usually backtested against historical data values to assess and optimize
-their performance. This ensures your trading platform reaps profitable results in similar market
-conditions.`,
+    title: `Educational Notes :`,
+    description: `Every recommendation comes with the reasoning behind it, ensuring you not only trade but also
+learn the logic and improve decision-making.`,
   },
 ];
 
@@ -68,9 +57,9 @@ const AlgoSection = () => {
     <div className="pb-10 flex space-y-4 space-x-0 xl:space-y-0 xl:flex-row justify-between w-full flex-col-reverse">
       <AlgoServiceRightPanel />
       <div className="py-6 px-5 xl:w-3/4 w-full flex flex-col justify-between space-y-5">
-        {SectionCompParaData.map((eleData, index) => (
+        {/* {SectionCompParaData.map((eleData, index) => (
           <SectionCompPara {...eleData} key={index} />
-        ))}
+        ))} */}
         <h2 className="text-black font-bold text-3xl lg:text-left text-center">
           Some Benefits for you
         </h2>
@@ -83,7 +72,14 @@ const AlgoSection = () => {
           "text" in eleData ? (
             <SectionCompPara {...eleData} key={index} />
           ) : (
-            <a key={index} className="block text-left text-blue-400" href={eleData.link} target="_blank">{eleData.link}</a>
+            <a
+              key={index}
+              className="block text-left text-blue-400"
+              href={eleData.link}
+              target="_blank"
+            >
+              {eleData.link}
+            </a>
           )
         )}
       </div>

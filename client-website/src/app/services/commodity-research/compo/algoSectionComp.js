@@ -9,57 +9,41 @@ function SectionCompPara({ text }) {
 
 const SectionCompParaData = [
   {
-    text: `Algo trading refers to a method of using computer algorithms to automate the process of financial
-trading. A predefined set of rules are provided to a computer program, and the orders are executed
-when those conditions are met. The trades are processed to maximize speed, efficiency and accuracy,
-while reducing human intervention.`,
+    text: `Commodity (MCX) research provides traders with actionable insights into bullion, energy, and metals,
+helping them capture opportunities in both intraday and positional trades.`,
   },
 
   {
-    text: `At Brain Auto Tech, we offer exceptional algorithmic trading services designed to empower investors
-and traders. Our cutting-edge algorithms, created by a team of experts, provide incredible speed,
-efficiency and precision in executing trades. Here are some algo trading services we offer:`,
+    text: `At Dhansetu, we specialize in delivering precise commodity market recommendations backed
+by expert analysis. From bullion to energy, our coverage ensures you stay ahead with real-time updates
+and multiple strategies designed for different trading styles:`,
   },
 ];
 
 const SectionCompParaData1 = [
   {
-    text: `At Brain Auto Tech, we are committed to helping you transform the way you trade. Contact us today to
-learn how you can unlock full trading potential and achieve your desired financial goals.`,
+    text: `At Dhansetu, our goal is to help you navigate commodity markets with confidence. Contact us
+today to learn how our research can support your trading journey and maximize your returns.`,
   },
 ];
 
 const UlLiCompData = [
   {
-    title: `Automated Algo Trading :`,
-    description: `Our algorithms automatically perform buy and sell orders based on predefined criteria, such as price,
-quantity and timing, without or with minimal human intervention.`,
+    title: `Bullion Coverage :`,
+    description: `Gold & Silver intraday and positional calls to help you trade precious metals with clarity.`,
   },
   {
-    title: `Strategies :`,
-    description: `Our algo trading services include using common strategies, such as trend following, scalping, statistical
-arbitrage, market monitoring and so on. Each strategy has its own rules and objectives.`,
+    title: `Energy & Metals :`,
+    description: `Key levels and insights for Crudeoil, Natural Gas, and Copper to guide your trading decisions.`,
   },
   {
-    title: `Fast and Reliable :`,
-    description: `Our algorithms are designed to process market data and execute trade in fractions of a second, which is
-faster than manual trading.`,
+    title: `Live Alerts :`,
+    description: `Real-time updates on stop-loss and target changes so you can act quickly and protect profits.`,
   },
   {
-    title: `Customization and Flexibility :`,
-    description: `Our algorithms can be easily customized to suit specific trading preferences, goals and strategies of the
-traders. The flexibility enables the creation of tailored approaches based on different market conditions.`,
-  },
-  {
-    title: `Seamless Integration with Trading Platforms :`,
-    description: `Our algo trading services can be integrated with trading platforms to facilitate direct market access
-(DMA) and smooth order execution.`,
-  },
-  {
-    title: `Backtesting :`,
-    description: `Our algo trading algorithms are usually backtested against historical data values to assess and optimize
-their performance. This ensures your trading platform reaps profitable results in similar market
-conditions.`,
+    title: `Multiple Strategies :`,
+    description: `We provide strategies for both conservative and aggressive traders, ensuring flexibility for
+different risk profiles.`,
   },
 ];
 
@@ -83,7 +67,14 @@ const AlgoSection = () => {
           "text" in eleData ? (
             <SectionCompPara {...eleData} key={index} />
           ) : (
-            <a key={index} className="block text-left text-blue-400" href={eleData.link} target="_blank">{eleData.link}</a>
+            <a
+              key={index}
+              className="block text-left text-blue-400"
+              href={eleData.link}
+              target="_blank"
+            >
+              {eleData.link}
+            </a>
           )
         )}
       </div>
