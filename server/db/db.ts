@@ -626,6 +626,107 @@ class UserDB extends DB {
       }
     });
   }
+  async addUserSubBackdoor(emailId: string, subId: string) {
+    return await this.retryQuery("addUserSub", async () => {
+      let pClient;
+      try {
+        pClient = await this.connect();
+        await pClient.query("BEGIN");
+        const resUser = await pClient.query(
+          `
+          SELECT u."id", u."uuid", u."email_id" as "emailId",
+          u."clerk_id" as "clerkId", u."first_name" as "firstName", 
+          u."last_name" as "lastName", u."img_URL" as "imgURL", 
+          u."created_at" as "createdAt"
+          FROM 
+            "users" as u 
+          WHERE
+            u."email_id" = $1::varchar;`,
+          [emailId]
+        );
+        if (resUser.rowCount === 0) {
+          await pClient.query("ROLLBACK");
+          return -1;
+        }
+        const user: ClientUser = resUser.rows[0];
+        const userId: number = user.id;
+        const resSub = await pClient.query(
+          `
+          SELECT 
+            sub."id", sub."sub_id" as "subId", sub."sub_name" as "subName",
+            sub."sub_time" as "subTime", sub."amount"
+            FROM "subscriptions" as sub
+          WHERE
+            sub."sub_id" = $1::int;`,
+          [subId]
+        );
+        if (resSub.rowCount === 0) {
+          await pClient.query("ROLLBACK");
+          return -1;
+        }
+        const sub: Sub = resSub.rows[0];
+        const extendTime = sub.subTime;
+        const resUserSub = await pClient.query(
+          `
+          SELECT us."expire"
+          FROM 
+            "users_subs" as us
+          WHERE
+            us."user_id" = $1::int;`,
+          [userId]
+        );
+        if (resUserSub.rowCount === 0) {
+          const newUserSub = await pClient.query(
+            `
+          INSERT INTO "users_subs" ("user_id", "expire")
+          VALUES
+          ($1::int, CURRENT_DATE + INTERVAL '${extendTime} month')
+          RETURNING id, expire;`,
+            [userId]
+          );
+          if (newUserSub.rowCount === 0) {
+            await pClient.query("ROLLBACK");
+            return -1;
+          }
+          const resInsertSub: { id: number; expire: string } =
+            newUserSub.rows[0];
+          await pClient.query("COMMIT");
+          return resInsertSub;
+        }
+        const updateUserSub = await pClient.query(
+          `
+          UPDATE "users_subs"
+          SET "expire" = CURRENT_DATE + INTERVAL '${extendTime} month';
+          WHERE
+          "user_id" = $1::int
+          RETURNING id, expire;`,
+          [userId]
+        );
+        if (updateUserSub.rowCount === 0) {
+          await pClient.query("ROLLBACK");
+          return -1;
+        }
+        const resUpdateSub: { id: number; expire: string } =
+          updateUserSub.rows[0];
+        await pClient.query("COMMIT");
+        return resUpdateSub;
+      } catch (error: any) {
+        console.log(
+          chalk.red("PostgresSQL Error: "),
+          error?.message,
+          error?.code
+        );
+        if (pClient) {
+          await pClient.query("ROLLBACK");
+        }
+        return null;
+      } finally {
+        if (pClient) {
+          this.release(pClient);
+        }
+      }
+    });
+  }
 }
 
 class SessionDB extends DB {

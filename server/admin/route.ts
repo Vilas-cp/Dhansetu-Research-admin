@@ -352,11 +352,57 @@ v1Routes.post("/givesub", async (req, res) => {
       return;
     }
     if (userInfo === -1) {
-      res.status(200).send({
-        status: "success",
+      res.status(400).send({
+        status: "fail",
         data: {
           message: "Did not find the user with the given emailid.",
-          userInfo: null,
+        },
+      });
+      return;
+    }
+    // if (userInfo.sub?.type === "premium") {
+    //   res.status(200).send({
+    //     status: "success",
+    //     data: {
+    //       message: "User already has a subscription. Wait for it to expire for renewal.",
+    //     },
+    //   });
+    //   return;
+    // }
+    const subInfo = await userDb.getSubInfo(subId);
+    if (subInfo === null) {
+      res.status(400).send({
+        status: "fail",
+        data: {
+          message: "Database error, or Database is offline.",
+        },
+      });
+      return;
+    }
+    if (subInfo == -1) {
+      res.status(400).send({
+        status: "fail",
+        data: {
+          message: "Wrong subId given.",
+        },
+      });
+      return;
+    }
+    const addUserSub = await userDb.addUserSubBackdoor(emailId, subId);
+    if (addUserSub === null) {
+      res.status(400).send({
+        status: "fail",
+        data: {
+          message: "Database error, or Database is offline.",
+        },
+      });
+      return;
+    }
+    if (addUserSub === -1) {
+      res.status(400).send({
+        status: "fail",
+        data: {
+          message: "Could not give sub to this user.",
         },
       });
       return;
@@ -364,7 +410,7 @@ v1Routes.post("/givesub", async (req, res) => {
     res.status(200).send({
       status: "success",
       data: {
-        userInfo,
+        userSub: addUserSub,
       },
     });
   } catch (error: any) {
