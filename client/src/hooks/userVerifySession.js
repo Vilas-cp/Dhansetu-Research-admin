@@ -9,6 +9,8 @@ export function useVerifySession() {
     const verifySession = async () => {
       try {
         const res = await apiPost("admin/v1/verify");
+        console.log(res);
+        
         if (res.status === "success") {
           router.replace("/dashboard");
         } else {
