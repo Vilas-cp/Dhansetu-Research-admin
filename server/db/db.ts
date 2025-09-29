@@ -595,7 +595,7 @@ class UserDB extends DB {
         const updateUserSub = await pClient.query(
           `
           UPDATE "users_subs"
-          SET "expire" = CURRENT_DATE + INTERVAL '${extendTime} month';
+          SET "expire" = CURRENT_DATE + INTERVAL '${extendTime} month'
           WHERE
           "user_id" = $1::int
           RETURNING id, expire;`,
@@ -657,7 +657,7 @@ class UserDB extends DB {
             sub."sub_time" as "subTime", sub."amount"
             FROM "subscriptions" as sub
           WHERE
-            sub."sub_id" = $1::int;`,
+            sub."sub_id" = $1::varchar;`,
           [subId]
         );
         if (resSub.rowCount === 0) {
@@ -693,10 +693,11 @@ class UserDB extends DB {
           await pClient.query("COMMIT");
           return resInsertSub;
         }
+        // console.log("in", userId);
         const updateUserSub = await pClient.query(
           `
           UPDATE "users_subs"
-          SET "expire" = CURRENT_DATE + INTERVAL '${extendTime} month';
+          SET "expire" = CURRENT_DATE + INTERVAL '${extendTime} month'
           WHERE
           "user_id" = $1::int
           RETURNING id, expire;`,
