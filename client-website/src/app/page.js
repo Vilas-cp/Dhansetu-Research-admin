@@ -54,8 +54,8 @@ export default function Home() {
       <main>
         <LoadGoogleAdsIframe />
 
-        <SidePopup />
-        <SidePopupR />
+        {/* <SidePopup />
+        <SidePopupR /> */}
         <Header1 />
 
         <AnimatePresence mode="wait">

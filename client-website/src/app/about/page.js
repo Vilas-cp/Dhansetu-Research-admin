@@ -88,12 +88,12 @@ const Aboutus = () => {
         <Header1 />
 
         {/* Hero Section */}
-        <div className="pt-[80px] flex justify-center items-center bg-[#aee9e7] h-[42vh] xl:h-[60vh] w-full">
-          <div>
-            <h1 className="text-[#0e2b5c] md:text-[8vh] text-[6vh] font-[800] text-center tracking-[1px]">
+        <div className="pt-[80px] flex justify-center items-center bg-[#002366] h-[42vh] xl:h-[47vh] w-full">
+
+            <h1 className="text-[#aee9e7] md:text-[8vh] text-[6vh] font-[800] text-center tracking-[1px]">
               About Dhansetu
             </h1>
-          </div>
+        
         </div>
 
         {/* Image Gallery Section */}
@@ -125,14 +125,13 @@ const Aboutus = () => {
 
             {/* Main Description */}
             <h2 className="text-center text-[#0e2b5c] md:text-[4vh] text-[3vh] font-[700] text-wrap pt-[40px]">
-              {`Emotionless, automated trading with India's first web-based`}
-              <br className="hidden md:block" /> platform Dhansetu.
+              {`Dhansetu Research is not just another market advisory – it is your bridge (“Setu”) to`}
+              <br className="hidden md:block" /> financial freedom.
             </h2>
             <div>
               <p className="font-medium text-center pt-[20px] xl:px-[50vh] xl:leading-relaxed text-[#627792]">
-                {`Dhansetu is not just another research platform – it is your bridge (“Setu”) to financial freedom.
-We are a SEBI-registered Research Analyst firm, combining professional market research, algorithmic trading technology, and disciplined execution to help retail traders and investors grow with confidence.
-`}
+                {`We are a SEBI-registered Research Analyst firm based in Indore, Madhya Pradesh, offering a powerful combination of professional equity research, algorithmic trading technology, and disciplined trade execution to help traders and investors grow with confidence.
+Founded by Mr. Vivek Singh Rajpoot, a seasoned market expert with over 8 years of experience, Dhansetu is built on trust, transparency, and technology. Our separate client support and technical teams ensure seamless onboarding, trade automation, and query resolution for every client.`}
               </p>
             </div>
           </div>

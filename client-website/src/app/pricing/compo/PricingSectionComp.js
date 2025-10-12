@@ -1,175 +1,448 @@
 "use client";
 import React, { useState } from "react";
-import PricingCard from "./PricingComp/PaymentCard";
+import {
+  Check,
+  X,
+  Loader2,
+  AlertCircle,
+  CreditCard,
+  ShieldCheck,
+} from "lucide-react";
+import pricingData from "./data";
 
-const paymentData = {
-  basic: {
-    monthly: {
-      price: "3,999",
-      planData: [
-        { text: "5 Research Calls/Week" },
-        { text: "Basic Algo (Intraday)" },
-        { text: "2 Broker Accounts" },
-        { text: "Telegram Updates" },
-        { text: "WhatsApp Support" },
-      ],
-    },
-    quarterly: { price: "10,000", planData: null },
-    halfYearly: { price: "18,000", planData: null },
-  },
-  premium: {
-    monthly: {
-      price: "7,999",
-      planData: [
-        { text: "10+ Research Calls/Week" },
-        { text: "Advanced Algo (Multiple Strategies)" },
-        { text: "2 Broker Accounts" },
-        { text: "SMA Alerts & Risk Management" },
-        { text: "Weekly Market Report" },
-        { text: "Call & Telegram Support" },
-      ],
-    },
-    quarterly: { price: "20,000", planData: null },
-    halfYearly: { price: "36,000", planData: null },
-  },
-  hni: {
-    monthly: {
-      price: "15,999",
-      planData: [
-        { text: "Unlimited Research Calls" },
-        { text: "Customized Algo Strategies" },
-        { text: "Unlimited Broker Accounts" },
-        { text: "Portfolio Optimization" },
-        { text: "Personal RM + Zoom Review Calls" },
-        { text: "Priority 24x7 Support" },
-      ],
-    },
-    quarterly: { price: "42,000", planData: null },
-    halfYearly: { price: "75,000", planData: null },
-  },
-  // stockOptions: {
-  //   monthly: {
-  //     price: "10,000",
-  //     planData: [
-  //       { text: "2 STRATEGIES" },
-  //       { text: "NO OF Accounts 2" },
-  //       { text: "LIMITED SIGNALS" },
-  //       { text: "FULLY AUTOMATIC" },
-  //       { text: "CALL AND TEXT SUPPORT" },
-  //       { text: "1000 Rs.Maintenance Charges For Every Month " },
-  //     ],
-  //   },
-  //   quarterly: {
-  //     price: "25,000",
-  //     planData: [
-  //       { text: "5 STRATEGIES" },
-  //       { text: "NO OF Accounts 4" },
-  //       { text: "3-10 SIGNALS PER DAY" },
-  //       { text: "FULLY AUTOMATIC" },
-  //       { text: "CALL AND TEXT SUPPORT" },
-  //       { text: "1000 Rs.Maintenance Charges For Every Month " },
-  //     ],
-  //   },
-  //   halfYearly: {
-  //     price: "45,000",
-  //     planData: [
-  //       { text: "7-8 STRATEGIES" },
-  //       { text: "NO OF Accounts 5" },
-  //       { text: "4-10 SIGNALS PER DAY" },
-  //       { text: "MULTIPLE Categories" },
-  //       { text: "FULLY AUTOMATIC" },
-  //       { text: "CALL AND TEXT SUPPORT" },
-  //       { text: "1000 Rs.Maintenance Charges For Every Month " },
-  //     ],
-  //   },
-  // },
-  // equityFuture : null,
-};
 
-paymentData.basic.quarterly.planData = paymentData.basic.monthly.planData;
-paymentData.basic.halfYearly.planData = paymentData.basic.monthly.planData;
-paymentData.premium.quarterly.planData = paymentData.premium.monthly.planData;
-paymentData.premium.halfYearly.planData = paymentData.premium.monthly.planData;
-paymentData.hni.quarterly.planData = paymentData.hni.monthly.planData;
-paymentData.hni.halfYearly.planData = paymentData.hni.monthly.planData;
-paymentData.equityFuture = paymentData.stockOptions;
+const PricingTable = () => {
+  const [billingCycle, setBillingCycle] = useState("monthly");
+  const [loading, setLoading] = useState(null);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [dialogLoading, setDialogLoading] = useState(false);
+  const [dialogData, setDialogData] = useState(null);
+  const [dialogError, setDialogError] = useState(null);
+  const [selectedPlan, setSelectedPlan] = useState(null);
+  const [payuParams, setPayuParams] = useState(null);
 
-const PricingSectionComp = () => {
-  const [selectPricing, setSelectPricing] = useState("basic");
+  const plans = ["basic", "premium", "hni"];
+  const planNames = {
+    basic: "BASIC",
+    premium: "PREMIUM",
+    hni: "HNI / CUSTOM"
+  };
+
+  const billingCycleLabels = {
+    monthly: "Monthly",
+    quarterly: "Quarterly", 
+    halfYearly: "Half-Yearly"
+  };
+
+  const handlePurchase = async (planType) => {
+    setLoading(planType);
+    setSelectedPlan(planType);
+    const planData = pricingData[billingCycle][planType];
+
+    // Open dialog and start loading
+    setDialogOpen(true);
+    setDialogLoading(true);
+    setDialogError(null);
+    setDialogData(null);
+
+    try {
+     const response = await fetch(
+        `https://your-backend-domain.com/user/v1/buy/order/${planData.subscriptionId}`,
+        {
+          method: "POST",
+          credentials: "include",
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+      console.log(response);
+
+      if (response.status === "success") {
+        setDialogData(response.data.params);
+        setPayuParams(response.data.params);
+      } else {
+        throw new Error("Failed to fetch subscription details");
+      }
+    } catch (error) {
+      console.error("API call failed:", error);
+      setDialogError("Something went wrong. Please try again later.");
+    } finally {
+      setDialogLoading(false);
+      setLoading(null);
+    }
+  };
+
+  const closeDialog = () => {
+    setDialogOpen(false);
+    setDialogData(null);
+    setDialogError(null);
+    setSelectedPlan(null);
+    setPayuParams(null);
+    setDialogLoading(false);
+  };
+
+  const formatPrice = (price) =>
+    new Intl.NumberFormat("en-IN", {
+      style: "currency",
+      currency: "INR",
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    }).format(price);
+
+  const getButtonText = (planType) => {
+    return "Buy";
+  };
+
+  const getButtonStyle = (planType) => {
+    if (planType === "basic")
+      return "bg-gray-800 border border-gray-600 text-gray-300 hover:bg-gray-700";
+    if (planType === "premium")
+      return "bg-white text-gray-900 hover:bg-gray-100";
+    return "bg-white text-gray-900 hover:bg-gray-100";
+  };
+
+  // Enhanced PayU Payment Form Component
+  const PayUForm = ({ params }) => {
+    return (
+      <form
+        action="https://test.payu.in/_payment"
+        method="post"
+        id="payuForm"
+        className="flex-1"
+      >
+        <input type="hidden" name="key" value={params.mkey} />
+        <input type="hidden" name="txnid" value={params.txnid} />
+        <input type="hidden" name="productinfo" value={params.productinfo} />
+        <input type="hidden" name="amount" value={params.amount} />
+        <input type="hidden" name="email" value={params.email} />
+        <input type="hidden" name="firstname" value={params.firstname} />
+        <input type="hidden" name="lastname" value={params.lastname} />
+        <input type="hidden" name="surl" value={params.surl} />
+        <input type="hidden" name="furl" value={params.furl} />
+        <input type="hidden" name="phone" value={params.phone} />
+        <input type="hidden" name="udf1" value={params.udf1} />
+        <input type="hidden" name="udf2" value={params.udf2} />
+        <input type="hidden" name="udf3" value={params.udf3} />
+        <input type="hidden" name="udf4" value={params.udf4} />
+        <input type="hidden" name="udf5" value={params.udf5} />
+        <input type="hidden" name="hash" value={params.hash} />
+
+        {/* Enhanced styled button */}
+        <button
+          type="submit"
+          className="group relative w-full py-4 px-6 flex items-center justify-center gap-3 rounded-xl 
+                     bg-gradient-to-r from-blue-600 via-blue-500 to-purple-600 
+                     hover:from-blue-700 hover:via-blue-600 hover:to-purple-700 
+                     text-white font-semibold text-base
+                     transition-all duration-200 transform hover:scale-[1.02] hover:shadow-2xl
+                     shadow-lg border border-blue-400/20"
+        >
+          {/* Animated background glow */}
+          <div
+            className="absolute inset-0 rounded-xl bg-gradient-to-r from-blue-600 to-purple-600 opacity-0 
+                          group-hover:opacity-20 transition-opacity duration-200 blur-xl"
+          ></div>
+
+          <CreditCard className="w-5 h-5 transition-transform duration-200 group-hover:scale-110" />
+          <span>Pay now</span>
+
+          {/* Small arrow icon */}
+          <div className="ml-1 transform transition-transform duration-200 group-hover:translate-x-1">
+            <svg
+              className="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M13 7l5 5m0 0l-5 5m5-5H6"
+              />
+            </svg>
+          </div>
+        </button>
+      </form>
+    );
+  };
+
   return (
-    <>
-      <div className="pt-[30px] pb-[30px] px-4">
-        <div className="flex flex-col md:flex-row mx-auto xl:w-[55%]  md:w-[75%] md:px-7 justify-between rounded-xl space-y-7 md:space-y-0 md:space-x-7 items-center shadow-md py-3 px-5 border-gray-700">
-          <button
-            className={`block text-lg ${
-              selectPricing === "basic" ? "text-red-500" : "text-black"
-            } font-bold`}
-            onClick={() => setSelectPricing("basic")}
-          >
-            BASIC PLATFORM
-          </button>
-          <button
-            className={`block text-lg ${
-              selectPricing === "premium" ? "text-red-500" : "text-black"
-            } font-bold`}
-            onClick={() => setSelectPricing("premium")}
-          >
-            PREMIUM PLATFORM
-          </button>
-          <button
-            className={`block text-lg ${
-              selectPricing === "hni" ? "text-red-500" : "text-black"
-            } font-bold`}
-            onClick={() => setSelectPricing("hni")}
-          >
-            HNI PLATFORM
-          </button>
-          {/* <button
-            className={`block text-lg ${
-              selectPricing === "stockOptions" ? "text-red-500" : "text-black"
-            } font-bold`}
-            onClick={() => setSelectPricing("stockOptions")}
-          >
-            STOCK OPTIONS
-          </button>
-          <button
-            className={`block text-lg ${
-              selectPricing === "equityFuture" ? "text-red-500" : "text-black"
-            } font-bold`}
-            onClick={() => setSelectPricing("equityFuture")}
-          >
-            {`EQUITY & FUTURE`}
-          </button> */}
+    <div className="pt-[80px]">
+     
+  <div className="min-h-screen bg-gradient-to-br from-blue-950 via-blue-900 to-indigo-800 p-4 sm:p-8">
+
+        <div className="max-w-7xl mx-auto">
+          {/* Header */}
+          <div className="text-center mb-8 sm:mb-12">
+            <h1 className="text-3xl sm:text-5xl font-bold text-white mb-4 sm:mb-6">
+              Plans for every level
+              <br className="hidden sm:block" />
+              of ambition
+            </h1>
+
+            {/* Billing Toggle */}
+            <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4 mb-6 sm:mb-8">
+              <button
+                onClick={() => setBillingCycle("monthly")}
+                className={`px-3 py-2 rounded-full transition-all text-sm sm:text-base ${
+                  billingCycle === "monthly"
+                    ? "bg-white text-gray-900"
+                    : "text-gray-300 hover:text-white"
+                }`}
+              >
+                Monthly
+              </button>
+              <button
+                onClick={() => setBillingCycle("quarterly")}
+                className={`px-3 py-2 rounded-full transition-all text-sm sm:text-base ${
+                  billingCycle === "quarterly"
+                    ? "bg-white text-gray-900"
+                    : "text-gray-300 hover:text-white"
+                }`}
+              >
+                Quarterly
+              </button>
+              <button
+                onClick={() => setBillingCycle("halfYearly")}
+                className={`px-3 py-2 rounded-full transition-all text-sm sm:text-base ${
+                  billingCycle === "halfYearly"
+                    ? "bg-white text-gray-900"
+                    : "text-gray-300 hover:text-white"
+                }`}
+              >
+                Half-Yearly
+              </button>
+            </div>
+          </div>
+
+          {/* Pricing Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            {plans.map((planType) => {
+              const plan = pricingData[billingCycle][planType];
+              const isPopular = planType === "premium";
+
+              return (
+                <div
+                  key={planType}
+                  className={`relative bg-gray-900/50 backdrop-blur-sm border rounded-2xl p-6 ${
+                    isPopular
+                      ? "border-blue-400 ring-1 ring-blue-400/20"
+                      : "border-gray-700"
+                  }`}
+                >
+                  {isPopular && (
+                    <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
+                      <span className="bg-blue-500 text-white px-3 py-1 rounded-full text-xs sm:text-sm">
+                        Popular
+                      </span>
+                    </div>
+                  )}
+
+                  <div className="text-center">
+                    <h3 className="text-lg sm:text-xl font-semibold text-white mb-3 sm:mb-4">
+                      {planNames[planType]}
+                    </h3>
+
+                    <div className="mb-4 sm:mb-6">
+                      <span className="text-2xl sm:text-3xl font-bold text-white">
+                        {formatPrice(plan.price)}
+                      </span>
+                      <div className="text-xs sm:text-sm text-gray-400 mt-1">
+                        billed {billingCycleLabels[billingCycle]}
+                      </div>
+                    </div>
+
+                    <button
+                      onClick={() => handlePurchase(planType)}
+                      disabled={loading === planType}
+                      className={`w-full py-2 sm:py-3 px-3 sm:px-4 rounded-lg font-medium transition-all text-sm sm:text-base ${getButtonStyle(
+                        planType
+                      )} ${
+                        loading === planType
+                          ? "opacity-50 cursor-not-allowed"
+                          : ""
+                      }`}
+                    >
+                      {loading === planType ? (
+                        <div className="flex items-center justify-center">
+                          <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                          Processing...
+                        </div>
+                      ) : (
+                        getButtonText(planType)
+                      )}
+                    </button>
+                  </div>
+
+                  {/* Features */}
+                  <div className="mt-5 sm:mt-6 space-y-2 sm:space-y-3">
+                    {Object.values(plan.features).map((feature, index) => (
+                      <div
+                        key={index}
+                        className="flex items-center text-xs sm:text-sm text-gray-300"
+                      >
+                        <Check className="w-4 h-4 text-green-400 mr-2 flex-shrink-0" />
+                        {feature}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Footer */}
+          <div className="text-center text-gray-400 text-xs sm:text-sm">
+            <p>Learn more about plans for professionals</p>
+          </div>
         </div>
-        <h2 className="text-4xl text-black py-8 text-center font-semibold">
-          Choose a Plan That <span className="text-red-500">Works for You</span>
-        </h2>
-        <div className="w-full space-y-4 md:space-y-0 card-container md:w-[80%] mx-auto h-auto mb-10 flex justify-evenly flex-row items-center flex-wrap">
-          <PricingCard
-            type={"Monthly Software fees + GST"}
-            price={paymentData[selectPricing].monthly.price}
-            key={1}
-            index={1}
-            bulletPoints={paymentData[selectPricing].monthly.planData}
-          />
-          <PricingCard
-            type={"Quarterly Software fees + GST"}
-            price={paymentData[selectPricing].quarterly.price}
-            key={2}
-            index={2}
-            bulletPoints={paymentData[selectPricing].quarterly.planData}
-          />
-          <PricingCard
-            type={"Half Yearly Software fees + GST"}
-            price={paymentData[selectPricing].halfYearly.price}
-            key={3}
-            index={3}
-            bulletPoints={paymentData[selectPricing].halfYearly.planData}
-          />
-        </div>
+
+        {/* Enhanced Dialog/Modal */}
+        {dialogOpen && (
+          <div className="fixed inset-0 bg-black/60 backdrop-blur-md flex items-center justify-center p-4 z-50 animate-in fade-in duration-200">
+            <div className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 border border-gray-600/50 rounded-3xl max-w-lg w-full relative overflow-hidden shadow-2xl animate-in zoom-in-95 duration-300">
+              {/* Decorative background pattern */}
+              <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-transparent to-purple-500/5"></div>
+
+              {/* Close button - Fixed with better positioning and z-index */}
+              <button
+                onClick={closeDialog}
+                className="absolute top-4 right-4 z-50 p-2 rounded-full bg-gray-800/80 hover:bg-gray-700/80 text-gray-300 hover:text-white transition-all duration-200 border border-gray-600/50 hover:border-gray-500/50"
+              >
+                <X className="w-5 h-5" />
+              </button>
+
+              {/* Dialog Content */}
+              <div className="relative p-8 pt-12">
+                {/* Header with icon */}
+                <div className="text-center mb-8">
+                  <h3 className="text-2xl font-bold text-white mb-2">
+                    {selectedPlan && `${planNames[selectedPlan]} Plan`}
+                  </h3>
+                  <p className="text-gray-400 text-sm">
+                    Complete your subscription
+                  </p>
+                </div>
+
+                {/* Loading State */}
+                {dialogLoading && !dialogError && !dialogData && (
+                  <div className="py-12 text-center">
+                    <div className="relative inline-flex items-center justify-center">
+                      <div className="w-12 h-12 border-4 border-blue-200 border-t-blue-500 rounded-full animate-spin"></div>
+                    </div>
+                    <p className="text-gray-300 mt-6 text-lg">
+                      Preparing your subscription...
+                    </p>
+                    <p className="text-gray-500 text-sm mt-2">
+                      This will only take a moment
+                    </p>
+                  </div>
+                )}
+
+                {/* Error State */}
+                {dialogError && (
+                  <div className="py-12 text-center">
+                    <div className="mx-auto w-16 h-16 rounded-full bg-red-500/10 flex items-center justify-center mb-6">
+                      <AlertCircle className="w-8 h-8 text-red-400" />
+                    </div>
+                    <h4 className="text-xl font-semibold text-white mb-3">
+                      Oops! Something went wrong
+                    </h4>
+                    <p className="text-red-400 mb-8 text-sm leading-relaxed">
+                      {dialogError}
+                    </p>
+                    <button
+                      onClick={closeDialog}
+                      className="px-6 py-3 bg-gray-800 border border-gray-600 text-gray-300 rounded-xl hover:bg-gray-700 hover:border-gray-500 transition-all duration-200"
+                    >
+                      Try Again Later
+                    </button>
+                  </div>
+                )}
+
+                {/* Success State with Subscription Details */}
+                {dialogData && !dialogError && (
+                  <div>
+                    {/* Subscription Summary Card */}
+                    <div className="bg-gradient-to-br from-gray-800/80 to-gray-700/40 backdrop-blur-sm rounded-2xl p-6 mb-8 border border-gray-600/30">
+                      <h4 className="text-lg font-semibold text-white mb-4 flex items-center">
+                        <ShieldCheck className="w-5 h-5 text-green-400 mr-2" />
+                        Subscription Summary
+                      </h4>
+                      <div className="space-y-3">
+                        <div className="flex justify-between items-center py-2 border-b border-gray-600/30">
+                          <span className="text-gray-400">Plan</span>
+                          <span className="text-white font-medium">
+                            {planNames[selectedPlan]}
+                          </span>
+                        </div>
+                        <div className="flex justify-between items-center py-2 border-b border-gray-600/30">
+                          <span className="text-gray-400">Billing Cycle</span>
+                          <span className="text-white font-medium capitalize">
+                            {billingCycleLabels[billingCycle]}
+                          </span>
+                        </div>
+                        <div className="flex justify-between items-center py-2 border-b border-gray-600/30">
+                          <span className="text-gray-400">Amount</span>
+                          <span className="text-2xl font-bold text-white">
+                            {formatPrice(
+                              pricingData[billingCycle][selectedPlan].price
+                            )}
+                          </span>
+                        </div>
+                        {dialogData.subscriptionId && (
+                          <div className="flex justify-between items-center py-2">
+                            <span className="text-gray-400">
+                              Subscription ID
+                            </span>
+                            <span className="text-white font-mono text-xs bg-gray-700/50 px-2 py-1 rounded">
+                              {dialogData.subscriptionId}
+                            </span>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Security Notice */}
+                    <div className="hidden md:block bg-blue-500/10 border border-blue-500/20 rounded-xl p-4 mb-8">
+                      <div className="flex items-start gap-3">
+                        <ShieldCheck className="w-5 h-5 text-blue-400 mt-0.5 flex-shrink-0" />
+                        <div>
+                          <p className="text-blue-300 text-sm font-medium">
+                            Secure Payment
+                          </p>
+                          <p className="text-blue-400/80 text-xs mt-1">
+                            Your payment is protected by bank-grade encryption
+                            and security measures.
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Action Buttons */}
+                    <div className="flex flex-col sm:flex-row gap-4">
+                      <button
+                        onClick={closeDialog}
+                        disabled={dialogLoading}
+                        className="order-2 sm:order-1 flex-1 py-3 px-6 bg-gray-800/50 border border-gray-600/50 text-gray-300 rounded-xl hover:bg-gray-700/50 hover:border-gray-500/50 transition-all duration-200 disabled:opacity-50"
+                      >
+                        Cancel
+                      </button>
+                      {payuParams && (
+                        <div className="order-1 sm:order-2 flex-1">
+                          <PayUForm params={payuParams} />
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
       </div>
-    </>
+    </div>
   );
 };
 
-export default PricingSectionComp;
+export default PricingTable;
