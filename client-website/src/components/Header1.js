@@ -216,7 +216,7 @@ const Header1 = () => {
                   <a
                     href="https://login.brainautotech.com/login"
                     target="_blank"
-                    className="rounded-md bg-purple-500 px-4 py-2 text-sm font-bold md:text-xl w-full
+                    className="rounded-md bg-[#002366] px-4 py-2 text-sm font-bold md:text-xl w-full
                  focus:outline-none focus:ring-2 focus:ring-inset focus:ring-gray-500 active:bg-gray-100 flex justify-center"
                   >
                     Login
@@ -224,7 +224,7 @@ const Header1 = () => {
                   <a
                     href="https://login.brainautotech.com/signup"
                     target="_blank"
-                    className="rounded-md bg-purple-500 px-4 py-2 text-sm font-bold md:text-xl w-full
+                    className="rounded-md bg-[#002366] px-4 py-2 text-sm font-bold md:text-xl w-full
                  focus:outline-none focus:ring-2 focus:ring-inset focus:ring-gray-500 active:bg-gray-100 flex justify-center"
                   >
                     Register
