@@ -9,8 +9,8 @@ const poppinsFont2 = Poppins({ subsets: ["latin"], weight: "500" });
 export default function Footer() {
   return (
     <div className={poppinsFont2.className}>
-      <div className=" flex items-center justify-center md:py-5">
-        <footer className="w-full max-w-7xl  bg-gradient-to-br from-blue-950 via-blue-900 to-indigo-800 rounded-3xl shadow-2xl p-12 text-white relative overflow-hidden">
+      <div className=" flex items-center justify-center ">
+        <footer className="w-full   bg-gradient-to-br from-blue-950 via-blue-900 to-indigo-800  shadow-2xl p-12 text-white relative overflow-hidden">
           <div className="relative z-10">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
               {/* About Company */}
