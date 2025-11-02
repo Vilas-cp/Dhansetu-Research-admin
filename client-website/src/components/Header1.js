@@ -9,6 +9,7 @@ const Header1 = () => {
   const navLinks = [
     { href: "/", label: "Home" },
     { href: "/about", label: "About" },
+    { href: "/market", label: "Market course" },
     { href: "/services", label: "Services" },
     { href: "/pricing", label: "Pricing" },
     { href: "/payment", label: "Payment" },
@@ -25,8 +26,8 @@ const Header1 = () => {
 
   return (
     <>
-      <Popover className="fixed top-0 w-full z-50 bg-white/95 backdrop-blur-md shadow-lg border-b border-gray-100">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <Popover className="fixed top-0 w-full z-50 bg-white backdrop-blur-md shadow-lg border-b border-gray-100">
+        <div className="w-full mx-auto px-4 sm:px-2 lg:px-2">
           <div className="flex items-center justify-between h-20">
             {/* Logo */}
             <a href="/" className="flex-shrink-0 transition-transform hover:scale-105 duration-300">

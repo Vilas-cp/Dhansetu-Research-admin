@@ -261,7 +261,7 @@ const PricingTable = () => {
 
                     <div className="mb-4 sm:mb-6">
                       <span className="text-2xl sm:text-3xl font-bold text-white">
-                        {formatPrice(plan.price)}
+                        {formatPrice(plan.price)}/- + gst 
                       </span>
                       <div className="text-xs sm:text-sm text-gray-400 mt-1">
                         billed {billingCycleLabels[billingCycle]}

@@ -2,7 +2,7 @@ const pricingData = {
   monthly: {
     basicIndex: {
       subscriptionId: 'basic_index_option_monthly_001',
-      price: 6000,
+      price: 8000,
       features: {
         researchCalls: '3–5 Index Option Calls/Week',
         algo: 'Basic Index Option Algo',
@@ -13,7 +13,7 @@ const pricingData = {
     },
     moderateIndex: {
       subscriptionId: 'moderate_index_option_monthly_002',
-      price: 15000,
+      price: 17000,
       features: {
         researchCalls: '7–10 Index Option Calls/Week',
         algo: 'Moderate Risk Index Option Algo',
@@ -24,7 +24,7 @@ const pricingData = {
     },
     advanceIndex: {
       subscriptionId: 'advance_index_option_monthly_003',
-      price: 30000,
+      price: 34000,
       features: {
         researchCalls: '20+ Index Option Calls/Week',
         algo: 'Advanced Multi-Layer Algo (NIFTY/BANKNIFTY)',
