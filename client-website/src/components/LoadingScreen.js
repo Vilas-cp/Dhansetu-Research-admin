@@ -24,11 +24,11 @@ function LoadingScreen() {
      flex justify-center items-center"
     >
       <motion.div className="relative h-full w-full bg-slate-100 flex items-center flex-col justify-center">
-        <div className="h-[25%] w-[25%] text-center text-3xl">
+        <div className="h-[15%] w-auto text-center text-3xl">
           <img
             alt=""
             className="w-full h-full object-contain animate-spinaround"
-            src="https://iili.io/dLmIrFe.md.png"
+            src="/logos/side-text.png"
           />
         </div>
       </motion.div>

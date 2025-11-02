@@ -19,7 +19,7 @@ function Footer() {
           <div className="flex justify-center">
             <div className="flex-row  ">
               <a href="/" className="cursor-pointer outline-none border-none">
-                <img src="/braintechlogo.PNG" width={200} />
+                <img src="/logos/rounded-text.png" width={240} />
               </a>
               <p className="pb-[30px] pt-[10px] text-[#566a8d] pl-[12px]">
                 Brain Auto Tech is a leading algorithmic <br></br>software

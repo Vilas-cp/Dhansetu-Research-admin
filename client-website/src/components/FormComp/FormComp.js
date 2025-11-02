@@ -121,7 +121,7 @@ function FormComp() {
       </a>
       <div className="xl:w-2/6 lg:w-2/4 w-full mx-auto p-8 bg-slate-50 rounded-lg relative border-[12px] border-white shadow-2xl ">
         <div className="flex justify-center mb-[20px]">
-          <img src="/braintechlogo.PNG" width={150} />
+          <img src="/logos/rounded-text.png" width={240} />
         </div>
         <h2 className="text-2xl text-center font-bold mb-7 text-[#1f3a68]">
           Fill the form for personal assistance
