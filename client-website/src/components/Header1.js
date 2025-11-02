@@ -20,7 +20,7 @@ const Header1 = () => {
     { href: "/terms", label: "Terms and Condition" },
     { href: "/refund", label: "Refund Policy" },
     {href:"/complaint",label:"Complaint"},
-    {href:"/disclaimer",label:"Disclaimer"}
+    {href:"/disclosure",label:"Disclosure"}
   ];
 
   return (
