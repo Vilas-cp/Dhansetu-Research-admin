@@ -181,7 +181,7 @@ export default function AboutUs() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-4xl mx-auto text-center">
             <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-6">
-              We Don't Sell Dreams, We Build Systems
+              {`We Don't Sell Dreams, We Build Systems`}
             </h2>
             <p className="text-xl text-gray-600 leading-relaxed">
               Dhansetu Research helps you grow consistently through data-driven research, automated execution, and complete risk control. Our SEBI-registered platform combines expert analysis with cutting-edge technology to deliver results you can trust.
@@ -307,7 +307,7 @@ export default function AboutUs() {
                 Learn While You Earn
               </h2>
               <p className="text-xl text-gray-600 mb-8 leading-relaxed">
-                We don't just provide signals—we help you understand the reasoning behind every decision. Our mission is to make every trader self-reliant through continuous education and transparent communication.
+                {`We don't just provide signals—we help you understand the reasoning behind every decision. Our mission is to make every trader self-reliant through continuous education and transparent communication.`}
               </p>
               
               <div className="space-y-4">
@@ -346,7 +346,7 @@ export default function AboutUs() {
                 <div className="space-y-6">
                   <div className="border-l-4 border-[#002366] pl-6">
                     <h4 className="font-bold text-gray-900 mb-2">Build Confidence</h4>
-                    <p className="text-gray-600">Understand the 'why' behind every trade decision</p>
+                    <p className="text-gray-600">{`Understand the 'why' behind every trade decision`}</p>
                   </div>
                   <div className="border-l-4 border-[#002366] pl-6">
                     <h4 className="font-bold text-gray-900 mb-2">Data-Based Decisions</h4>

@@ -238,7 +238,7 @@ We clearly communicate all service charges and subscription costs before onboard
           <p className="text-left text-[#555555] pt-[10px] font-bold leading-loose">{`How It Helps You:`}</p>
           <ul className="list-disc pl-4">
             <li className="text-left text-[#555555]  pt-[10px]">
-              You know exactly what you're paying for
+             {`You know exactly what you're paying for`} 
             </li>
             <li className="text-left text-[#555555]  pt-[10px]">
               No confusion or hidden terms
