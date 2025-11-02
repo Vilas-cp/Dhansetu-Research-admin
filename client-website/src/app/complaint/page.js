@@ -205,13 +205,13 @@ const Complaint = () => {
         </div>
 
         {/* Image Gallery Section */}
-        <div className="pt-[40px] pb-[30px] px-80 space-y-3">
+        <div className="pt-[40px] pb-[30px] px-3 lg:px-80 space-y-3">
           <h2 className="text-[#002366] text-3xl font-bold">
             Complaint Status
           </h2>
           <p>Formats for investors complaints data to be disclosed monthly by RAs on their website/mobile application:</p>
           <h3 className="text-[#002366] text-2xl font-bold">Data for the month ending - September 2025</h3>
-          <div>
+          <div className="w-full overflow-x-auto">
             <table className="border-collapse w-full">
               <thead>
                 <tr>
@@ -242,7 +242,7 @@ const Complaint = () => {
           <p>Average Resolution time is the sum total of time taken to resolve each complaint in days, in the current 
             month divided by total number of complaints resolved in the current month.</p>
           <h3 className="text-[#002366] text-2xl font-bold">Trend of monthly disposal of complaints</h3>
-          <div>
+          <div className="w-full overflow-x-auto">
             <table className="border-collapse w-full">
               <thead>
                 <tr>
@@ -276,7 +276,7 @@ const Complaint = () => {
             *Multiple complaints done by a single client count as one.
           </p>
           <h3 className="text-[#002366] text-2xl font-bold">Trend of annual disposal of complaints</h3>
-          <div>
+          <div className="w-full overflow-x-auto">
             <table className="border-collapse w-full">
               <thead>
                 <tr>
@@ -317,13 +317,13 @@ const Complaint = () => {
 
 function Th2({children}) {
   return (
-    <th className="border border-gray-400 px-4 py-2">{children}</th>
+    <th className="border border-gray-400 px-2 py-1 lg:px-4 lg:py-2">{children}</th>
   );
 }
 
 function Td2({ children }) {
   return (
-    <td className="border border-gray-400 px-4 py-2">{children}</td>
+    <td className="border border-gray-400 px-2 py-1 lg:px-4 lg:py-2">{children}</td>
   );
 }
 
