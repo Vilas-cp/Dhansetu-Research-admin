@@ -1,258 +1,213 @@
 "use client";
-import React, { Fragment } from "react";
+import React, { Fragment, useState } from "react";
 import { Popover, Transition } from "@headlessui/react";
-import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/solid";
-import {
-
-  Button,
-  DropdownItem,
-  DropdownTrigger,
-  Dropdown,
-  DropdownMenu,
-} from "@nextui-org/react";
-import { Poppins } from "next/font/google";
-
-const poppinsFont = Poppins({ subsets: ["latin"], weight: "300" });
-const poppinsFont1 = Poppins({ subsets: ["latin"], weight: "700" });
-const poppinsFont2 = Poppins({ subsets: ["latin"], weight: "500" });
+import { Bars3Icon, XMarkIcon, ChevronDownIcon } from "@heroicons/react/24/solid";
 
 const Header1 = () => {
+  const [isPolicyOpen, setIsPolicyOpen] = useState(false);
+
+  const navLinks = [
+    { href: "/", label: "Home" },
+    { href: "/about", label: "About" },
+    { href: "/services", label: "Services" },
+    { href: "/pricing", label: "Pricing" },
+    { href: "/payment", label: "Payment" },
+  ];
+
+  const policyLinks = [
+    { href: "/disclaimer", label: "Disclaimer" },
+    { href: "/privacy", label: "Privacy Policy" },
+    { href: "/terms", label: "Terms and Condition" },
+    { href: "/refund", label: "Refund Policy" },
+    {href:"/complaint",label:"Complaint"},
+    {href:"/disclaimer",label:"Disclaimer"}
+  ];
+
   return (
     <>
-      <div className={poppinsFont1.className}>
-        <Popover
-          className={
-            "flex items-center border-b-2 w-[100%] px-6 bg-white py-2 h-20 text-black z-[100]  fixed shadow-2xl bg-opacity-100 bg-blur"
-          }
-        >
-          <a href="/" className="cursor-pointer outline-none border-none">
-            <img src="/logos/side-text.png" className="h-full w-56"/>
-          </a>
-          <div className="grow flex justify-center items-center">
-            <div className="hidden lg:flex items-center gap-2 md:gap-8 ">
-              <a href="/" className="textdesign hover:cursor-pointer">
-                Home
-              </a>
-              <a href="/about" className="textdesign hover:cursor-pointer">
-                About
-              </a>
-              <a href="/services" className="textdesign hover:cursor-pointer">
-                Services
-              </a>
+      <Popover className="fixed top-0 w-full z-50 bg-white/95 backdrop-blur-md shadow-lg border-b border-gray-100">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-20">
+            {/* Logo */}
+            <a href="/" className="flex-shrink-0 transition-transform hover:scale-105 duration-300">
+              <img src="/logos/side-text.png" className="h-12 w-auto" alt="Logo" />
+            </a>
 
-              <a href="/pricing" className="textdesign cursor-pointer">
-                Pricing
-              </a>
-
-              <a href="/payment" className="textdesign hover:cursor-pointer">
-                Payment
-              </a>
-              <Dropdown>
-                <DropdownTrigger>
-                  <Button
-                    disableRipple
-                    className="p-0 bg-transparent data-[hover=true]:bg-transparent"
-                    radius="sm"
-                    variant="light"
-                  >
-                    <div className="flex gap-1 items-center justify-center textdesign">
-                      Policy
-                      <img
-                        src="https://static.thenounproject.com/png/1123247-200.png"
-                        alt=""
-                        width={23}
-                      />
-                    </div>
-                  </Button>
-                </DropdownTrigger>
-
-                <DropdownMenu
-                  aria-label="ACME features"
-                  className="w-[240px] bg-gray-100 rounded-[8px]  shadow-xl text-[16px] flex gap-[10px] "
-                  itemClasses={{
-                    base: "gap-4",
-                  }}
+            {/* Desktop Navigation */}
+            <nav className="hidden lg:flex items-center space-x-8">
+              {navLinks.map((link) => (
+                <a
+                  key={link.href}
+                  href={link.href}
+                  className="textdesign text-base"
                 >
-                  <DropdownItem
-                    key="autoscal"
-                    className="flex justify-center py-[8px]"
+                  {link.label}
+                </a>
+              ))}
+
+              {/* Policy Dropdown */}
+              <div className="relative group">
+                <button
+                  onMouseEnter={() => setIsPolicyOpen(true)}
+                  onMouseLeave={() => setIsPolicyOpen(false)}
+                  className="textdesign text-base flex items-center gap-1"
+                >
+                  Policy
+                  <ChevronDownIcon className={`w-4 h-4 transition-transform duration-300 ${isPolicyOpen ? 'rotate-180' : ''}`} />
+                </button>
+                
+                <Transition
+                  show={isPolicyOpen}
+                  enter="transition ease-out duration-200"
+                  enterFrom="opacity-0 translate-y-1"
+                  enterTo="opacity-100 translate-y-0"
+                  leave="transition ease-in duration-150"
+                  leaveFrom="opacity-100 translate-y-0"
+                  leaveTo="opacity-0 translate-y-1"
+                >
+                  <div
+                    onMouseEnter={() => setIsPolicyOpen(true)}
+                    onMouseLeave={() => setIsPolicyOpen(false)}
+                    className="absolute left-1/2 transform -translate-x-1/2 mt-3 w-56"
                   >
-                    <a className="textdesign font-bold" href="/disclaimer">
-                      Disclaimer
-                    </a>
-                  </DropdownItem>
-                  <DropdownItem
-                    key="supreme_support"
-                    className="flex justify-center py-[8px]"
-                  >
-                    <a className="textdesign font-bold" href="/privacy">
-                      Privacy Policy
-                    </a>
-                  </DropdownItem>
-                  <DropdownItem
-                    key="autoscaling"
-                    className="flex justify-center py-[8px]"
-                  >
-                    <a className="textdesign font-bold" href="/terms">
-                      Terms and Condition
-                    </a>
-                  </DropdownItem>
-                  <DropdownItem
-                    key="supreme_supt"
-                    className="flex justify-center py-[8px]"
-                  >
-                    <a className="textdesign font-bold" href="/refund">
-                      Refund Policy
-                    </a>
-                  </DropdownItem>
-                </DropdownMenu>
-              </Dropdown>
-              <a href="/contact" className="textdesign">
+                    <div className="rounded-xl shadow-xl bg-white ring-1 ring-black ring-opacity-5 overflow-hidden">
+                      <div className="relative grid gap-1 p-2">
+                        {policyLinks.map((link) => (
+                          <a
+                            key={link.href}
+                            href={link.href}
+                            className="flex items-center px-4 py-3 text-sm font-semibold text-[#1f3a68] hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 rounded-lg transition-all duration-200"
+                          >
+                            <span className="w-1.5 h-1.5 bg-[#ff3221] rounded-full mr-3"></span>
+                            {link.label}
+                          </a>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </Transition>
+              </div>
+
+              <a href="/contact" className="textdesign text-base">
                 Contact
               </a>
+            </nav>
+
+            {/* Auth Buttons Desktop */}
+            <div className="hidden lg:flex items-center space-x-3">
+              <a
+                href="https://login.brainautotech.com/login"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-6 py-2.5 bg-[#002366] text-white font-semibold rounded-lg hover:bg-[#003399] transform hover:scale-105 transition-all duration-300 shadow-md hover:shadow-lg"
+              >
+                Login
+              </a>
+              <a
+                href="https://login.brainautotech.com/signup"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-6 py-2.5 bg-gradient-to-r from-[#ff3221] to-[#ff5544] text-white font-semibold rounded-lg hover:from-[#ff4532] hover:to-[#ff6655] transform hover:scale-105 transition-all duration-300 shadow-md hover:shadow-lg"
+              >
+                Register
+              </a>
+            </div>
+
+            {/* Mobile Menu Button */}
+            <div className="flex lg:hidden">
+              <Popover.Button className="inline-flex items-center justify-center p-2 rounded-lg text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-[#002366] transition-all duration-200">
+                <span className="sr-only">Open menu</span>
+                <Bars3Icon className="h-6 w-6" aria-hidden="true" />
+              </Popover.Button>
             </div>
           </div>
-          <div className="flex items-center justify-end lg:hidden">
-            <Popover.Button
-              className="inline-flex items-center justify-center rounded-md bg-white p-2 text-gray-400
-     hover:bg-gray-100 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500"
-            >
-              <span className="sr-only">Open menu</span>
-              <Bars3Icon className="h-6 w-6" aria-hidden="true" />
-            </Popover.Button>
-          </div>
-          <Transition
-            as={Fragment}
-            enter="duration-200 ease-out"
-            enterFrom="opacity-0 scale-95"
-            enterTo="opacity-100 scale-100"
-            leave="duration-100 ease-in"
-            leaveFrom="opacity-100 scale-100"
-            leaveTo="opacity-0 scale-95"
-          >
-            <Popover.Panel
-              focus
-              className="absolute   inset-x-0 top-0 origin-top-right transform p-2 transition xl:hidden z-[100]"
-            >
-              <div className="rounded-lg overflow-y-auto max-h-[90vh] bg-[#aee9e7] !text-[#102b5c] shadow-lg ring-1 ring-black ring-opacity-5 divide-y-2 divide-gray-50">
-                <div className="px-5 pt-5 pb-6">
-                  <div className="flex items-center justify-between">
-                    <a
-                      href="/"
-                      className="cursor-pointer outline-none border-none"
-                    >
-                      <img src="/Textonly.png" width={160} className="" />
-                    </a>
-                    <div className="-mr-2">
-                      <Popover.Button
-                        className="inline-flex items-center justify-center rounded-md bg-[#aee9e7] p-2 text-black
-     hover:bg-gray-100 hover:text-gray-500 focus:outline-none"
-                      >
-                        <span className="sr-only">Close menu</span>
-                        <XMarkIcon className="h-6 w-6" aria-hidden="true" />
-                      </Popover.Button>
-                    </div>
-                  </div>
-                  <div className="mt-6">
-                    <nav className="grid gap-y-5 text-white font-bold text-center">
-                      <a
-                        href="/"
-                        className="focus:outline-none focus:ring-2 !text-[#102b5c] focus:ring-inset focus:ring-gray-500 px-2"
-                      >
-                        Home
-                      </a>
-                      <a
-                        href="/about"
-                        className="focus:outline-none focus:ring-2 !text-[#102b5c] focus:ring-inset focus:ring-gray-500 px-2"
-                      >
-                        About
-                      </a>
-                      <a
-                        href="/services"
-                        className="focus:outline-none focus:ring-2 !text-[#102b5c] focus:ring-inset focus:ring-gray-500 px-2"
-                      >
-                        Services
-                      </a>
+        </div>
 
-                      <a
-                        href="/pricing"
-                        className="focus:outline-none focus:ring-2 !text-[#102b5c] focus:ring-inset focus:ring-gray-500 px-2"
-                      >
-                        Pricing
-                      </a>
-                      <a
-                        href="/payment"
-                        className="focus:outline-none focus:ring-2 !text-[#102b5c] focus:ring-inset focus:ring-gray-500 px-2"
-                      >
-                        Payment
-                      </a>
-                      <a
-                        href="/disclaimer"
-                        className="focus:outline-none focus:ring-2 !text-[#102b5c] focus:ring-inset focus:ring-gray-500 px-2"
-                      >
-                        Disclaimer
-                      </a>
-                      <a
-                        href="/privacy"
-                        className="focus:outline-none focus:ring-2 !text-[#102b5c] focus:ring-inset focus:ring-gray-500 px-2"
-                      >
-                        Privacy Policy
-                      </a>
-                      <a
-                        href="/terms"
-                        className="focus:outline-none focus:ring-2 !text-[#102b5c] focus:ring-inset focus:ring-gray-500 px-2"
-                      >
-                        Terms and Condition
-                      </a>
-                      <a
-                        href="/contact"
-                        className="focus:outline-none focus:ring-2 !text-[#102b5c] focus:ring-inset focus:ring-gray-500 px-2"
-                      >
-                        Contact
-                      </a>
-                    </nav>
-                  </div>
-                  <div className="mt-6 flex items-center gap-2 text-white">
+        {/* Mobile Menu */}
+        <Transition
+          as={Fragment}
+          enter="duration-200 ease-out"
+          enterFrom="opacity-0 scale-95"
+          enterTo="opacity-100 scale-100"
+          leave="duration-100 ease-in"
+          leaveFrom="opacity-100 scale-100"
+          leaveTo="opacity-0 scale-95"
+        >
+          <Popover.Panel className="absolute top-0 inset-x-0 p-2 transition transform origin-top-right lg:hidden z-50">
+            <div className="rounded-2xl shadow-2xl bg-white ring-1 ring-black ring-opacity-5 overflow-hidden">
+              <div className="px-5 pt-4 pb-3">
+                {/* Mobile Header */}
+                <div className="flex items-center justify-between mb-6">
+                  <a href="/" className=" w-full flex items-center justify-center">
+                    <img src="/logos/side-text.png" className="h-10 w-auto" alt="Logo" />
+                  </a>
+                  <Popover.Button className="inline-flex items-center justify-center p-2 rounded-lg text-gray-700 hover:bg-gray-100 focus:outline-none transition-all duration-200">
+                    <span className="sr-only">Close menu</span>
+                    <XMarkIcon className="h-6 w-6" aria-hidden="true" />
+                  </Popover.Button>
+                </div>
+
+                {/* Mobile Navigation */}
+                <nav className="grid gap-2">
+                  {navLinks.map((link) => (
                     <a
-                      href="https://login.brainautotech.com/login"
-                      target="_blank"
-                      className="rounded-md bg-[#002366] px-4 py-2 text-sm font-bold md:text-xl w-full
-                 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-gray-500 active:bg-gray-100 flex justify-center"
+                      key={link.href}
+                      href={link.href}
+                      className="px-4 py-3 text-base font-bold text-[#1f3a68] hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 rounded-lg transition-all duration-200"
                     >
-                      Login
+                      {link.label}
                     </a>
-                    <a
-                      href="https://login.brainautotech.com/signup"
-                      target="_blank"
-                      className="rounded-md bg-[#002366] px-4 py-2 text-sm font-bold md:text-xl w-full
-                 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-gray-500 active:bg-gray-100 flex justify-center"
-                    >
-                      Register
-                    </a>
+                  ))}
+
+                  {/* Policy Section Mobile */}
+                  <div className="border-t border-gray-200 mt-2 pt-2">
+                    <div className="px-4 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                      Policy
+                    </div>
+                    {policyLinks.map((link) => (
+                      <a
+                        key={link.href}
+                        href={link.href}
+                        className="px-4 py-3 text-sm font-semibold text-[#1f3a68] hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 rounded-lg transition-all duration-200 flex items-center"
+                      >
+                        <span className="w-1.5 h-1.5 bg-[#ff3221] rounded-full mr-3"></span>
+                        {link.label}
+                      </a>
+                    ))}
                   </div>
+
+                  <a
+                    href="/contact"
+                    className="px-4 py-3 text-base font-bold text-[#1f3a68] hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 rounded-lg transition-all duration-200"
+                  >
+                    Contact
+                  </a>
+                </nav>
+
+                {/* Mobile Auth Buttons */}
+                <div className="mt-6 grid grid-cols-2 gap-3">
+                  <a
+                    href="https://login.brainautotech.com/login"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="px-4 py-3 bg-[#002366] text-white text-center font-semibold rounded-lg hover:bg-[#003399] transition-all duration-200 shadow-md"
+                  >
+                    Login
+                  </a>
+                  <a
+                    href="https://login.brainautotech.com/signup"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="px-4 py-3 bg-gradient-to-r from-[#ff3221] to-[#ff5544] text-white text-center font-semibold rounded-lg hover:from-[#ff4532] hover:to-[#ff6655] transition-all duration-200 shadow-md"
+                  >
+                    Register
+                  </a>
                 </div>
               </div>
-            </Popover.Panel>
-          </Transition>
-          <div className="hidden lg:flex lg:gap-[20px] text-white">
-            <a
-              href="https://login.brainautotech.com/login"
-              target="_blank"
-              className="mr-2 flex items-center justify-center  bg-[#002366] duration-300 hover:bg-slate-700 xl:w-[85px] lg:w-[50px] h-[5vh] font-light rounded-xl text-[2vh]"
-            >
-              Login
-            </a>
-            <a
-              href="https://login.brainautotech.com/signup"
-              target="_blank"
-              className="mr-2  flex items-center justify-center bg-[#002366] duration-300 hover:bg-slate-700 xl:w-[85px] lg:w-[50px] h-[5vh] font-light rounded-xl text-[2vh]"
-            >
-              Register
-            </a>
-          </div>
-        </Popover>
-      </div>
-
+            </div>
+          </Popover.Panel>
+        </Transition>
+      </Popover>
     </>
   );
 };
