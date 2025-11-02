@@ -1,11 +1,11 @@
 const metadataProps = {
   home: {
     title:
-      "Innovative AI-Powered Solutions for Trading & Investment - BrainAutoTech",
+      "Innovative AI-Powered Solutions for Trading & Investment - DhansetuResearch",
     description: `Explore our advanced ALGO software, 
     featuring powerful strategies for seamless trading 
     across multiple brokers. Achieve maximum convenience and 
-    success in your investments with BrainAutoTech. &#128222; +91 9179042673`,
+    success in your investments with DhansetuResearch. &#128222; +91 9179042673`,
   },
   algoServices: {
     title: "Dhansetu",
@@ -46,63 +46,63 @@ const metadataProps = {
   },
   itServices: {
     title:
-      "Comprehensive IT Services: Digital Marketing, Web, Mobile, Software & More - BrainAutoTech",
-    description: `BrainAutoTech offering web development, mobile development, 
+      "Comprehensive IT Services: Digital Marketing, Web, Mobile, Software & More - DhansetuResearch",
+    description: `DhansetuResearch offering web development, mobile development, 
     graphic design, software development, game development, and digital marketing 
     services. Contact us for expert IT solutions.`,
     webDevelopment: {
       title:
-        "Expert Web Development Services - Affordable & Professional - BrainAutoTech",
+        "Expert Web Development Services - Affordable & Professional - DhansetuResearch",
       description: `Our experienced team provides expert web development, design, and 
       testing services. We deliver professional and affordable solutions for all your 
       website needs.`,
     },
     mobileAppDevelopment: {
       title:
-        "Custom Mobile App Development - High Performance & Unique - BrainAutoTech",
+        "Custom Mobile App Development - High Performance & Unique - DhansetuResearch",
       description: `Expert mobile app development with quality assurance, safety, 
       and integration. We design unique, high-performance apps to suit your business 
       needs. 100+ successful apps.`,
     },
     graphicVideoDesign: {
       title:
-        "Empowering Change: Progressive Strategies for Growth - BrainAutoTech",
+        "Empowering Change: Progressive Strategies for Growth - DhansetuResearch",
       description: `Transform your business with innovative strategies and holistic 
       approaches. Engage in front-end e-business and redefine cross-platform materials 
       for empowered growth.`,
     },
     softwareDevelopment: {
-      title: "Mastering Software Design & Development - BrainAutoTech",
+      title: "Mastering Software Design & Development - DhansetuResearch",
       description: `With over 18+ years of experience, we delivers customized software 
       solutions globally. From start-ups to enterprises, we cater to diverse client needs 
       with domain expertise.`,
     },
     gameDevelopment: {
       title:
-        "Engaging Mobile Game Development for Android & iOS - BrainAutoTech",
-      description: `BrainAutoTech crafts mobile games with captivating UI for 
+        "Engaging Mobile Game Development for Android & iOS - DhansetuResearch",
+      description: `DhansetuResearch crafts mobile games with captivating UI for 
       Android & iOS. From concept to reality, we focus on consumer satisfaction, 
       thorough testing, and secure in-app purchases.`,
     },
     digitalMarketing: {
       title:
-        "Effective Digital Marketing Solutions - Boost Your Online Presence - BrainAutoTech",
+        "Effective Digital Marketing Solutions - Boost Your Online Presence - DhansetuResearch",
       description: `Discover powerful digital marketing strategies to enhance your online 
       presence. Our solutions drive growth and engagement for your business.`,
     },
   },
   pricing: {
-    title: "Transparent Pricing for Quality Services - BrainAutoTech",
+    title: "Transparent Pricing for Quality Services - DhansetuResearch",
     description: `Explore our transparent pricing for high-quality services. 
     Get the best value for your investment with clear and competitive pricing options.`,
   },
   indicator: {
-    title: "Indicator  - BrainAutoTech",
-    description: `Get the indicator details here for any services of BrainAutoTech.`,
+    title: "Indicator  - DhansetuResearch",
+    description: `Get the indicator details here for any services of DhansetuResearch.`,
   },
   payment: {
-    title: "Payment  - BrainAutoTech",
-    description: `Get the payment details here for any services of BrainAutoTech.`,
+    title: "Payment  - DhansetuResearch",
+    description: `Get the payment details here for any services of DhansetuResearch.`,
   },
   contact: {
     title: "Contact Us for Expert Assistance | Reach Out Today!",
@@ -111,19 +111,19 @@ const metadataProps = {
   },
   about: {
     title:
-      "Brain Auto Tech: Emotionless Auto Trading Terminal  - BrainAutoTech",
+      "Dhansetu Research: Emotionless Auto Trading Terminal  - DhansetuResearch",
     description: `Learn about our innovative solutions and commitment to your success. 
     Discover how we can help you achieve your goals with cutting-edge technology.`,
   },
   complaint: {
     title:
-      "Brain Auto Tech: Emotionless Auto Trading Terminal  - BrainAutoTech",
+      "Dhansetu Research: Emotionless Auto Trading Terminal  - DhansetuResearch",
     description: `Learn about our innovative solutions and commitment to your success. 
     Discover how we can help you achieve your goals with cutting-edge technology.`,
   },
   disclosure: {
     title:
-      "Brain Auto Tech: Emotionless Auto Trading Terminal  - BrainAutoTech",
+      "Dhansetu Research: Emotionless Auto Trading Terminal  - DhansetuResearch",
     description: `Learn about our innovative solutions and commitment to your success. 
     Discover how we can help you achieve your goals with cutting-edge technology.`,
   },

@@ -120,7 +120,7 @@ function PurpleCardSection({ setLoading, indexLoad }) {
               OUR COMPANY
             </p>
             <h2 className="text-white text-2xl font-bold h1">
-              Brain Auto Tech provides best Algo Software for you
+              Dhansetu Research provides best Algo Software for you
             </h2>
           </div>
           <div className="md:w-[40%] w-full text-[#9b9aad] text-base p2">
@@ -140,7 +140,7 @@ function PurpleCardSection({ setLoading, indexLoad }) {
             <a
               href="/algo-services/"
               target="_blank"
-              title="Brain Auto Tech Docs"
+              title="Dhansetu Research Docs"
             >
               Explore our automated services.
             </a>

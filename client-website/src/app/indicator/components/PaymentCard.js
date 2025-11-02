@@ -377,7 +377,7 @@ function PaymentForm({
           key: "rzp_live_vegmCeNoQ1JTfU",
           amount: order.amount,
           currency: order.currency,
-          name: "Brain Auto Tech",
+          name: "Dhansetu Research",
           description: "Strategy Transaction",
           order_id: order.id,
           prefill: {

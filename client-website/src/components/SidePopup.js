@@ -7,7 +7,7 @@ function SidePopup() {
         <a
           href="https://brainautotech.gitbook.io/intro/"
           target="_blank"
-          title="Brain Auto Tech Docs"
+          title="Dhansetu Research Docs"
         >
           <div className="h-10 w-10 bg-yellow-600 rounded-full flex items-center justify-evenly cursor-pointer duration-300 ease-in-out hover:bg-slate-700 hover:!invert-0">
             <img

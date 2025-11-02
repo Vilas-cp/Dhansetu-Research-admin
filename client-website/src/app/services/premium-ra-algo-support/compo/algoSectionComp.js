@@ -13,15 +13,15 @@ const SectionCompParaData = [
 fully automated execution, and robust risk management — all in one package.`,
   },
   {
-    text: `At Brain Auto Tech, we go beyond standard algo trading by offering a comprehensive solution 
-where research meets automation. From portfolio customization to performance tracking, here’s what 
+    text: `At Dhansetu Research, we go beyond standard algo trading by offering a comprehensive solution 
+where research meets automation. From portfolio customization to performance tracking, here's what 
 you get with our Premium RA + Algo Combo:`,
   },
 ];
 
 const SectionCompParaData1 = [
   {
-    text: `At Brain Auto Tech, we are committed to providing you with not just technology but 
+    text: `At Dhansetu Research, we are committed to providing you with not just technology but 
 complete trading empowerment. Contact us today and experience the perfect blend of Research + Algo 
 support to achieve your financial goals.`,
   },

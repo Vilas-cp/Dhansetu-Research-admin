@@ -21,7 +21,7 @@ const Page = () => {
           </h2>
           <div className="text-lg">
             <li className="text-left text-[#555555]  p1 pt-[30px] font-medium ">
-              All subscription fees paid to Brain Auto Tech is not refundable.
+              All subscription fees paid to Dhansetu Research is not refundable.
               We do not provide trading tips nor are we investment adviser.
             </li>
             <li className="text-left text-[#555555]   p1  font-medium  pt-[5px]">
@@ -43,7 +43,7 @@ const Page = () => {
               <li className="pt-[5px] ">
                 Past performance of advise/strategy/model does not indicate the
                 future performance of any current or future strategy/model or
-                advise by Brain Auto Tech Trades and actual returns may differ
+                advise by Dhansetu Research Trades and actual returns may differ
                 significantly from that depicted herein due to various factors
                 including but not limited to impact costs, expense charged,
                 timing of entry/exit, timing of additional flows/redemptions,

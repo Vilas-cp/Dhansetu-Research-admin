@@ -90,10 +90,10 @@ const Aboutus = () => {
         {/* Hero Section */}
         <div className="pt-[80px] flex justify-center items-center bg-[#002366] h-[42vh] xl:h-[47vh] w-full">
 
-            <h1 className="text-white md:text-[8vh] text-[6vh] font-[800] text-center tracking-[1px]">
-              About Dhansetu
-            </h1>
-        
+          <h1 className="text-white md:text-[8vh] text-[6vh] font-[800] text-center tracking-[1px]">
+            About Dhansetu
+          </h1>
+
         </div>
 
         {/* Image Gallery Section */}
@@ -104,7 +104,7 @@ const Aboutus = () => {
                 <img
                   src="https://live.21lab.co/nanosoft/wp-content/uploads/2018/05/283-pai4685-jj-id-392158-jpeg1-1000x852.jpg"
                   className="rounded-md shadow-2xl hover:-translate-y-3 transition-transform duration-300 ease-out"
-                  alt="Brain Auto Tech Office"
+                  alt="Dhansetu Research Office"
                 />
               </div>
               <div className="flex-row">
@@ -158,11 +158,10 @@ Founded by Mr. Vivek Singh Rajpoot, a seasoned market expert with over 8 years o
                 <div
                   key={index}
                   ref={(el) => (cardRefs.current[index] = el)}
-                  className={`transform transition-all duration-700 ${
-                    visibleCards[index]
+                  className={`transform transition-all duration-700 ${visibleCards[index]
                       ? "translate-y-0 opacity-100"
                       : "translate-y-10 opacity-0"
-                  }`}
+                    }`}
                 >
                   <div className="w-full max-w-4xl mx-auto">
                     <div className="bg-white rounded-2xl shadow-xl p-10 hover:shadow-2xl transition-shadow duration-300">

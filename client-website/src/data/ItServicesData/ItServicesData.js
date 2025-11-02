@@ -44,7 +44,7 @@ redefine cross-platform materials for enabled methods of empowerment. Uniquely i
     title: "Software Development",
     description: `Today's world is all about “Innovation or persuasion” 
     and the same is applicable across industries, including IT sector. 
-    With over 18+ years of experience, BrainAutoTech has mastered the art of software designing and development.
+    With over 18+ years of experience, DhansetuResearch has mastered the art of software designing and development.
 
 We deliver customized solutions across the globe for a variety of clients 
 belonging from start-up levels to big enterprises. With vast domain knowledge 
@@ -53,7 +53,7 @@ and in-depth technological expertise, we are capable enough to cater needs of ou
   },
   {
     title: "Game Development",
-    description: `Brain Auto Tech believes in developing games 
+    description: `Dhansetu Research believes in developing games 
     with attractive UI that highly engage your targeted customers. We develop 
     games for two of the most widely used mobile platforms: Android OS and iOS. 
     Moreover, we are a game development agency that explicitly focuses on your craziest 
@@ -76,7 +76,7 @@ and bug-free. We focus on providing the most secure in-app purchases to ensure t
   },
   {
     title: "Partners",
-    description: `Brain Auto Tech has partnered with softwareView for their charting solution. 
+    description: `Dhansetu Research has partnered with softwareView for their charting solution. 
     A social software platform that provides an exceptional charting experience through which users can track 
     the prices of various instruments like https://www.softwareview.com/symbols/CBOT_MINI-YM1!/ and EUR USD LINK 
     https://www.softwareview. . Can track easily. .com/symbols/EURUSD/ We will need links to Dow futures and EUR USD.

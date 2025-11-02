@@ -19,7 +19,7 @@ const Page = () => {
             Terms & Condition
           </h2>
           <p className="text-left text-black pt-[10px] leading-loose font-medium">
-            {'Dear Client, Welcome to "Brain Auto Tech ".'}
+            {'Dear Client, Welcome to "Dhansetu Research ".'}
           </p>
           <p className="text-left text-black pt-[10px] leading-loose font-medium">
             {

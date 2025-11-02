@@ -16,7 +16,7 @@ while reducing human intervention.`,
   },
 
   {
-    text: `At Brain Auto Tech, we offer exceptional algorithmic trading services designed to empower investors
+    text: `At Dhansetu Research, we offer exceptional algorithmic trading services designed to empower investors
 and traders. Our cutting-edge algorithms, created by a team of experts, provide incredible speed,
 efficiency and precision in executing trades. Here are some algo trading services we offer:`,
   },

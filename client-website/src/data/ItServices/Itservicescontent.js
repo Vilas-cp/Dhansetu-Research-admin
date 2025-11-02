@@ -29,7 +29,7 @@ const Itservicescontent = [
   },
   {
     title: "Game Development",
-    description: `Brain Auto Tech believes in developing games with highly engaging UI.`,
+    description: `Dhansetu Research believes in developing games with highly engaging UI.`,
     imgSrc: `https://img.icons8.com/?size=256&id=zuXTPMKU8SkB&format=png`,
     footerNote: "Read more",
     routing: `/it-services/game-development`,

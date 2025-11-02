@@ -4,8 +4,8 @@ import { Toaster } from "react-hot-toast";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {
-  title: "Disclaimer - Brain Auto Tech",
-  description: "Brain Auto Tech",
+  title: "Disclaimer - Dhansetu Research",
+  description: "Dhansetu Research",
   alternates: {
     canonical: "https://brainautotech.com/disclaimer/",
   },

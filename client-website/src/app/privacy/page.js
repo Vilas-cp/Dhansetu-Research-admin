@@ -19,9 +19,9 @@ const Page = () => {
             Website Privacy Policy
           </h2>
           <p className="text-left text-[#555555] pt-[10px] leading-loose">
-            {`At Brain Auto Tech, one of our principle needs is the
+            {`At Dhansetu Research, one of our principle needs is the
           protection of our visitors. This Privacy Policy report contains sorts
-          of data that is gathered and recorded by Brain Auto Tech and
+          of data that is gathered and recorded by Dhansetu Research and
           how we use it. If you have extra inquiries or require more data about
           our Privacy Policy, don't stop for a second to get in touch with us.`}
           </p>
@@ -82,7 +82,7 @@ const Page = () => {
             Log Files
           </h2>
           <p className="text-left text-[#555555]  pt-[10px] leading-loose">
-            {`Brain Auto Tech follows a standard technique of utilizing log
+            {`Dhansetu Research follows a standard technique of utilizing log
           documents. All hosting organizations do this and a sort of hosting
           services' examination. The data gathered by log documents include
           internet protocol (IP) addresses, program type, Internet Service
@@ -95,7 +95,7 @@ const Page = () => {
             Third Party Privacy Policies
           </h2>
           <p className="text-left text-[#555555]  pt-[10px] leading-loose">
-            {`Brain Auto Tech Privacy Policy doesn't have any significant
+            {`Dhansetu Research Privacy Policy doesn't have any significant
           bearing to different sponsors or sites. In this way, we are
           encouraging you to consult the individual Privacy Policies of these
           outsider advertisement servers for progressively nitty gritty data. It
@@ -179,7 +179,7 @@ const Page = () => {
             in, as well as screen and guide their online movement.
           </p>
           <p className="text-left text-[#555555]  pt-[10px] leading-loose">
-            {`Brain Auto Tech doesn't intentionally gather any Personal
+            {`Dhansetu Research doesn't intentionally gather any Personal
           Identifiable Information from kids younger than 13. If you believe
           that your kid gave this sort of data on our site, we urge you to get
           in touch with us quickly and we will do our best attempts to promptly

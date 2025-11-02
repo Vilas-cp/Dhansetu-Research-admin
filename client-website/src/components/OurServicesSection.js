@@ -115,7 +115,7 @@ function OurServicesSection({ setLoading, indexLoad }) {
         <p className="text-center text-slate-500 px-6 p1">
           Do you want to learn more about how this works?{" "}
           <span className="font-medium underline text-slate-700">
-            <a href="https://brainautotech.gitbook.io/intro/" target="_blank" title="Brain Auto Tech Docs">Learn more here.</a>
+            <a href="https://brainautotech.gitbook.io/intro/" target="_blank" title="Dhansetu Research Docs">Learn more here.</a>
           </span>
         </p>
         <div className="w-[80%] border-t-2 border-slate-300 mt-6 pt-4 flex flex-col justify-evenly items-center svg-icons">
@@ -139,10 +139,10 @@ function OurServicesSection({ setLoading, indexLoad }) {
             CONSULT YOUR INVESTMENT ADVISOR BEFORE INVESTING.
           </p>
           <p className="text-center font-semibold animate-pulse">
-            {"BrainAutotech ISN'T LIABLE FOR YOUR PROFITS OR LOSSES."}
+            {"DhansetuResearch ISN'T LIABLE FOR YOUR PROFITS OR LOSSES."}
           </p>
           <p className="text-center font-semibold animate-pulse">
-            ALL THE FEES PAID TO BrainAutoTech IS NON - REFUNDABLE. Any dispute
+            ALL THE FEES PAID TO DhansetuResearch IS NON - REFUNDABLE. Any dispute
             arising under these terms and conditions shall be subject to the
             Indore, M.P. jurisdiction only.
           </p>
