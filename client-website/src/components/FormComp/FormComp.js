@@ -71,7 +71,7 @@ function FormComp() {
 
       try {
         const response1 = await window.fetch(
-          `${links.server}/pushrow`,
+          `/pushrow`,
           {
             method: "POST",
             headers: {
