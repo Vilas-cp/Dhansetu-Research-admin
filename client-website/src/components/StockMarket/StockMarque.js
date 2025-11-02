@@ -29,27 +29,26 @@ const stockData = [
 function StockMarque() {
   useEffect(() => {
     async function init() {
-      const res = await fetch("https://rgcfwe8e2g.execute-api.ap-south-1.amazonaws.com/default/stock-api-v2");
-      const resJson = await res.json();
-      console.log(resJson);
+      // const res = await fetch("https://rgcfwe8e2g.execute-api.ap-south-1.amazonaws.com/default/stock-api-v2");
+      // const resJson = await res.json();
+      // console.log(resJson);
     }
     // init();
   }, []);
   return (
-    <div className="relative bg-slate-100 h-[70px] w-full overflow-hidden text-[25px] font-bold py-3">
+    <div className="relative bg-slate-900 h-[70px] w-full overflow-hidden text-[25px] font-bold py-3">
       <div className="absolute top-0 left-0 flex animate-marquee">
         {stockData.map((stock, index) => (
           <div
             key={index}
-            className={`flex items-center justify-center gap-5 mx-7 ${stock.direction === "up" ? "text-[#00FF00]" : "text-[#FF0000]"
-              }`}
+            className={`flex items-center justify-center gap-5 mx-7 text-white`}
           >
-            <div className="flex items-center flex-col -space-y-[8px]">
+            <div className="flex items-center flex-col -space-y-[8px] ">
               <div>{stock.symbol}</div>
-              <div>{stock.percent}</div>
+              <div>{stock.direction === "up" && "+"}{stock.percent}</div>
             </div>
             <div className="flex items-center flex-col -space-y-[8px] justify-center">
-              <div>
+              <div className={`${stock.direction === "up" ? "text-[#00FF00]" : "text-[#FF0000]"}`}>
                 <span>
                   {stock.direction === "up" ? (
                     <ArrowDropUpIcon />
@@ -62,7 +61,7 @@ function StockMarque() {
               </div>
               <div>
                 <span>{stock.currency}</span>
-                {stock.diff}
+                {stock.direction === "up" && "+"}{stock.diff}
               </div>
             </div>
           </div>
@@ -70,15 +69,14 @@ function StockMarque() {
         {stockData.map((stock, index) => (
           <div
             key={index}
-            className={`flex items-center justify-center gap-5 mx-7 ${stock.direction === "up" ? "text-[#00FF00]" : "text-[#FF0000]"
-              }`}
+            className={`flex items-center justify-center gap-5 mx-7 text-white`}
           >
-            <div className="flex items-center flex-col -space-y-[8px]">
+            <div className="flex items-center flex-col -space-y-[8px] ">
               <div>{stock.symbol}</div>
-              <div>{stock.percent}</div>
+              <div>{stock.direction === "up" && "+"}{stock.percent}</div>
             </div>
             <div className="flex items-center flex-col -space-y-[8px] justify-center">
-              <div>
+              <div className={`${stock.direction === "up" ? "text-[#00FF00]" : "text-[#FF0000]"}`}>
                 <span>
                   {stock.direction === "up" ? (
                     <ArrowDropUpIcon />
@@ -91,7 +89,7 @@ function StockMarque() {
               </div>
               <div>
                 <span>{stock.currency}</span>
-                {stock.diff}
+                {stock.direction === "up" && "+"}{stock.diff}
               </div>
             </div>
           </div>
