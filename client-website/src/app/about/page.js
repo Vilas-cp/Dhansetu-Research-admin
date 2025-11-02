@@ -90,7 +90,7 @@ const Aboutus = () => {
         {/* Hero Section */}
         <div className="pt-[80px] flex justify-center items-center bg-[#002366] h-[42vh] xl:h-[47vh] w-full">
 
-            <h1 className="text-[#aee9e7] md:text-[8vh] text-[6vh] font-[800] text-center tracking-[1px]">
+            <h1 className="text-white md:text-[8vh] text-[6vh] font-[800] text-center tracking-[1px]">
               About Dhansetu
             </h1>
         

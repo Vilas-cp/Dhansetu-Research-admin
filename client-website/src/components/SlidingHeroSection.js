@@ -54,7 +54,7 @@ function SlidingHeroSection({ setLoading, indexLoad }) {
                       fillMode="forwards"
                     >
                       <h1 className="xl:text-[50px] text-[4vh] font-medium text-white">
-                        Best <br className="block xl:hidden"></br>ALGO Software
+                        Quality <br className="block xl:hidden"></br>Equity Research
                       </h1>
                     </MovingComponent>
                     <MovingComponent
@@ -111,7 +111,7 @@ function SlidingHeroSection({ setLoading, indexLoad }) {
                       fillMode="forwards"
                     >
                       <p className="xl:text-[95px] text-[6vh] font-[800] text-white">
-                        Multiple Trading
+                        Multiple General Trading
                       </p>
                     </MovingComponent>
                     <MovingComponent
@@ -137,7 +137,7 @@ function SlidingHeroSection({ setLoading, indexLoad }) {
                       fillMode="forwards"
                     >
                       <p className="xl:text-[50px] text-[4vh] font-medium text-white">
-                        Fully Automated Strategies
+                        Best Support From Team
                       </p>
                     </MovingComponent>
                     <CTA type="middle" />
@@ -168,8 +168,7 @@ function SlidingHeroSection({ setLoading, indexLoad }) {
                       fillMode="forwards"
                     >
                       <p className="xl:text-[50px] text-[4.5vh] font-medium text-white">
-                        Easy to <br className="block xl:hidden"></br>Use
-                        Software
+                        Easy to <br className="block xl:hidden"></br>Understand 
                       </p>
                     </MovingComponent>
                     <MovingComponent
@@ -182,7 +181,7 @@ function SlidingHeroSection({ setLoading, indexLoad }) {
                       fillMode="forwards"
                     >
                       <p className="xl:text-[95px] text-[7.5vh] font-[800] text-white">
-                        Multiple Brokers
+                        Multiple Segments
                       </p>
                     </MovingComponent>
                     <MovingComponent
