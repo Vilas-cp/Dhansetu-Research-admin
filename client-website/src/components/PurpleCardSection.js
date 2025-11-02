@@ -120,11 +120,12 @@ function PurpleCardSection({ setLoading, indexLoad }) {
               OUR COMPANY
             </p>
             <h2 className="text-white text-2xl font-bold h1">
-              Dhansetu Research provides best Algo Software for you
+             At Dhansetu Research, we don’t just provide calls or signals we provide clarity, confidence, and control to your trading journey. 
             </h2>
           </div>
           <div className="md:w-[40%] w-full text-[#9b9aad] text-base p2">
-            {`Explore our ALGO software for automated trading with a range of powerful strategies. Trade seamlessly across multiple brokers for maximum convenience and success in your investments.`}
+            {`As a SEBI-Registered Research Analyst and Algo Trading Platform, our services are built around one clear purpose to help retail traders and investors make smarter, data-driven, and emotion-free market decisions.
+`}
           </div>
         </div>
         <div className="w-full h-20 lg:pt-10 pt-10 lg:space-y-0 space-y-20 flex service-card-container flex-row justify-between items-center flex-wrap">
@@ -138,7 +139,7 @@ function PurpleCardSection({ setLoading, indexLoad }) {
           Stop wasting time and money on manual trading{" "}
           <span className="text-black underline">
             <a
-              href="/algo-services/"
+              href="/services/"
               target="_blank"
               title="Dhansetu Research Docs"
             >

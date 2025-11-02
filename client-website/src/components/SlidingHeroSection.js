@@ -38,10 +38,10 @@ function SlidingHeroSection({ setLoading, indexLoad }) {
             <div
               className="absolute inset-0 bg-cover bg-center w-full filter contrast-150 "
               style={{
-                backgroundImage: `url('/sls-images/1.jpeg')`,
+                backgroundImage: `url('/sliderimages/sliderimage.png')`,
               }}
             >
-              <div className="w-full h-full bg-blue-700/50">
+              <div className="w-full h-full bg-[#002366]/80">
                 <div className="flex justify-center xl:pt-[120px] pt-[5vh] mx-[2px]">
                   <div className="gap-[-10px]">
                     <MovingComponent
@@ -95,10 +95,11 @@ function SlidingHeroSection({ setLoading, indexLoad }) {
             <div
               className="absolute inset-0 bg-cover bg-center w-full filter contrast-150"
               style={{
-                backgroundImage: `url('/sls-images/2.jpeg')`,
+                // backgroundImage: `url('/sls-images/2.jpeg')`,
+                 backgroundImage: `url('/sliderimages/sliderimage.png')`,
               }}
             >
-              <div className="w-full h-full bg-blue-700/50">
+              <div className="w-full h-full bg-[#002366]/80">
                 <div className="flex justify-center xl:pl-[20px] xl:pt-[120px] xl:justify-start pt-[5vh] pl-[1vh]">
                   <div className="flex-col justify-start">
                     <MovingComponent
@@ -152,10 +153,11 @@ function SlidingHeroSection({ setLoading, indexLoad }) {
             <div
               className="absolute inset-0 bg-cover bg-center w-full filter contrast-150"
               style={{
-                backgroundImage: `url('/sls-images/3.jpeg')`,
+                // backgroundImage: `url('/sls-images/3.jpeg')`,
+                 backgroundImage: `url('/sliderimages/sliderimage.png')`,
               }}
             >
-              <div className="w-full h-full bg-blue-700/50">
+              <div className="w-full h-full bg-[#002366]/80">
                 <div className="flex xl:justify-end justify-center xl:pt-[120px] xl:pr-[20px]  pt-[5vh] ">
                   <div className="xl:gap-[-10px] flex-col justify-start">
                     <MovingComponent

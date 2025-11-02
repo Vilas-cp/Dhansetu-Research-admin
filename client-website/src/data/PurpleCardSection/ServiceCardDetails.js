@@ -3,13 +3,13 @@ const serviceCardDetails = [
     title: "Our services",
     description: "How we can help",
     imgSrc: "/pcs-images/1.jpeg",
-    readmore: "/it-services",
+    readmore: "/services",
   },
   {
-    title: "Algo Services",
-    description: "Why use our software",
+    title: "About Us",
+    description: "Who are we",
     imgSrc: "/pcs-images/2.jpeg",
-    readmore: "/algo-services",
+    readmore: "/about",
   },
   {
     title: "Our policy",
