@@ -52,7 +52,7 @@ export default function Footer() {
                       href="/services/commodity-research/"
                       className="hover:text-amber-300 transition-colors cursor-pointer"
                     >
-                    {"Commodity(MCX) Research"} 
+                      {"Commodity(MCX) Research"}
                     </Link>
                   </li>
                   <li>
@@ -68,7 +68,7 @@ export default function Footer() {
                       href="/services/premium-ra-algo-support/"
                       className="hover:text-amber-300 transition-colors cursor-pointer"
                     >
-                       Premium RA + Algo Combo
+                      Premium RA + Algo Combo
                     </Link>
                   </li>
                 </ul>
@@ -103,28 +103,52 @@ export default function Footer() {
                 <h3 className="text-xl font-semibold mb-4 pb-2 border-b-2 border-amber-400 inline-block">
                   Get In Touch
                 </h3>
+
                 <div className="mt-6 space-y-4 text-sm text-gray-200">
+                  {/* Phone */}
                   <div className="flex items-start gap-3">
                     <Phone className="w-5 h-5 text-white flex-shrink-0 mt-0.5" />
-                    <span>(+91) 9999999999</span>
+                    <a
+                      href="tel:+919999999999"
+                      className="hover:text-amber-300 transition-colors"
+                    >
+                      (+91) 9999999999
+                    </a>
                   </div>
+
+                  {/* Email */}
                   <div className="flex items-start gap-3">
                     <Mail className="w-5 h-5 text-white flex-shrink-0 mt-0.5" />
                     <div className="flex flex-col gap-1">
-                      <span>info@hanseturesearch.com,</span>
-                      <span>dhanseturesearch@gmail.com,</span>
-                      <span>dhanseturesearch@gmail.com</span>
+                      <a
+                        href="mailto:info@hanseturesearch.com"
+                        className="hover:text-amber-300 transition-colors"
+                      >
+                        info@hanseturesearch.com
+                      </a>
+                      <a
+                        href="mailto:dhanseturesearch@gmail.com"
+                        className="hover:text-amber-300 transition-colors"
+                      >
+                        dhanseturesearch@gmail.com
+                      </a>
                     </div>
                   </div>
+
+                  {/* Website */}
                   <div className="flex items-start gap-3">
                     <ExternalLink className="w-5 h-5 text-white flex-shrink-0 mt-0.5" />
                     <a
-                      href="https://finestcapitalresearch.com/"
+                      href="https://dhanseturesearch.com/"
+                      target="_blank"
+                      rel="noopener noreferrer"
                       className="hover:text-amber-300 transition-colors break-all"
                     >
                       https://dhanseturesearch.com/
                     </a>
                   </div>
+
+                  {/* Office Hours */}
                   <div className="flex items-start gap-3">
                     <Clock className="w-5 h-5 text-white flex-shrink-0 mt-0.5" />
                     <span>
@@ -134,12 +158,19 @@ export default function Footer() {
                       </span>
                     </span>
                   </div>
+
+                  {/* Address */}
                   <div className="flex items-start gap-3">
                     <MapPin className="w-5 h-5 text-white flex-shrink-0 mt-0.5" />
-                    <span>
-                      Janjeerbala Sqare, Near Janjeerbala Sqare Indore, Madhya
-                      Pradesh, 452010
-                    </span>
+                    <a
+                      href="https://www.google.com/maps/search/?api=1&query=Janjeerbala+Square,+Indore,+Madhya+Pradesh+452010"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="hover:text-amber-300 transition-colors"
+                    >
+                      Janjeerbala Square, Near Janjeerbala Square, Indore,
+                      Madhya Pradesh, 452010
+                    </a>
                   </div>
                 </div>
               </div>
