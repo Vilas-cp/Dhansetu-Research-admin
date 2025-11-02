@@ -21,12 +21,26 @@ const PricingTable = () => {
   const [selectedPlan, setSelectedPlan] = useState(null);
   const [payuParams, setPayuParams] = useState(null);
 
-  const plans = ["basic", "premium", "hni"];
+const plans = [
+  "basicIndex",
+  "moderateIndex",
+  "advanceIndex",
+  "stockOption",
+  "stockFuture",
+  "equityResearch",
+  "longTermEquity"
+];
+
   const planNames = {
-    basic: "BASIC",
-    premium: "PREMIUM",
-    hni: "HNI / CUSTOM"
-  };
+  basicIndex: "Basic Index Option",
+  moderateIndex: "Moderate Index Options",
+  advanceIndex: "Advance Index Options",
+  stockOption: "Stock Option",
+  stockFuture: "Stock Future",
+  equityResearch: "Equity Research",
+  longTermEquity: "Long Term Equity Research"
+};
+
 
   const billingCycleLabels = {
     monthly: "Monthly",
@@ -216,7 +230,11 @@ const PricingTable = () => {
           </div>
 
           {/* Pricing Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+  <div
+  className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 gap-6 mb-8"
+  style={{ gridAutoRows: 'auto', gridTemplateRows: 'repeat(2, auto)' }}
+>
+
             {plans.map((planType) => {
               const plan = pricingData[billingCycle][planType];
               const isPopular = planType === "premium";
