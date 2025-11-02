@@ -10,7 +10,6 @@ import {
 } from "lucide-react";
 import pricingData from "./data";
 
-
 const PricingTable = () => {
   const [billingCycle, setBillingCycle] = useState("monthly");
   const [loading, setLoading] = useState(null);
@@ -21,31 +20,30 @@ const PricingTable = () => {
   const [selectedPlan, setSelectedPlan] = useState(null);
   const [payuParams, setPayuParams] = useState(null);
 
-const plans = [
-  "basicIndex",
-  "moderateIndex",
-  "advanceIndex",
-  "stockOption",
-  "stockFuture",
-  "equityResearch",
-  "longTermEquity"
-];
+  const plans = [
+    "basicIndex",
+    "moderateIndex",
+    "advanceIndex",
+    "stockOption",
+    "stockFuture",
+    "equityResearch",
+    "longTermEquity",
+  ];
 
   const planNames = {
-  basicIndex: "Basic Index Option",
-  moderateIndex: "Moderate Index Options",
-  advanceIndex: "Advance Index Options",
-  stockOption: "Stock Option",
-  stockFuture: "Stock Future",
-  equityResearch: "Equity Research",
-  longTermEquity: "Long Term Equity Research"
-};
-
+    basicIndex: "Basic Index Option",
+    moderateIndex: "Moderate Index Options",
+    advanceIndex: "Advance Index Options",
+    stockOption: "Stock Option",
+    stockFuture: "Stock Future",
+    equityResearch: "Equity Research",
+    longTermEquity: "Long Term Equity Research",
+  };
 
   const billingCycleLabels = {
     monthly: "Monthly",
-    quarterly: "Quarterly", 
-    halfYearly: "Half-Yearly"
+    quarterly: "Quarterly",
+    halfYearly: "Half-Yearly",
   };
 
   const handlePurchase = async (planType) => {
@@ -60,7 +58,7 @@ const plans = [
     setDialogData(null);
 
     try {
-     const response = await fetch(
+      const response = await fetch(
         `https://your-backend-domain.com/user/v1/buy/order/${planData.subscriptionId}`,
         {
           method: "POST",
@@ -182,9 +180,7 @@ const plans = [
 
   return (
     <div className="pt-[80px]">
-     
-  <div className="min-h-screen bg-gradient-to-br from-blue-950 via-blue-900 to-indigo-800 p-4 sm:p-8">
-
+      <div className="min-h-screen bg-gradient-to-br from-blue-950 via-blue-900 to-indigo-800 p-4 sm:p-8">
         <div className="max-w-7xl mx-auto">
           {/* Header */}
           <div className="text-center mb-8 sm:mb-12">
@@ -230,11 +226,13 @@ const plans = [
           </div>
 
           {/* Pricing Cards */}
-  <div
-  className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 gap-6 mb-8"
-  style={{ gridAutoRows: 'auto', gridTemplateRows: 'repeat(2, auto)' }}
->
-
+          <div
+            className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 gap-6 "
+            style={{
+              gridAutoRows: "auto",
+              gridTemplateRows: "repeat(2, auto)",
+            }}
+          >
             {plans.map((planType) => {
               const plan = pricingData[billingCycle][planType];
               const isPopular = planType === "premium";
