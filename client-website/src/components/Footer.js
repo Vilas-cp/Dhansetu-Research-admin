@@ -112,7 +112,7 @@ export default function Footer() {
                       href="tel:+919999999999"
                       className="hover:text-amber-300 transition-colors"
                     >
-                      (+91) 9999999999
+                      (+91) 7697722464
                     </a>
                   </div>
 
@@ -124,7 +124,7 @@ export default function Footer() {
                         href="mailto:info@hanseturesearch.com"
                         className="hover:text-amber-300 transition-colors"
                       >
-                        info@hanseturesearch.com
+                        info@dhanseturesearch.com
                       </a>
                       <a
                         href="mailto:dhanseturesearch@gmail.com"
@@ -163,12 +163,12 @@ export default function Footer() {
                   <div className="flex items-start gap-3">
                     <MapPin className="w-5 h-5 text-white flex-shrink-0 mt-0.5" />
                     <a
-                      href="https://www.google.com/maps/search/?api=1&query=Janjeerbala+Square,+Indore,+Madhya+Pradesh+452010"
+                      href="https://www.google.com/maps/search/?api=1&query= +H2,+Belmont park,+Niranjanpur,+Indore,+Madhya+Pradesh+452010"
                       target="_blank"
                       rel="noopener noreferrer"
                       className="hover:text-amber-300 transition-colors"
                     >
-                      Janjeerbala Square, Near Janjeerbala Square, Indore,
+                       601, 6th Floor, H2, Belmont park, Niranjanpur, Indore,
                       Madhya Pradesh, 452010
                     </a>
                   </div>
