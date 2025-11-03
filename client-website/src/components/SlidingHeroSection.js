@@ -34,7 +34,7 @@ function SlidingHeroSection({ setLoading, indexLoad }) {
         className="mySwiper w-[100%] mr-0 pr-0"
       >
         <SwiperSlide>
-          <div className="relative xl:h-[680px] sm:h-[60vh]  h-[70vh]">
+          <div className="relative xl:h-[680px] sm:h-[60vh]  h-[50vh]">
             <div
               className="absolute inset-0 bg-cover bg-center w-full filter contrast-150 "
               style={{
@@ -66,7 +66,7 @@ function SlidingHeroSection({ setLoading, indexLoad }) {
                       iteration="1"
                       fillMode="forwards"
                     >
-                      <p className="xl:text-[95px] text-[7vh] font-[800] text-white">
+                      <p className="xl:text-[95px] text-[5vh] font-[800] text-white">
                         Sebi Registered
                       </p>
                     </MovingComponent>
@@ -79,7 +79,7 @@ function SlidingHeroSection({ setLoading, indexLoad }) {
                       iteration="1"
                       fillMode="forwards"
                     >
-                      <p className="xl:text-[95px] text-[7vh] font-[800] text-white">
+                      <p className="xl:text-[95px] text-[5vh] font-[800] text-white">
                        Analyst
                       </p>
                     </MovingComponent>
@@ -91,7 +91,7 @@ function SlidingHeroSection({ setLoading, indexLoad }) {
           </div>
         </SwiperSlide>
         <SwiperSlide>
-          <div className="relative xl:h-[680px] sm:h-[60vh] h-[70vh]">
+          <div className="relative xl:h-[680px] sm:h-[60vh] h-[50vh]">
             <div
               className="absolute inset-0 bg-cover bg-center w-full filter contrast-150"
               style={{
@@ -100,7 +100,7 @@ function SlidingHeroSection({ setLoading, indexLoad }) {
               }}
             >
               <div className="w-full h-full bg-[#002366]/80">
-                <div className="flex justify-center xl:pl-[20px] xl:pt-[120px] xl:justify-start pt-[5vh] pl-[1vh]">
+                <div className="flex justify-center xl:pl-[20px] xl:pt-[120px] xl:justify-start pt-[5vh] pl-[35px]">
                   <div className="flex-col justify-start">
                     <MovingComponent
                       type="fadeInFromTop"
@@ -111,7 +111,7 @@ function SlidingHeroSection({ setLoading, indexLoad }) {
                       iteration="1"
                       fillMode="forwards"
                     >
-                      <p className="xl:text-[95px] text-[6vh] font-[800] text-white">
+                      <p className="xl:text-[95px] text-[4vh] font-[800] text-white">
                         Multiple General Trading
                       </p>
                     </MovingComponent>
@@ -124,7 +124,7 @@ function SlidingHeroSection({ setLoading, indexLoad }) {
                       iteration="1"
                       fillMode="forwards"
                     >
-                      <p className="xl:text-[95px] text-[6vh] font-[800] text-white mt-0">
+                      <p className="xl:text-[95px] text-[4vh] font-[800] text-white mt-0">
                         And Investment Strategies
                       </p>
                     </MovingComponent>
@@ -137,7 +137,7 @@ function SlidingHeroSection({ setLoading, indexLoad }) {
                       iteration="1"
                       fillMode="forwards"
                     >
-                      <p className="xl:text-[50px] text-[4vh] font-medium text-white">
+                      <p className="xl:text-[50px] text-[3vh] font-medium text-white">
                         Best Support From Team
                       </p>
                     </MovingComponent>
@@ -149,7 +149,7 @@ function SlidingHeroSection({ setLoading, indexLoad }) {
           </div>
         </SwiperSlide>
         <SwiperSlide>
-          <div className="relative xl:h-[680px] sm:h-[60vh] h-[70vh]">
+          <div className="relative xl:h-[680px] sm:h-[60vh] h-[50vh]">
             <div
               className="absolute inset-0 bg-cover bg-center w-full filter contrast-150"
               style={{
@@ -158,7 +158,7 @@ function SlidingHeroSection({ setLoading, indexLoad }) {
               }}
             >
               <div className="w-full h-full bg-[#002366]/80">
-                <div className="flex xl:justify-end justify-center xl:pt-[120px] xl:pr-[20px]  pt-[5vh] ">
+                <div className="flex xl:justify-end justify-center xl:pt-[120px] xl:pr-[20px]  pt-[5vh]">
                   <div className="xl:gap-[-10px] flex-col justify-start">
                     <MovingComponent
                       type="fadeInFromTop"
@@ -169,7 +169,7 @@ function SlidingHeroSection({ setLoading, indexLoad }) {
                       iteration="1"
                       fillMode="forwards"
                     >
-                      <p className="xl:text-[50px] text-[4.5vh] font-medium text-white">
+                      <p className="xl:text-[50px] text-[3vh] font-medium text-white">
                         Easy to <br className="block xl:hidden"></br>Understand 
                       </p>
                     </MovingComponent>
@@ -182,7 +182,7 @@ function SlidingHeroSection({ setLoading, indexLoad }) {
                       iteration="1"
                       fillMode="forwards"
                     >
-                      <p className="xl:text-[95px] text-[7.5vh] font-[800] text-white">
+                      <p className="xl:text-[95px] text-[4vh] font-[800] text-white">
                         Multiple Segments
                       </p>
                     </MovingComponent>
@@ -195,7 +195,7 @@ function SlidingHeroSection({ setLoading, indexLoad }) {
                       iteration="1"
                       fillMode="forwards"
                     >
-                      <p className="xl:text-[95px] text-[7.5vh] font-[800] text-white">
+                      <p className="xl:text-[95px] text-[4vh] font-[800] text-white">
                         Supported.
                       </p>
                     </MovingComponent>
