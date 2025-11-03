@@ -109,7 +109,7 @@ export default function Footer() {
                   <div className="flex items-start gap-3">
                     <Phone className="w-5 h-5 text-white flex-shrink-0 mt-0.5" />
                     <a
-                      href="tel:+919999999999"
+                      href="tel:+917697722464"
                       className="hover:text-amber-300 transition-colors"
                     >
                       (+91) 7697722464
@@ -121,7 +121,7 @@ export default function Footer() {
                     <Mail className="w-5 h-5 text-white flex-shrink-0 mt-0.5" />
                     <div className="flex flex-col gap-1">
                       <a
-                        href="mailto:info@hanseturesearch.com"
+                        href="mailto:info@dhanseturesearch.com"
                         className="hover:text-amber-300 transition-colors"
                       >
                         info@dhanseturesearch.com
