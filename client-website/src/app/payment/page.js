@@ -11,7 +11,7 @@ const Page = () => {
       <section>
         <LoadGoogleAdsIframe />
         <Header1 />
-        <div className="pt-[80px] pb-[30px]">
+        <div className="pt-[125px] pb-[30px]">
           <h1 className="w-full bg-[#002366] flex justify-center items-center h-[35vh] text-white font-[999] text-[5vh] xl:text-[8vh]">
             Payment
           </h1>
@@ -22,18 +22,18 @@ const Page = () => {
                   <img src="/image/icici bank.png" width={250} className="" />
                 </div>
                 <p className="p-[12px] font-medium">
-                  <span className=" font-bold">Bank Name:-</span> ICICI BANK
+                  <span className=" font-bold">Bank Name:-</span> HDFC BANK
                 </p>
                 <p className="p-[12px] font-medium">
                   <span className=" font-bold">Account Name :-</span>{" "}
-                  BRAINAUTOTECH PRIVATE LIMITED
+                  DHANSETU RESEARCH
                 </p>
                 <p className="p-[12px] font-medium">
                   <span className=" font-bold">Account Number :- </span>
-                  004105021241
+                  50200105354956
                 </p>
                 <p className="p-[12px] font-medium">
-                  <span className=" font-bold">IFSC Code :-</span> ICIC0000041
+                  <span className=" font-bold">IFSC Code :-</span> HDFC0000281
                 </p>
               </div>
               <div className="shadow-xl w-full p-[30px] rounded-xl mt-[50px] hover:-translate-y-3 transition-transform duration-300 ease-out">

@@ -15,12 +15,10 @@ const Complaint = () => {
         <Header1 />
 
         {/* Hero Section */}
-        <div className="pt-[80px] flex justify-center items-center bg-[#002366] h-[42vh] xl:h-[47vh] w-full">
-
-            <h1 className="text-white md:text-[8vh] text-[6vh] font-[800] text-center tracking-[1px]">
-              Disclosure
-            </h1>
-        
+        <div className='pt-[130px]'>
+        <h1 className="w-full bg-[#002366] flex justify-center items-center h-[35vh] text-white font-[999] text-[5vh] xl:text-[8vh] ">
+          Disclosure
+        </h1>
         </div>
 
         {/* Image Gallery Section */}

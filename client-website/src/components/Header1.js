@@ -1,7 +1,12 @@
 "use client";
 import React, { Fragment, useState } from "react";
 import { Popover, Transition } from "@headlessui/react";
-import { Bars3Icon, XMarkIcon, ChevronDownIcon } from "@heroicons/react/24/solid";
+import {
+  Bars3Icon,
+  XMarkIcon,
+  ChevronDownIcon,
+} from "@heroicons/react/24/solid";
+import DisclaimerMarque from "./Disclaimer";
 
 const Header1 = () => {
   const [isPolicyOpen, setIsPolicyOpen] = useState(false);
@@ -20,18 +25,28 @@ const Header1 = () => {
     { href: "/privacy", label: "Privacy Policy" },
     { href: "/terms", label: "Terms and Condition" },
     { href: "/refund", label: "Refund Policy" },
-    {href:"/complaint",label:"Complaint"},
-    {href:"/disclosure",label:"Disclosure"}
+    { href: "/complaint", label: "Complaint" },
+    { href: "/disclosure", label: "Disclosure" },
   ];
 
   return (
     <>
+     
       <Popover className="fixed top-0 w-full z-50 bg-white backdrop-blur-md shadow-lg border-b border-gray-100">
+      <DisclaimerMarque/>
         <div className="w-full mx-auto px-4 sm:px-2 lg:px-2">
+          
           <div className="flex items-center justify-between h-20">
             {/* Logo */}
-            <a href="/" className="flex-shrink-0 transition-transform hover:scale-105 duration-300">
-              <img src="/logos/side-text.png" className="h-12 w-auto" alt="Logo" />
+            <a
+              href="/"
+              className="flex-shrink-0 transition-transform hover:scale-105 duration-300"
+            >
+              <img
+                src="/logos/side-text.png"
+                className="h-12 w-auto"
+                alt="Logo"
+              />
             </a>
 
             {/* Desktop Navigation */}
@@ -54,9 +69,13 @@ const Header1 = () => {
                   className="textdesign text-base flex items-center gap-1"
                 >
                   Policy
-                  <ChevronDownIcon className={`w-4 h-4 transition-transform duration-300 ${isPolicyOpen ? 'rotate-180' : ''}`} />
+                  <ChevronDownIcon
+                    className={`w-4 h-4 transition-transform duration-300 ${
+                      isPolicyOpen ? "rotate-180" : ""
+                    }`}
+                  />
                 </button>
-                
+
                 <Transition
                   show={isPolicyOpen}
                   enter="transition ease-out duration-200"
@@ -139,8 +158,15 @@ const Header1 = () => {
               <div className="px-5 pt-4 pb-3">
                 {/* Mobile Header */}
                 <div className="flex items-center justify-between mb-6">
-                  <a href="/" className=" w-full flex items-center justify-center">
-                    <img src="/logos/side-text.png" className="h-10 w-auto" alt="Logo" />
+                  <a
+                    href="/"
+                    className=" w-full flex items-center justify-center"
+                  >
+                    <img
+                      src="/logos/side-text.png"
+                      className="h-10 w-auto"
+                      alt="Logo"
+                    />
                   </a>
                   <Popover.Button className="inline-flex items-center justify-center p-2 rounded-lg text-gray-700 hover:bg-gray-100 focus:outline-none transition-all duration-200">
                     <span className="sr-only">Close menu</span>

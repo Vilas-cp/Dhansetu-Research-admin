@@ -143,7 +143,7 @@ export default function AboutUs() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 pt-[100px]">
       {/* Hero Section */}
       <section className="relative bg-gradient-to-br from-[#002366] via-[#003399] to-[#004499] text-white overflow-hidden">
         <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-10"></div>

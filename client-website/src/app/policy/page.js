@@ -10,7 +10,7 @@ const Page = () => {
       <LoadGoogleAdsScript />
       <LoadGoogleAdsIframe />
       <Header1 />
-      <div className="pt-[80px] pb-[30px]">
+      <div className="pt-[125px] pb-[30px]">
         <h1 className="w-full bg-[#002366] flex justify-center items-center h-[35vh] text-white font-[999] text-[5vh] xl:text-[8vh]">
           Policies
         </h1>

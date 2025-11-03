@@ -21,7 +21,7 @@ function SlidingHeroSection({ setLoading, indexLoad }) {
   }, []);
   return (
     /*On header1 pt-0 else pt-[120px]*/
-    <div className="xl:pt-[80px] pt-[80px]">
+    <div className="xl:pt-[100px] pt-[100px]">
       <Swiper
         // spaceBetween={30}
         centeredSlides={true}
@@ -67,7 +67,7 @@ function SlidingHeroSection({ setLoading, indexLoad }) {
                       fillMode="forwards"
                     >
                       <p className="xl:text-[95px] text-[7vh] font-[800] text-white">
-                        Best
+                        Sebi Registered
                       </p>
                     </MovingComponent>
                     <MovingComponent
@@ -80,7 +80,7 @@ function SlidingHeroSection({ setLoading, indexLoad }) {
                       fillMode="forwards"
                     >
                       <p className="xl:text-[95px] text-[7vh] font-[800] text-white">
-                        in the Market.
+                       Analyst
                       </p>
                     </MovingComponent>
                     <CTA />
