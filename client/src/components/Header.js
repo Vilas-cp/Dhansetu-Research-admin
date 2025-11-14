@@ -97,13 +97,13 @@ const Header = () => {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-56">
-                <DropdownMenuItem asChild>
+                {/* <DropdownMenuItem asChild>
                   <Link href="/dashboard/profile" className="flex items-center space-x-2">
                     <Users className="w-4 h-4" />
                     <span>Profile</span>
                   </Link>
                 </DropdownMenuItem>
-                <DropdownMenuSeparator />
+                <DropdownMenuSeparator /> */}
                 <DropdownMenuItem 
                   onClick={handleLogout}
                   className="text-red-600 focus:text-red-600 focus:bg-red-50"
