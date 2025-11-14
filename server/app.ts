@@ -28,7 +28,11 @@ app.use((_, res, next) => {
   next();
 });
 
-const whitelist = ["https://blog.dhanseturesearch.com", "https://adminblog.dhanseturesearch.com"];
+const whitelist = [
+  "https://blog.dhanseturesearch.com",
+  "https://adminblog.dhanseturesearch.com",
+  "https://test.payu.in",
+];
 // const whitelist = ["http://localhost:3000"];
 const corsOptions: CorsOptions = {
   origin: function (url, callback) {
