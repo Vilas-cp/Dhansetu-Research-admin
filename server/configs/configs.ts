@@ -21,6 +21,8 @@ const serverConfigs = {
   ZOOM_RETRY_WAIT_MIN_SEC: 1,
   ZOOM_RETRY_WAIT_MAX_SEC: 2,
   JOB_INTERVAL_HOUR: 1,
+  BACKEND_LINK: `https://server.dhanseturesearch.com`,
+  CLIENT_LINK: `https://blog.dhanseturesearch.com`,
 } as const;
 
 const dbConfigs = {

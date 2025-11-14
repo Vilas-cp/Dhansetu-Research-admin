@@ -14,6 +14,9 @@ const userRoutes = express.Router();
 const { SESSION_EXPIRE_TIME_IN_DAYS } = serverConfigs;
 const { PAYU_MERCHANT_ID, PAYU_SALT } = envConfigs;
 
+const backendLink = serverConfigs.BACKEND_LINK;
+const clientLink = serverConfigs.CLIENT_LINK;
+
 v1Routes.post("/login", async (req, res) => {
   try {
     const { emailId, clerkId, firstName, lastName, imgURL } = req.body;
@@ -431,7 +434,8 @@ v1Routes.post("/buy/verify/success", async (req, res) => {
       payRes["transaction_details"]?.["txnid"]?.toString();
     console.log(payResTxnId);
     if (payResTxnId !== txnId) {
-      res.redirect("http://localhost:3000/failure");
+      const failureLink = clientLink + "/failure";
+      res.redirect(failureLink);
       return;
     }
     const orderInfo = await userDb.getOrder(txnId);
@@ -457,7 +461,8 @@ v1Routes.post("/buy/verify/success", async (req, res) => {
       res.redirect("http://localhost:3000/failure");
       return;
     }
-    res.redirect("http://localhost:3000/success");
+    const successLink = clientLink + "/success";
+    res.redirect(successLink);
     const emailId = payUBody.email;
     const mailHelp = new MailHandler();
     await mailHelp.sendMail(
@@ -552,7 +557,6 @@ v1Routes.post("/buy/order/:subId", async (req, res) => {
       return;
     }
     const dummyPhone = "no_phone_number";
-    const backendLink = `https://profound-adequate-salmon.ngrok-free.app`;
     const sUrl = backendLink + "/user/v1/buy/verify/success";
     const fUrl = backendLink + "/user/v1/buy/verify/fail";
     const subId = req.params.subId;
