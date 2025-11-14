@@ -116,3 +116,9 @@ ADD FOREIGN KEY ("admin_id") REFERENCES "admin" ("id") ON DELETE CASCADE;
 
 ALTER TABLE "articles_details"
 ADD FOREIGN KEY ("article_id") REFERENCES "articles" ("id") ON DELETE CASCADE;
+
+
+INSERT INTO "subscriptions" (sub_id, sub_name, sub_time, amount) VALUES ('pre-monthly', 'Premium Monthly', 1, 1);
+INSERT INTO "subscriptions" (sub_id, sub_name, sub_time, amount) VALUES ('pre-quarterly', 'Premium Quarterly', 4, 4);
+INSERT INTO "subscriptions" (sub_id, sub_name, sub_time, amount) VALUES ('pre-half-yearly', 'Premium Half Yearly', 6, 6);
+INSERT INTO "subscriptions" (sub_id, sub_name, sub_time, amount) VALUES ('pre-yearly', 'Premium Yearly', 12, 12);

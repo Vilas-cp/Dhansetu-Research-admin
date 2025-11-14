@@ -1,5 +1,5 @@
 import express from "express";
-import cors from "cors";
+import cors, { CorsOptions } from "cors";
 import helmet from "helmet";
 // import { fileRouter } from "./file/route";
 // import { userRouter } from "./user/route";
@@ -16,7 +16,6 @@ import { adminRoutes } from "./admin/route";
 import { userRoutes } from "./user/route";
 
 const { COOKIE_SECRET } = envConfigs;
-const { CORS_ORIGIN } = serverConfigs;
 
 // App instance - Express server
 const app = express();
@@ -28,12 +27,21 @@ app.use((_, res, next) => {
   res.setHeader("ngrok-skip-browser-warning", "true");
   next();
 });
-app.use(
-  cors({
-    credentials: true,
-    origin: CORS_ORIGIN,
-  })
-);
+
+const whitelist = ["https://blog.dhanseturesearch.com", "https://adminblog.dhanseturesearch.com"];
+// const whitelist = ["http://localhost:3000"];
+const corsOptions: CorsOptions = {
+  origin: function (url, callback) {
+    if (whitelist.indexOf(url || "") !== -1) {
+      callback(null, true)
+    } else {
+      callback(new Error('Not allowed by CORS'))
+    }
+  },
+  credentials: true,
+};
+
+app.use(cors(corsOptions));
 app.use(compression());
 app.use(helmet());
 app.use(express.json());

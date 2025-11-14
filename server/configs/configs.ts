@@ -21,7 +21,6 @@ const serverConfigs = {
   ZOOM_RETRY_WAIT_MIN_SEC: 1,
   ZOOM_RETRY_WAIT_MAX_SEC: 2,
   JOB_INTERVAL_HOUR: 1,
-  CORS_ORIGIN: "http://localhost:3000",
 } as const;
 
 const dbConfigs = {

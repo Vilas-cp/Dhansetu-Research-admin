@@ -258,7 +258,7 @@ v1Routes.post("/create/user", async (req, res) => {
         adminCrtRes,
       },
     });
-    console.log(chalk.yellow(`User: ${adUserName}, is logged out as Admin!`));
+    console.log(chalk.yellow(`User: ${adUserName}, is created as Admin!`));
   } catch (error: any) {
     console.log(
       chalk.red(`Error: ${error?.message}, for user id ${req.body?.userName}`)
