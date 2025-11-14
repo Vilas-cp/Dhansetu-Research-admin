@@ -6,6 +6,7 @@ import PostSummary from "./components/PostSummary";
 import { apiPost } from "@/lib/api";
 import toast from "react-hot-toast";
 import Header from "@/components/Header";
+import { useRouter } from "next/navigation";
 
 
 export default function BlogEditor() {
@@ -13,6 +14,7 @@ export default function BlogEditor() {
   const [title, setTitle] = useState("");
   const [thumbnailUrl, setThumbnailUrl] = useState("");
   const [isPremium, setIsPremium] = useState(false);
+  const router=useRouter();
 
   const addBlock = (type) =>
     setBlocks([...blocks, { id: Date.now(), type, content: "" }]);
@@ -64,6 +66,7 @@ export default function BlogEditor() {
     
     if (res.status=="success") {
       toast.success("Article created successfully!");
+      router.push("/dashboard/blogs");
     } else {
       toast.error(res.data.message || "Something went wrong.");
     }

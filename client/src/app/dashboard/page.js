@@ -108,8 +108,8 @@ export default function Dashboard() {
         </div>
 
         {/* Recent Activity Section */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Recent Articles */}
+        {/* <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+         
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center justify-between">
@@ -139,7 +139,7 @@ export default function Dashboard() {
             </CardContent>
           </Card>
 
-          {/* User Activity */}
+       
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center justify-between">
@@ -167,7 +167,7 @@ export default function Dashboard() {
               </div>
             </CardContent>
           </Card>
-        </div>
+        </div> */}
       </main>
     </div>
   );

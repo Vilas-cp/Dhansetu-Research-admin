@@ -44,7 +44,7 @@ const Header = () => {
     { href: "/dashboard/addBlog", label: "Add Blog", icon: PlusCircle },
     { href: "/dashboard/blogs", label: "Blogs", icon: FileText },
     { href: "/dashboard/users", label: "Users", icon: Users },
-    { href: "/dashboard/analytics", label: "Analytics", icon: BarChart3 },
+    // { href: "/dashboard/analytics", label: "Analytics", icon: BarChart3 },
   ];
 
   return (
