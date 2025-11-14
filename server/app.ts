@@ -32,10 +32,14 @@ const whitelist = ["https://blog.dhanseturesearch.com", "https://adminblog.dhans
 // const whitelist = ["http://localhost:3000"];
 const corsOptions: CorsOptions = {
   origin: function (url, callback) {
-    if (whitelist.indexOf(url || "") !== -1) {
-      callback(null, true)
+    if (!url) {
+      callback(null, true);
+      return;
+    }
+    if (whitelist.indexOf(url) !== -1) {
+      callback(null, true);
     } else {
-      callback(new Error('Not allowed by CORS'))
+      callback(new Error('Not allowed by CORS'));
     }
   },
   credentials: true,
