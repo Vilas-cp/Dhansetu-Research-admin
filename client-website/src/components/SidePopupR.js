@@ -1,7 +1,7 @@
-import React, {useState} from "react";
+import React, { useState } from "react";
 import { AnimatePresence } from "framer-motion";
 import { motion } from "framer-motion";
-import popUpsData from "@/data/ItServicesData/ItServicesData";
+import popUpsData from "@/data/RaServiceData/RaServiceData";
 
 function SidePopup() {
   const [isOpen, setIsOpen] = useState(null);
@@ -87,7 +87,7 @@ function PopUp({ title, description, imgSrc, setIsOpen }) {
             </span>
           </div>
           <div className="flex flex-col items-center h-auto ">
-            
+
             <div className="lg:w-1/2 w-full h-auto p-4 flex justify-evenly items-center">
               <img
                 src={imgSrc}

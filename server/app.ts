@@ -29,6 +29,7 @@ app.use((_, res, next) => {
 });
 
 const whitelist = [
+  "http://localhost:3000",
   "https://blog.dhanseturesearch.com",
   "https://adminblog.dhanseturesearch.com",
   "https://test.payu.in",
