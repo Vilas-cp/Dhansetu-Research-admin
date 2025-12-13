@@ -133,7 +133,9 @@ const Header = () => {
               </DropdownMenu>
             ) : (
               <Link href="/sign-in" className="hidden md:block">
-                <Button className="bg-white text-black border border-black">Sign In</Button>
+                <Button className="bg-white text-black border border-black">
+                  Sign In
+                </Button>
               </Link>
             )}
 
@@ -167,8 +169,8 @@ const Header = () => {
                   variant={isActive ? "default" : "ghost"}
                   className={`flex items-center space-x-2 ${
                     isActive
-                      ? "bg-[#fdeee9] text-[#f99d1d] hover:bg-[#fee3da]"
-                      : "text-gray-600 hover:text-gray-900"
+                      ? "bg-[#e6efff] text-[#1e3a8a] hover:bg-[#dbeafe]"
+                      : "text-gray-600 hover:text-[#1e3a8a]"
                   }`}
                 >
                   {/* <Icon className="w-4 h-4" /> */}
@@ -205,7 +207,7 @@ const Header = () => {
                   </Link>
                 );
               })}
-              
+
               {/* Mobile User Profile Section */}
               {user && (
                 <div className="pt-4 border-t border-gray-200">
@@ -231,7 +233,7 @@ const Header = () => {
                       </div>
                     </div>
                   </div>
-                  
+
                   {/* Profile Link */}
                   <Link
                     href="/dashboard"
@@ -241,7 +243,7 @@ const Header = () => {
                     <Users className="w-5 h-5" />
                     <span className="font-medium">Profile</span>
                   </Link>
-                  
+
                   {/* Logout Button */}
                   <button
                     onClick={handleLogout}
@@ -255,7 +257,7 @@ const Header = () => {
                   </button>
                 </div>
               )}
-              
+
               {/* Mobile Sign In */}
               {!user && (
                 <div className="pt-4 border-t border-gray-200">

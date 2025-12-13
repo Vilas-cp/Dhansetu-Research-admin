@@ -60,11 +60,14 @@ const UserProfilePage = () => {
   if (error) {
     return (
       <div>
+        <Header />
         <div className="min-h-screen bg-gray-50 flex items-center justify-center">
           <div className="bg-white rounded-lg shadow-sm border border-red-200 p-8 max-w-md w-full mx-4">
             <div className="text-center">
               <div className="text-red-500 text-lg font-medium mb-2">
                 Error Loading Profile
+                <br></br>
+                PLease logout and login again
               </div>
               <p className="text-gray-600">{error}</p>
               <button

@@ -9,6 +9,7 @@ import {
   Clock,
   ArrowRight,
   Crown,
+  Loader2,
 } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -137,7 +138,6 @@ const ArticleCard = ({ article, index, isLast, onShare }) => (
               {article.artType === "premium" && (
                 <Crown size={14} className="inline-block" />
               )}
-              {/* {article.artType === "premium" ? "Premium" : "Free"} */}
             </span>
           </div>
         </div>
@@ -230,6 +230,14 @@ const FeaturedArticle = ({ article, onShare }) => (
   </div>
 );
 
+// Loading State Component
+const LoadingState = () => (
+  <div className="flex flex-col items-center justify-center py-20 min-h-screen">
+    <Loader2 className="w-12 h-12 text-blue-600 animate-spin mb-4" />
+    <p className="text-slate-600 text-lg font-medium">Loading articles...</p>
+  </div>
+);
+
 // Empty State Component
 const EmptyState = () => (
   <div className="text-center py-16">
@@ -244,24 +252,24 @@ const EmptyState = () => (
   </div>
 );
 
-
-
 const ArticlesGrid = () => {
   const [showShareDialog, setShowShareDialog] = useState(false);
   const [currentArticleLink, setCurrentArticleLink] = useState("");
   const [copied, setCopied] = useState(false);
   const [articles, setArticles] = useState([]);
+  const [loading, setLoading] = useState(true);
   const router = useRouter();
 
   useEffect(() => {
     const getAllArticles = async () => {
       try {
+        setLoading(true);
         const res = await apiGet("user/v1/articles/all");
-      
-        
         setArticles(res?.data.res || []);
       } catch (err) {
         toast.error("Error occurred", err);
+      } finally {
+        setLoading(false);
       }
     };
     getAllArticles();
@@ -293,9 +301,9 @@ const ArticlesGrid = () => {
       />
 
       <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-      
-
-        {articles.length > 0 ? (
+        {loading ? (
+          <LoadingState />
+        ) : articles.length > 0 ? (
           <>
             {/* Featured Article */}
             <FeaturedArticle article={articles[0]} onShare={handleShareClick} />

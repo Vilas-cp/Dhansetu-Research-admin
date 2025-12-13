@@ -7,11 +7,11 @@ const greyCardContent = [
     routing:`/algo-services`,
   },
   {
-    title: "IT services",
-    description: `We create minimalistic designs that lead your business out of the competition`,
+    title: "RA services",
+    description: `Where clarity meets compliance, and data is transformed into meaningful direction.`,
     imgSrc: `https://live.21lab.co/nanosoft/wp-content/uploads/2018/08/ssd-storage-1951_0cd86b60-9df8-4053-9198-84f76027d5de.svg`,
-    footerNote: "IT services",
-    routing:`/it-services`,
+    footerNote: "RA services",
+    routing:`/ra-services`,
   },
   /*{
     title: "Order Management",
