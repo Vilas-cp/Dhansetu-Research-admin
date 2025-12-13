@@ -50,7 +50,7 @@ const Page = () => {
                 <span className="text-red-500 font-bold fa">
                   <FontAwesomeIcon icon={faPhone} />
                 </span>{" "}
-                <a href="tel:9179042673"> : +91 9179042673</a>
+                <a href="tel:7697722464"> : +91 7697722464</a>
               </li>
               <li className="text-left text-[#555555]  p1 pt-[30px] font-medium ">
                 <a href="mailto:support@dhansetu.in">
@@ -65,8 +65,8 @@ const Page = () => {
                   <FontAwesomeIcon icon={faMapMarkerAlt} />{" "}
                 </span>
                 <a href="#map">
-                  : Sai kripa colony, Radisson square, Indore,<br></br> Madhya
-                  Pradesh 452010
+                  :  601, 6th Floor, H2, Belmont park, Niranjanpur,<br></br> Indore,
+                      Madhya Pradesh, 452010
                 </a>
               </li>
             </div>

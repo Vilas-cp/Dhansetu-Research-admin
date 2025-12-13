@@ -1,6 +1,6 @@
 import Header1 from "@/components/Header1";
 import React from "react";
-import Itservicessection from "./compo/Itservicessection";
+import Itservicessection from "./compo/RAservicessection";
 import Footer from "@/components/Footer";
 import LoadGoogleAdsScript from "@/components/LoadGoogleAdsScript";
 import LoadGoogleAdsIframe from "@/components/LoadGoogleAdsIframe";
@@ -12,8 +12,8 @@ const Page = () => {
       <LoadGoogleAdsIframe />
       <Header1 />
       <div className="pt-[125px]">
-        <h1 className="w-full bg-[#aee9e7] flex justify-center items-center h-[35vh] text-[#102b5c] font-[999] text-[5vh] xl:text-[8vh] ">
-          IT-services
+        <h1 className="w-full bg-[#002366] flex justify-center items-center h-[35vh] text-white font-[999] text-[5vh] xl:text-[8vh] ">
+          RA-services
         </h1>
       </div>
       <Itservicessection />

@@ -4,9 +4,9 @@ import Footer from "@/components/Footer";
 import LoadGoogleAdsScript from "@/components/LoadGoogleAdsScript";
 import LoadGoogleAdsIframe from "@/components/LoadGoogleAdsIframe";
 import ItServiceData from "@/data/ItServicesData/ItServicesData";
-import RightPanelItService from "../compo/Itservicescompos/RightPanelItService";
+import RightPanelItService from "../compo/RAservicescompos/RightPanelItService";
 
-const dataIndex = 0;
+const dataIndex = 3;
 const Page = () => {
   return (
     <>

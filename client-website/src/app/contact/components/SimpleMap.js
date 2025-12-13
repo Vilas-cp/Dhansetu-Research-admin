@@ -17,7 +17,7 @@ function SimpleMap() {
     <div className="pt-20" id="map">
       <MapContainer
         className="!h-[60vh] !z-0"
-        center={[22.749283, 75.903513]}
+        center={[22.785000, 75.890218]}
         zoom={13}
         scrollWheelZoom={false}
       >
@@ -25,7 +25,7 @@ function SimpleMap() {
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
-        <Marker icon={ICON} position={[22.749283, 75.903513]}>
+        <Marker icon={ICON} position={[22.785000, 75.890218]}>
           <Popup>
             A pretty CSS3 popup. <br /> Easily customizable.
           </Popup>

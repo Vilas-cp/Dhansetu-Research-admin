@@ -139,15 +139,8 @@ function IndustryWeServeSection({ setLoading, indexLoad}) {
     >
       <section className="bg-[#181123] px-[10%] py-10 flex flex-col justify-between items-center">
         <div className="flex flex-row justify-between items-center flex-wrap">
-          <div className="md:w-[40%] w-full">
-            <p className="tracking-widest text-xs text-[#1dc2ef] p1">
-              INDUSTRIES WE SERVE
-            </p>
-            <h2 className="text-white text-2xl font-bold h1">
-              Managed IT services customized for your industry
-            </h2>
-          </div>
-          <div className="md:w-[40%] w-full text-[#9b9aad] text-base p2">
+         
+          <div className="md:w-[90%] w-full text-[#9b9aad] text-base p2">
             {`We are Providing Algo Software is one of the most leading software, which helps to automate your 
           trade-in effectively & efficiently. Algo-Software is the term used to describe the use of preset software 
           to execute trades. A set of instructions or an algorithm is added to computers`}

@@ -1,4 +1,4 @@
-import Itservicescontent from "@/data/ItServices/Itservicescontent";
+import RAservicescontent from "@/data/RAServices/RAservicescontent";
 import React from "react";
 
 const ATagComp = ({ title, imgSrc, routing }) => (
@@ -16,7 +16,7 @@ const ATagComp = ({ title, imgSrc, routing }) => (
 function RightPanelItService() {
   return (
     <div className="flex w-full xl:w-1/4 flex-col float-left pl-4 py-6">
-      {Itservicescontent.map((ele, index) => (
+      {RAservicescontent.map((ele, index) => (
         <ATagComp key={index} {...ele} />
       ))}
     </div>
