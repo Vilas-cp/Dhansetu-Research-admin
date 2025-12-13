@@ -17,6 +17,9 @@ import LoadGoogleAdsScript from "@/components/LoadGoogleAdsScript";
 import LoadGoogleAdsIframe from "@/components/LoadGoogleAdsIframe";
 import AppFormComp from "@/components/FormComp/AppFormComp";
 import StockMarque from "@/components/StockMarket/StockMarque";
+import StockTrade from "./StockTrade";
+
+
 
 export default function Home() {
   const [loading, setLoading] = useState([
@@ -63,7 +66,9 @@ export default function Home() {
         </AnimatePresence>
 
         <SlidingHeroSection setLoading={setLoading} indexLoad={0} />
-        <StockMarque />
+        {/* <StockMarque /> */}
+        <StockTrade />
+
         <PurpleCardSection setLoading={setLoading} indexLoad={1} />
 
         <OurServicesSection setLoading={setLoading} indexLoad={2} />
