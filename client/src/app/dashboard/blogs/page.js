@@ -188,15 +188,19 @@ const ArticlesGrid = () => {
   const [copied, setCopied] = useState(false);
   const [articles, setArticles] = useState([]);
   const [isDeleting, setIsDeleting] = useState(false);
-  const router=useRouter();
+  const [isLoading, setIsLoading] = useState(true); // ✅ added
+  const router = useRouter();
 
   useEffect(() => {
     const getAllArticles = async () => {
       try {
+        setIsLoading(true); // ✅ added
         const res = await apiGet("admin/v1/articles/all");
         setArticles(res?.data.res || []);
       } catch (err) {
         toast.error("Error occurred", err);
+      } finally {
+        setIsLoading(false); // ✅ added
       }
     };
     getAllArticles();
@@ -214,7 +218,7 @@ const ArticlesGrid = () => {
   const handleEditClick = (e, article) => {
     e.preventDefault();
     e.stopPropagation();
-    router.push(`/dashboard/editblog/${article.artId}`)
+    router.push(`/dashboard/editblog/${article.artId}`);
   };
 
   const handleDeleteClick = (e, article) => {
@@ -242,11 +246,9 @@ const ArticlesGrid = () => {
         toast.success("Article deleted successfully");
       } else {
         toast.error("Failed to delete article");
-     
       }
     } catch (error) {
       toast.error("Error deleting article", error);
-  
     } finally {
       setIsDeleting(false);
       setShowDeleteDialog(false);
@@ -262,7 +264,8 @@ const ArticlesGrid = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Header currentPage="blogs"/>
+      <Header currentPage="blogs" />
+
       <ShareDialog
         isOpen={showShareDialog}
         onClose={setShowShareDialog}
@@ -281,23 +284,28 @@ const ArticlesGrid = () => {
 
       <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="overflow-hidden">
-          {articles.map((article, index) => (
-            <ArticleCard
-              key={article.id}
-              article={article}
-              index={index}
-              isLast={index === articles.length - 1}
-              onShare={handleShareClick}
-              onEdit={handleEditClick}
-              onDelete={handleDeleteClick}
-            />
-          ))}
+          {isLoading ? (
+            <div className="flex justify-center py-20">
+              <div className="h-10 w-10 animate-spin rounded-full border-4 border-gray-300 border-t-[#1e3a8a]" />
+            </div>
+          ) : (
+            articles.map((article, index) => (
+              <ArticleCard
+                key={article.id}
+                article={article}
+                index={index}
+                isLast={index === articles.length - 1}
+                onShare={handleShareClick}
+                onEdit={handleEditClick}
+                onDelete={handleDeleteClick}
+              />
+            ))
+          )}
         </div>
 
-        {articles.length === 0 && <EmptyState />}
+        {!isLoading && articles.length === 0 && <EmptyState />}
       </main>
     </div>
   );
 };
-
 export default ArticlesGrid;
