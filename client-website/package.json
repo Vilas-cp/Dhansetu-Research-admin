@@ -32,7 +32,7 @@
     "leaflet": "^1.9.4",
     "lucide-react": "^0.545.0",
     "nanosoft-app": "file:",
-    "next": "^14.1.4",
+    "next": "14.2.35",
     "randomstring": "^1.3.0",
     "react": "^18",
     "react-dom": "^18",
