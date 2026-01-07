@@ -24,9 +24,9 @@ export default function Footer() {
                   market.
                 </p>
                 <div className="mt-8 space-y-2 text-sm text-gray-200">
-                  <p>BSE Enlistment No.- 0000</p>
-                  <p>SEBI Registration No. - INH00000000</p>
-                  <p>Validity:- 0 August, 2100 – Perpetual</p>
+                  <p>BSE Enlistment No. - 0000</p>
+                  <p>SEBI Registration No. - INH000024550</p>
+                  <p>Validity:- Jan 01, 2026 - Dec 31, 2030</p>
                 </div>
               </div>
 
@@ -109,10 +109,10 @@ export default function Footer() {
                   <div className="flex items-start gap-3">
                     <Phone className="w-5 h-5 text-white flex-shrink-0 mt-0.5" />
                     <a
-                      href="tel:+917697722464"
+                      href="tel:+919243022464"
                       className="hover:text-amber-300 transition-colors"
                     >
-                      (+91) 7697722464
+                      (+91) 9243022464
                     </a>
                   </div>
 
@@ -178,7 +178,7 @@ export default function Footer() {
 
             {/* Copyright */}
             <div className="pt-8 border-t border-[#2a5d6c] text-center text-sm text-gray-200">
-              <p>© 2025 Dhansetu Research. All Rights Reserved.</p>
+              <p>© 2026 Dhansetu Research. All Rights Reserved.</p>
             </div>
           </div>
         </footer>
