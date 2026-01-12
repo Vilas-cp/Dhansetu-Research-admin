@@ -5,7 +5,7 @@ function SidePopup() {
     <div className="fixed z-[100] w-auto right-0 -translate-y-1/2 top-1/2 h-auto ">
       <div className="flex flex-col justify-evenly space-y-2 py-2 items-center pr-1">
         <a
-          href="https://brainautotech.gitbook.io/intro/"
+          href="#"
           target="_blank"
           title="Dhansetu Research Docs"
         >
@@ -17,7 +17,7 @@ function SidePopup() {
             />
           </div>
         </a>
-        <a href="tel:+917697722464">
+        <a href="/contact">
           <div className="h-10 w-10 bg-blue-600 rounded-full flex items-center justify-evenly cursor-pointer duration-300 ease-in-out hover:bg-slate-700 hover:!invert-0">
             <img
               className="w-[75%] h-[75%] invert"

@@ -41,7 +41,7 @@ function AppFormComp() {
                   <span className="text-red-500 font-bold">
                     <FontAwesomeIcon icon={faEnvelope} />
                   </span>{" "}
-                  : support@dhansetu.in
+                  : support@dhanseturesearch.com
                 </a>
               </li>
               <li className="text-left text-[#555555]  p1 pt-[30px] font-medium ">
@@ -49,8 +49,8 @@ function AppFormComp() {
                   <FontAwesomeIcon icon={faMapMarkerAlt} />{" "}
                 </span>
                 <a href="/contact/#mapcont">
-                  : Sai kripa colony, Radisson square, Indore,<br></br> Madhya
-                  Pradesh 452010
+                  : 601, 6th Floor, H2, Belmont park, Niranjanpur, 
+                  Indore, Madhya Pradesh, 452010
                 </a>
               </li>
             </div>

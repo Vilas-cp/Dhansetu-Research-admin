@@ -107,7 +107,7 @@ Everything backed by data, delivered in a crisp, actionable format.`,
   {
     title: "ISO Certification",
     description: ``,
-    imgSrc: "/iso/iso_cert.jpg",
+    imgSrc: "",
   },
 ];
 
