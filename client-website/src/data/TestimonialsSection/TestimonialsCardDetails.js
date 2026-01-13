@@ -19,7 +19,7 @@ const testimonialCardDeatils = [
   },
   {
     name: "Siddharth Patel",
-    state: "Bangalore",
+    state: "Bengaluru",
     message: `“I had a great experience with Dhansetu Research. Their team provided excellent support, and I learned 
                 invaluable strategies for safe trading during a session with a market expert. The automated software they
                  offer works like a charm, providing accurate information and quick responses to any questions.Thank you Dhansetu Research”`,
