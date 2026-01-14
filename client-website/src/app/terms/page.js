@@ -43,7 +43,7 @@ const Page = () => {
           </li>
           <li className="text-left text-[#555555] pt-[10px]">
             {
-              "We suggest you not to work on personal recommendation given by associates of company."
+              "We suggest you not to work on personal recommendation given by the associates of company."
             }
           </li>
           <li className="text-left text-[#555555] pt-[10px]">
