@@ -203,7 +203,10 @@ const Header1 = () => {
           leaveFrom="opacity-100 scale-100"
           leaveTo="opacity-0 scale-95"
         >
-          <Popover.Panel className="absolute top-0 inset-x-0 p-2 transition transform origin-top-right lg:hidden z-50">
+           <Popover.Panel
+                focus
+                className="absolute z-10 top-0 inset-x-0 p-2 transition transform origin-top-right md:hidden max-h-screen overflow-y-auto"
+              >
             <div className="rounded-2xl shadow-2xl bg-white ring-1 ring-black ring-opacity-5 overflow-hidden">
               <div className="px-5 pt-4 pb-3">
                 {/* Mobile Header */}
