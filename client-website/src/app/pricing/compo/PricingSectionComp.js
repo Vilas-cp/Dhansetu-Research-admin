@@ -28,7 +28,7 @@ const PricingTable = () => {
     "stockFuture",
     "equityResearch",
     "longTermEquity",
-    "mcxnaturalgasCrudeoil",
+    "mcx",
   ];
 
   const planNames = {
@@ -39,7 +39,7 @@ const PricingTable = () => {
     stockFuture: "Stock Future",
     equityResearch: "Equity Research",
     longTermEquity: "Long Term Equity Research",
-    mcxnaturalgasCrudeoil: "MCX (Natural Gas, Crude Oil)",
+    mcx: "MCX",
   };
 
   const billingCycleLabels = {
