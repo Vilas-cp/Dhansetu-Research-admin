@@ -6,7 +6,7 @@ export const metadata = {
   title: "Refund Policy - Dhansetu Research",
   description: "Dhansetu Research",
   alternates: {
-    canonical: "https://brainautotech.com/refund/",
+    canonical: "https://dhanseturesearch.com/refund/",
   },
 };
 

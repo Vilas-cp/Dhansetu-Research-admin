@@ -18,7 +18,7 @@ function Header() {
   return (
     <Navbar className="pt-6 px-[20px] fixed bg-white pb-6 z-[100]">
       <NavbarBrand>
-        <p className="font-bold text-inherit">BrainTech</p>
+        <p className="font-bold text-inherit">Dhansetu Research</p>
       </NavbarBrand>
       <NavbarContent
         className="hidden sm:flex  font-semibold gap-[10vh] text-[#032b5f] text-[17px]"
@@ -142,17 +142,17 @@ function Header() {
           <Link color="foreground" href="#">
             Contact
             </Link>
-          <Link href="https://brainautotech.gitbook.io/intro/" target="_blank" rel="noopener noreferrer" className="textdesign">
+          <Link href="https://www.youtube.com/@DhansetuResearch" target="_blank" rel="noopener noreferrer" className="textdesign">
             Help Center
           </Link>
         </NavbarItem>
       </NavbarContent>
       <NavbarContent justify="end">
         <NavbarItem className="hidden lg:flex">
-          <Link href="#">Login</Link>
+          <Link href="https://client.dhanseturesearch.com/login">Login</Link>
         </NavbarItem>
         <NavbarItem>
-          <Button as={Link} color="primary" href="#" variant="flat">
+          <Button as={Link} color="primary" href="https://client.dhanseturesearch.com/signup" variant="flat">
             Register
           </Button>
         </NavbarItem>

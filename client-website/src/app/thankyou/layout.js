@@ -6,7 +6,7 @@ export const metadata = {
   title: "Thank You - Dhansetu Research",
   description: "Dhansetu Research",
   alternates: {
-    canonical: "https://brainautotech.com/thankyou/",
+    canonical: "https://dhanseturesearch.com/thankyou/",
   },
 };
 

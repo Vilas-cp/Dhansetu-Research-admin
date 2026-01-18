@@ -7,7 +7,7 @@ export const metadata = {
   title: metadataProps.complaint.title,
   description: metadataProps.complaint.description,
   alternates: {
-    canonical: "https://brainautotech.com/about/",
+    canonical: "https://dhanseturesearch.com/about/",
   },
 };
 

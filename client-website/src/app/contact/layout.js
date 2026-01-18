@@ -8,7 +8,7 @@ export const metadata = {
   title: metadataProps.contact.title,
   description: metadataProps.contact.description,
   alternates: {
-    canonical: "https://brainautotech.com/contact/",
+    canonical: "https://dhanseturesearch.com/contact/",
   },
 };
 

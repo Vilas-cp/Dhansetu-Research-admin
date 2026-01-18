@@ -30,6 +30,6 @@ export default function robots() {
         "/indicator",
       ],
     },
-    sitemap: "https://brainautotech.com/sitemap.xml",
+    sitemap: "https://dhanseturesearch.com/sitemap.xml",
   };
 }

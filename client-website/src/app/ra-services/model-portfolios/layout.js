@@ -7,7 +7,7 @@ export const metadata = {
   title: metadataProps.itServices.gameDevelopment.title,
   description: metadataProps.itServices.gameDevelopment.description,
   alternates: {
-    canonical: "https://brainautotech.com/it-services/game-development/",
+    canonical: "https://dhanseturesearch.com/it-services/game-development/",
   },
 };
 

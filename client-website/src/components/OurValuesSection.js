@@ -19,7 +19,7 @@ function OurValuesSection({ setLoading, indexLoad }) {
             These values give us the foundations we need.
           </p>
 
-          <a href="https://www.youtube.com/@BrainAutoTech" target="_blank" title="YouTube">
+          <a href="https://www.youtube.com/@DhansetuResearch" target="_blank" title="YouTube">
             <div className="bg-white rounded-full w-20 h-20 !mt-10 relative animate-bounce cursor-pointer">
               <div className="absolute -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2 h-7 w-7">
                 

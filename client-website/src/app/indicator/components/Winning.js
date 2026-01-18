@@ -11,7 +11,7 @@ function Winning() {
       <div className="text-center flex flex-col space-y-4">
         <h2 className="text-6xl font-bold text-[#00c2e0]">Our Winning Edge</h2>
         <p className="text-lg px-[20%]">
-          Discover BrainAutoTech, the ultimate online trading service featuring  the most advanced, cutting-edge
+          Discover Dhansetu Research, the ultimate online trading service featuring  the most advanced, cutting-edge
           indicators that unveil precise{" "}
           <span className="text-green-500">BUY</span> and{" "}
           <span className="text-red-500">SELL</span> signals, catapulting your

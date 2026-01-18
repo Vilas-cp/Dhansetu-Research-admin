@@ -7,7 +7,7 @@ export const metadata = {
   title: metadataProps.itServices.graphicVideoDesign.title,
   description: metadataProps.itServices.graphicVideoDesign.description,
   alternates: {
-    canonical: "https://brainautotech.com/it-services/graphic-video-design/",
+    canonical: "https://dhanseturesearch.com/it-services/graphic-video-design/",
   },
 };
 

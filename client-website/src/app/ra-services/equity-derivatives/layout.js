@@ -7,7 +7,7 @@ export const metadata = {
   title: metadataProps.itServices.digitalMarketing.title,
   description: metadataProps.itServices.digitalMarketing.description,
   alternates: {
-    canonical: "https://brainautotech.com/it-services/digital-marketing/",
+    canonical: "https://dhanseturesearch.com/it-services/digital-marketing/",
   },
 };
 

@@ -5,7 +5,7 @@ const brandCardDetails = [
       "https://live.21lab.co/nanosoft/wp-content/uploads/2018/08/box-w.svg",
     description: "Login",
     bgColor: "#8a49a1",
-    linkTo: "https://login.brainautotech.com/login",
+    linkTo: "https://client.dhanseturesearch.com/login",
   },
   {
     imgSrc: "/iws-section/2.jpeg",
@@ -22,7 +22,7 @@ const brandCardDetails = [
       "https://live.21lab.co/nanosoft/wp-content/uploads/2018/08/uni-w.svg",
     description: "Enjoy automated trading.",
     bgColor: "#71cbcc",
-    linkTo: "https://login.brainautotech.com/signup",
+    linkTo: "https://client.dhanseturesearch.com/login",
   },
 ];
 

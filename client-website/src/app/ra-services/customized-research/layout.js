@@ -7,7 +7,7 @@ export const metadata = {
   title: metadataProps.itServices.softwareDevelopment.title,
   description: metadataProps.itServices.softwareDevelopment.description,
   alternates: {
-    canonical: "https://brainautotech.com/it-services/software-development/",
+    canonical: "https://dhanseturesearch.com/it-services/software-development/",
   },
 };
 

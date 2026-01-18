@@ -7,7 +7,7 @@ export const metadata = {
   title: metadataProps.algoServices.equity.title,
   description: metadataProps.algoServices.equity.description,
   alternates: {
-    canonical: "https://brainautotech.com/algo-services/algo-trading/",
+    canonical: "https://dhanseturesearch.com/algo-services/algo-trading/",
   },
 };
 

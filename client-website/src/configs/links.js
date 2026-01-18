@@ -1,5 +1,5 @@
 const links = {
-  // server: "https://api-brainautotech.vercel.app",
+  // server: "https://api-dhanseturesearch.vercel.app",
   server: "http://localhost:3000",
 };
 

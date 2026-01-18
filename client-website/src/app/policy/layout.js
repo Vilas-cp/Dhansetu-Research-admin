@@ -6,7 +6,7 @@ export const metadata = {
   title: "Policies - Dhansetu Research",
   description: "Dhansetu Research",
   alternates: {
-    canonical: "https://brainautotech.com/privacy/",
+    canonical: "https://dhanseturesearch.com/privacy/",
   },
 };
 

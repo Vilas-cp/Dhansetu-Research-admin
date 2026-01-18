@@ -61,7 +61,7 @@ const Herosection = ({ paymentForm, setSelectedStrategy }) => {
             <span className="text-[#00c2e0]">TRADE SMARTER WITH </span>
             <br />
             <span className="text-[#00c2e0]">
-              <span className="text-black">BRAIN</span>AUTOTECH
+              <span className="text-black">DHANSETU</span>RESEARCH
             </span>
           </div>
 

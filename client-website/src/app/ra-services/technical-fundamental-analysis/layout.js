@@ -7,7 +7,7 @@ export const metadata = {
   title: metadataProps.itServices.mobileAppDevelopment.title,
   description: metadataProps.itServices.mobileAppDevelopment.description,
   alternates: {
-    canonical: "https://brainautotech.com/it-services/mobile-app-development/",
+    canonical: "https://dhanseturesearch.com/it-services/mobile-app-development/",
   },
 };
 

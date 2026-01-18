@@ -7,7 +7,7 @@ export const metadata = {
   title: "Disclaimer - Dhansetu Research",
   description: "Dhansetu Research",
   alternates: {
-    canonical: "https://brainautotech.com/disclaimer/",
+    canonical: "https://dhanseturesearch.com/disclaimer/",
   },
 };
 

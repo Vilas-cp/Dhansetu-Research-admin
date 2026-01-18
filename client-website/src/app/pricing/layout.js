@@ -7,7 +7,7 @@ export const metadata = {
   title: metadataProps.pricing.title,
   description: metadataProps.pricing.description,
   alternates: {
-    canonical: "https://brainautotech.com/pricing/",
+    canonical: "https://dhanseturesearch.com/pricing/",
   },
 };
 
