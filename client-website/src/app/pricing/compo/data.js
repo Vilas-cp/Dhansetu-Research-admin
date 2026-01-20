@@ -179,8 +179,8 @@ const pricingData = {
         support: 'Email Support Only',
       },
     },
-    mcxnaturalgasCrudeoil: {
-      subscriptionId: 'mcx_natural_gas_crude_oil_quarterly_008',
+    mcx: {
+      subscriptionId: 'mcx_quarterly_008',
       price: 65000,
       features: {
         researchCalls: 'Options/Futures',
@@ -275,8 +275,8 @@ const pricingData = {
         support: 'Email Support Only',
       },
     },
-    mcxnaturalgasCrudeoil: {
-      subscriptionId: 'mcx_natural_gas_crude_oil_halfyearly_008',
+    mcx: {
+      subscriptionId: 'mcx_halfyearly_008',
       price: 100000,
       features: {
         researchCalls: 'Options/Futures',
