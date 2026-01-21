@@ -15,7 +15,7 @@ const Header1 = () => {
   const navLinks = [
     { href: "/", label: "Home" },
     { href: "/about", label: "About" },
-    { href: "/market", label: "Market course" },
+    { href: "/https://blog.dhanseturesearch.com/", label: "Market course" },
     { href: "/pricing", label: "Pricing" },
     { href: "/payment", label: "Payment" },
   ];
