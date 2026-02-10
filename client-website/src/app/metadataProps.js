@@ -5,7 +5,7 @@ const metadataProps = {
     description: `Explore our advanced ALGO software, 
     featuring powerful strategies for seamless trading 
     across multiple brokers. Achieve maximum convenience and 
-    success in your investments with DhansetuResearch. &#128222; +91 9179042673`,
+    success in your investments with DhansetuResearch. &#128222; +91 9993898621`,
   },
   algoServices: {
     title: "Dhansetu",
