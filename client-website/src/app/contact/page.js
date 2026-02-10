@@ -50,14 +50,14 @@ const Page = () => {
                 <span className="text-red-500 font-bold fa">
                   <FontAwesomeIcon icon={faPhone} />
                 </span>{" "}
-                <a href="tel:7697722464"> : +91 7697722464</a>
+                <a href="tel:9993898621"> : +91 9993898621</a>
               </li>
               <li className="text-left text-[#555555]  p1 pt-[30px] font-medium ">
                 <a href="mailto:support@dhansetu.in">
                   <span className="text-red-500 font-bold">
                     <FontAwesomeIcon icon={faEnvelope} />
                   </span>{" "}
-                  : support@dhansetu.in
+                  : info@dhanseturesearch.com
                 </a>
               </li>
               <li className="text-left text-[#555555]  p1 pt-[30px] font-medium ">

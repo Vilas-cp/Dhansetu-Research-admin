@@ -26,7 +26,7 @@ function SidePopup() {
             />
           </div>
         </a>
-        <a href="https://wa.me/917697722464" target="_blank" title="WhatsApp">
+        <a href="https://wa.me/919993898621" target="_blank" title="WhatsApp">
           <div className="h-10 w-10 bg-white rounded-full flex items-center justify-evenly cursor-pointer fill-green-600 duration-300 ease-in-out hover:!fill-slate-700">
             <svg
               xmlns="http://www.w3.org/2000/svg"
