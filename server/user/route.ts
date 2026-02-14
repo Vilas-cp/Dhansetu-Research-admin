@@ -7,12 +7,15 @@ import { generateOrder } from "../helpers/orders";
 import { PayUBody } from "../types/sub";
 import { getPaymentDetails } from "../helpers/fetchURL";
 import { MailHandler } from "../helpers/notifications";
+import Razorpay from "razorpay";
+import { validateWebhookSignature } from "razorpay/dist/utils/razorpay-utils";
 const v1Routes = express.Router();
 const userRoutes = express.Router();
 
 // Macros
 const { SESSION_EXPIRE_TIME_IN_DAYS } = serverConfigs;
 const { PAYU_MERCHANT_ID, PAYU_SALT } = envConfigs;
+const { RAZORPAY_KEY_ID, RAZORPAY_KEY_SECRET } = envConfigs;
 
 const backendLink = serverConfigs.BACKEND_LINK;
 const clientLink = serverConfigs.CLIENT_LINK;
@@ -40,7 +43,7 @@ v1Routes.post("/login", async (req, res) => {
         clerkId,
         firstName,
         lastName,
-        imgURL
+        imgURL,
       );
       if (createUserRes === null) {
         res.status(400).send({
@@ -116,7 +119,7 @@ v1Routes.post("/login", async (req, res) => {
     console.log(chalk.yellow(`User: ${emailId}, is logged in as user!`));
   } catch (error: any) {
     console.log(
-      chalk.red(`Error: ${error?.message}, for user id ${req.body?.emailId}`)
+      chalk.red(`Error: ${error?.message}, for user id ${req.body?.emailId}`),
     );
     res.status(400).send({
       status: "fail",
@@ -161,7 +164,7 @@ v1Routes.post("/verify", async (req, res) => {
     console.log(chalk.yellow(`User: ${userName}, is verified!`));
   } catch (error: any) {
     console.log(
-      chalk.red(`Error: ${error?.message}, for user id ${req.body?.userName}`)
+      chalk.red(`Error: ${error?.message}, for user id ${req.body?.userName}`),
     );
     res.status(400).send({
       status: "fail",
@@ -214,7 +217,7 @@ v1Routes.get("/info", async (req, res) => {
     });
   } catch (error: any) {
     console.log(
-      chalk.red(`Error: ${error?.message}, for user id ${req.body?.userName}`)
+      chalk.red(`Error: ${error?.message}, for user id ${req.body?.userName}`),
     );
     res.status(400).send({
       status: "fail",
@@ -229,7 +232,7 @@ v1Routes.get("/info", async (req, res) => {
 v1Routes.post("/test", async (req, res) => {
   try {
     const { sessionId, userName } = req.signedCookies;
-     const mailHand = new MailHandler();
+    const mailHand = new MailHandler();
     // await mailHand.sendMail("vilaspgowda1000@gmail.com", "", "", "");
     res.status(200).send({
       status: "success",
@@ -239,7 +242,7 @@ v1Routes.post("/test", async (req, res) => {
     });
   } catch (error: any) {
     console.log(
-      chalk.red(`Error: ${error?.message}, for user id ${req.body?.userName}`)
+      chalk.red(`Error: ${error?.message}, for user id ${req.body?.userName}`),
     );
     res.status(400).send({
       status: "fail",
@@ -280,7 +283,7 @@ v1Routes.post("/logout", async (req, res) => {
     console.log(chalk.yellow(`User: ${userName}, is logged out as user!`));
   } catch (error: any) {
     console.log(
-      chalk.red(`Error: ${error?.message}, for user id ${req.body?.userName}`)
+      chalk.red(`Error: ${error?.message}, for user id ${req.body?.userName}`),
     );
     res.status(400).send({
       status: "fail",
@@ -314,7 +317,7 @@ v1Routes.get("/articles/all", async (req, res) => {
     });
   } catch (error: any) {
     console.log(
-      chalk.red(`Error: ${error?.message}, for user id ${req.body?.userName}`)
+      chalk.red(`Error: ${error?.message}, for user id ${req.body?.userName}`),
     );
     res.status(400).send({
       status: "fail",
@@ -362,6 +365,7 @@ v1Routes.get("/article/:artid", async (req, res) => {
       return;
     }
     const sessionDB = new SessionDB();
+    // console.log(userName, sessionId);
     const sessionIdRes = await sessionDB.getSessionId(userName || "");
     // console.log(sessionId, sessionIdRes);
     if (!sessionId || sessionIdRes !== sessionId) {
@@ -389,7 +393,8 @@ v1Routes.get("/article/:artid", async (req, res) => {
       res.status(200).send({
         status: "success",
         data: {
-          message: "You need premium subscription accont to view this blog. Please buy it, or renew it.",
+          message:
+            "You need premium subscription accont to view this blog. Please buy it, or renew it.",
           access: false,
           userLoggedIn: userRes !== -1,
         },
@@ -406,7 +411,7 @@ v1Routes.get("/article/:artid", async (req, res) => {
     });
   } catch (error: any) {
     console.log(
-      chalk.red(`Error: ${error?.message}, for user id ${req.body?.userName}`)
+      chalk.red(`Error: ${error?.message}, for user id ${req.body?.userName}`),
     );
     res.status(400).send({
       status: "fail",
@@ -418,66 +423,93 @@ v1Routes.get("/article/:artid", async (req, res) => {
   }
 });
 
-v1Routes.post("/buy/verify/success", async (req, res) => {
+v1Routes.post("/buy/verify/rzpay", async (req, res) => {
   try {
-    // console.log(req.body);
-    const payUBody: PayUBody = req.body;
+    // const { sessionId, userName } = req.signedCookies;
+    // if (!sessionId || !userName) {
+    //   res.status(400).send({
+    //     status: "fail",
+    //     data: {
+    //       message: "SessionId not found",
+    //     },
+    //   });
+    //   return;
+    // }
+    const userName = req.body.userName;
     const userDb = new UserDB();
-    const txnId: string = payUBody.txnid;
-    if (!PAYU_MERCHANT_ID || !PAYU_SALT) {
-      res.redirect("http://localhost:3000/failure");
+    const userInfo = await userDb.getClientUser(userName);
+    if (userInfo === null) {
+      res.status(400).send({
+        status: "fail",
+        data: {
+          message: "Database error, or Database is offline.",
+        },
+      });
       return;
     }
-    const payUId = payUBody.mihpayid;
-    const payRes = await getPaymentDetails(payUId, PAYU_MERCHANT_ID, PAYU_SALT);
-    const payResTxnId: string =
-      payRes["transaction_details"]?.["txnid"]?.toString();
-    console.log(payResTxnId);
-    if (payResTxnId !== txnId) {
-      const failureLink = clientLink + "/failure";
-      res.redirect(failureLink);
+    if (userInfo === -1) {
+      res.status(400).send({
+        status: "fail",
+        data: {
+          message: "User does not exists.",
+        },
+      });
       return;
     }
+    const { razorpay_order_id, razorpay_payment_id, razorpay_signature } =
+      req.body;
+    console.log(req.body);
+    const secret = RAZORPAY_KEY_SECRET || "no_secret";
+    const body = razorpay_order_id + "|" + razorpay_payment_id;
+    const isValidSignature = validateWebhookSignature(
+      body,
+      razorpay_signature,
+      secret,
+    );
+    console.log(`Is Valid ${razorpay_order_id}`, isValidSignature);
+    res.status(200).send({
+      status: "success",
+      data: {
+        message: "Order " + (isValidSignature ? "succedded" : "failed"),
+        successIsValid: isValidSignature,
+      },
+    });
+    const txnId = razorpay_order_id;
     const orderInfo = await userDb.getOrder(txnId);
     if (orderInfo === null || orderInfo === -1) {
-      res.redirect("http://localhost:3000/failure");
       return;
     }
-    if (orderInfo.status === "success") {
-      res.redirect("http://localhost:3000/success");
-      return;
-    }
-    if (orderInfo.status === "fail") {
-      res.redirect("http://localhost:3000/failure");
-      return;
-    }
+    // if (orderInfo.status === "success") {
+    //   return;
+    // }
     const orderUpdate = await userDb.verifyOrder(txnId);
     if (orderUpdate === null || orderUpdate === -1) {
-      res.redirect("http://localhost:3000/failure");
       return;
     }
     const addUserSub = await userDb.addUserSub(txnId);
     if (addUserSub === null || addUserSub === -1) {
-      res.redirect("http://localhost:3000/failure");
       return;
     }
-    const successLink = clientLink + "/success";
-    res.redirect(successLink);
-    const emailId = payUBody.email;
+    const userDet = await userDb.getUserDet(txnId);
+    if (userDet === null || userDet === -1) {
+      return;
+    }
+    const emailId = userInfo.emailId;
     const mailHelp = new MailHandler();
+    // console.log(userDet);
     await mailHelp.sendMail(
       emailId,
-      payUBody.amount,
-      payUBody.productinfo,
-      payUBody.addedon,
-      payUBody.mode,
+      userDet.sub.amount.toString(),
+      userDet.sub.subName,
+      (new Date()).toISOString(),
       txnId,
-      payUBody.firstname + payUBody.lastname,
+      userInfo.firstName + userInfo.lastName,
     );
     console.log(chalk.yellow(`User: ${emailId}, payment verified!`));
+    return;
   } catch (error: any) {
     console.log(
-      chalk.red(`Error: ${error?.message}, for user id ${req.body?.userName}`)
+      chalk.red(`Error: ${error?.message}, for user id ${req.body?.userName}`),
     );
     res.status(400).send({
       status: "fail",
@@ -489,33 +521,7 @@ v1Routes.post("/buy/verify/success", async (req, res) => {
   }
 });
 
-v1Routes.post("/buy/verify/fail", async (req, res) => {
-  try {
-    const { sessionId, userName } = req.signedCookies;
-    console.log(req.body);
-    // res.status(200).send({
-    //   status: "success",
-    //   data: {
-    //     message: "Payment fail",
-    //   },
-    // });
-    res.redirect("http://localhost:3000/fail");
-    console.log(chalk.yellow(`User: ${userName}, payment fail!`));
-  } catch (error: any) {
-    console.log(
-      chalk.red(`Error: ${error?.message}, for user id ${req.body?.userName}`)
-    );
-    res.status(400).send({
-      status: "fail",
-      error: error,
-      data: {
-        message: "Internal Server Error!",
-      },
-    });
-  }
-});
-
-v1Routes.post("/buy/order/:subId", async (req, res) => {
+v1Routes.post("/buy/order/rzpay/:subId", async (req, res) => {
   try {
     const { sessionId, userName } = req.signedCookies;
     if (!sessionId || !userName) {
@@ -523,15 +529,6 @@ v1Routes.post("/buy/order/:subId", async (req, res) => {
         status: "fail",
         data: {
           message: "SessionId not found",
-        },
-      });
-      return;
-    }
-    if (!PAYU_MERCHANT_ID || !PAYU_SALT) {
-      res.status(400).send({
-        status: "fail",
-        data: {
-          message: "PayU credentials not found",
         },
       });
       return;
@@ -556,9 +553,6 @@ v1Routes.post("/buy/order/:subId", async (req, res) => {
       });
       return;
     }
-    const dummyPhone = "no_phone_number";
-    const sUrl = backendLink + "/user/v1/buy/verify/success";
-    const fUrl = backendLink + "/user/v1/buy/verify/fail";
     const subId = req.params.subId;
     const subInfo = await userDb.getSubInfo(subId);
     if (subInfo === null) {
@@ -579,23 +573,22 @@ v1Routes.post("/buy/order/:subId", async (req, res) => {
       });
       return;
     }
-    const params = generateOrder(
-      PAYU_MERCHANT_ID,
-      PAYU_SALT,
-      userInfo.id,
-      userInfo.emailId,
-      userInfo.firstName,
-      userInfo.lastName,
-      dummyPhone,
-      sUrl,
-      fUrl,
-      subInfo.amount,
-      subInfo.subName
-    );
+    const razorpay = new Razorpay({
+      key_id: RAZORPAY_KEY_ID,
+      key_secret: RAZORPAY_KEY_SECRET,
+    });
+    const amount = subInfo.amount;
+    const options = {
+      amount: amount * 100,
+      currency: "INR",
+      receipt: "no_receipt",
+      notes: {},
+    };
+    const order = await razorpay.orders.create(options);
     const createOrder = await userDb.createOrder(
       userInfo.id,
       subInfo.id,
-      params.txnid
+      order.id,
     );
     if (createOrder === null) {
       res.status(400).send({
@@ -610,7 +603,7 @@ v1Routes.post("/buy/order/:subId", async (req, res) => {
       res.status(400).send({
         status: "fail",
         data: {
-          message: "Failed to create order.",
+          message: "Error while creating order in Database.",
         },
       });
       return;
@@ -619,13 +612,13 @@ v1Routes.post("/buy/order/:subId", async (req, res) => {
       status: "success",
       data: {
         message: "Order created",
-        params: params,
-        order: createOrder,
+        order: order,
       },
     });
+    return;
   } catch (error: any) {
     console.log(
-      chalk.red(`Error: ${error?.message}, for user id ${req.body?.userName}`)
+      chalk.red(`Error: ${error?.message}, for user id ${req.body?.userName}`),
     );
     res.status(400).send({
       status: "fail",
@@ -636,6 +629,229 @@ v1Routes.post("/buy/order/:subId", async (req, res) => {
     });
   }
 });
+
+// PayU
+
+// {
+//   v1Routes.post("/buy/verify/success", async (req, res) => {
+//     try {
+//       // console.log(req.body);
+//       const payUBody: PayUBody = req.body;
+//       const userDb = new UserDB();
+//       const txnId: string = payUBody.txnid;
+//       if (!PAYU_MERCHANT_ID || !PAYU_SALT) {
+//         res.redirect("http://localhost:3000/failure");
+//         return;
+//       }
+//       const payUId = payUBody.mihpayid;
+//       const payRes = await getPaymentDetails(payUId, PAYU_MERCHANT_ID, PAYU_SALT);
+//       const payResTxnId: string =
+//         payRes["transaction_details"]?.["txnid"]?.toString();
+//       console.log(payResTxnId);
+//       if (payResTxnId !== txnId) {
+//         const failureLink = clientLink + "/failure";
+//         res.redirect(failureLink);
+//         return;
+//       }
+//       const orderInfo = await userDb.getOrder(txnId);
+//       if (orderInfo === null || orderInfo === -1) {
+//         res.redirect("http://localhost:3000/failure");
+//         return;
+//       }
+//       if (orderInfo.status === "success") {
+//         res.redirect("http://localhost:3000/success");
+//         return;
+//       }
+//       if (orderInfo.status === "fail") {
+//         res.redirect("http://localhost:3000/failure");
+//         return;
+//       }
+//       const orderUpdate = await userDb.verifyOrder(txnId);
+//       if (orderUpdate === null || orderUpdate === -1) {
+//         res.redirect("http://localhost:3000/failure");
+//         return;
+//       }
+//       const addUserSub = await userDb.addUserSub(txnId);
+//       if (addUserSub === null || addUserSub === -1) {
+//         res.redirect("http://localhost:3000/failure");
+//         return;
+//       }
+//       const successLink = clientLink + "/success";
+//       res.redirect(successLink);
+//       const emailId = payUBody.email;
+//       const mailHelp = new MailHandler();
+//       await mailHelp.sendMail(
+//         emailId,
+//         payUBody.amount,
+//         payUBody.productinfo,
+//         payUBody.addedon,
+//         payUBody.mode,
+//         txnId,
+//         payUBody.firstname + payUBody.lastname,
+//       );
+//       console.log(chalk.yellow(`User: ${emailId}, payment verified!`));
+//     } catch (error: any) {
+//       console.log(
+//         chalk.red(`Error: ${error?.message}, for user id ${req.body?.userName}`),
+//       );
+//       res.status(400).send({
+//         status: "fail",
+//         error: error,
+//         data: {
+//           message: "Internal Server Error!",
+//         },
+//       });
+//     }
+//   });
+
+//   v1Routes.post("/buy/verify/fail", async (req, res) => {
+//     try {
+//       const { sessionId, userName } = req.signedCookies;
+//       console.log(req.body);
+//       // res.status(200).send({
+//       //   status: "success",
+//       //   data: {
+//       //     message: "Payment fail",
+//       //   },
+//       // });
+//       res.redirect("http://localhost:3000/fail");
+//       console.log(chalk.yellow(`User: ${userName}, payment fail!`));
+//     } catch (error: any) {
+//       console.log(
+//         chalk.red(`Error: ${error?.message}, for user id ${req.body?.userName}`),
+//       );
+//       res.status(400).send({
+//         status: "fail",
+//         error: error,
+//         data: {
+//           message: "Internal Server Error!",
+//         },
+//       });
+//     }
+//   });
+
+//   v1Routes.post("/buy/order/:subId", async (req, res) => {
+//     try {
+//       const { sessionId, userName } = req.signedCookies;
+//       if (!sessionId || !userName) {
+//         res.status(400).send({
+//           status: "fail",
+//           data: {
+//             message: "SessionId not found",
+//           },
+//         });
+//         return;
+//       }
+//       if (!PAYU_MERCHANT_ID || !PAYU_SALT) {
+//         res.status(400).send({
+//           status: "fail",
+//           data: {
+//             message: "PayU credentials not found",
+//           },
+//         });
+//         return;
+//       }
+//       const userDb = new UserDB();
+//       const userInfo = await userDb.getClientUser(userName);
+//       if (userInfo === null) {
+//         res.status(400).send({
+//           status: "fail",
+//           data: {
+//             message: "Database error, or Database is offline.",
+//           },
+//         });
+//         return;
+//       }
+//       if (userInfo === -1) {
+//         res.status(400).send({
+//           status: "fail",
+//           data: {
+//             message: "User does not exists.",
+//           },
+//         });
+//         return;
+//       }
+//       const dummyPhone = "no_phone_number";
+//       const sUrl = backendLink + "/user/v1/buy/verify/success";
+//       const fUrl = backendLink + "/user/v1/buy/verify/fail";
+//       const subId = req.params.subId;
+//       const subInfo = await userDb.getSubInfo(subId);
+//       if (subInfo === null) {
+//         res.status(400).send({
+//           status: "fail",
+//           data: {
+//             message: "Database error, or Database is offline.",
+//           },
+//         });
+//         return;
+//       }
+//       if (subInfo == -1) {
+//         res.status(400).send({
+//           status: "fail",
+//           data: {
+//             message: "Wrong subId given.",
+//           },
+//         });
+//         return;
+//       }
+//       const params = generateOrder(
+//         PAYU_MERCHANT_ID,
+//         PAYU_SALT,
+//         userInfo.id,
+//         userInfo.emailId,
+//         userInfo.firstName,
+//         userInfo.lastName,
+//         dummyPhone,
+//         sUrl,
+//         fUrl,
+//         subInfo.amount.toString(),
+//         subInfo.subName,
+//       );
+//       const createOrder = await userDb.createOrder(
+//         userInfo.id,
+//         subInfo.id,
+//         params.txnid,
+//       );
+//       if (createOrder === null) {
+//         res.status(400).send({
+//           status: "fail",
+//           data: {
+//             message: "Database error, or Database is offline.",
+//           },
+//         });
+//         return;
+//       }
+//       if (createOrder == -1) {
+//         res.status(400).send({
+//           status: "fail",
+//           data: {
+//             message: "Failed to create order.",
+//           },
+//         });
+//         return;
+//       }
+//       res.status(200).send({
+//         status: "success",
+//         data: {
+//           message: "Order created",
+//           params: params,
+//           order: createOrder,
+//         },
+//       });
+//     } catch (error: any) {
+//       console.log(
+//         chalk.red(`Error: ${error?.message}, for user id ${req.body?.userName}`),
+//       );
+//       res.status(400).send({
+//         status: "fail",
+//         error: error,
+//         data: {
+//           message: "Internal Server Error!",
+//         },
+//       });
+//     }
+//   });
+// }
 
 userRoutes.use("/v1", v1Routes);
 

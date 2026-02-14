@@ -2,8 +2,8 @@ type Sub = {
   id: number,
   subId: string,
   subName: string,
-  subTime: string,
-  amount: string,
+  subTime: number,
+  amount: number,
 }
 
 type PayUBody = {

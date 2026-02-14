@@ -14,6 +14,7 @@ import { DB } from "./db/db";
 import compression from "compression";
 import { adminRoutes } from "./admin/route";
 import { userRoutes } from "./user/route";
+import { webRoutes } from "./web/route";
 
 const { COOKIE_SECRET } = envConfigs;
 
@@ -32,6 +33,7 @@ const whitelist = [
   "http://localhost:3000",
   "https://blog.dhanseturesearch.com",
   "https://adminblog.dhanseturesearch.com",
+  "https://dhanseturesearch.com",
   "https://test.payu.in",
 ];
 // const whitelist = ["http://localhost:3000"];
@@ -66,6 +68,7 @@ app.use(authMiddleWare);
 // app.use("/user", userRouter);
 app.use("/admin", adminRoutes);
 app.use("/user", userRoutes);
+app.use("/web", webRoutes);
 
 app.get("/hello", (_, res) => {
   try {

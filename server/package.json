@@ -40,6 +40,7 @@
     "nodemailer": "^7.0.6",
     "pg": "^8.13.1",
     "pg-format": "^1.0.4",
+    "razorpay": "^2.9.6",
     "redis": "^4.7.0",
     "short-unique-id": "^5.2.0",
     "uuid": "^11.0.4",

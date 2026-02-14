@@ -14,6 +14,8 @@ import {
 import pricingData from "./data";
 import Header from "@/components/Header";
 import { apiPost, apiGet } from "@/lib/api";
+import Script from "next/script";
+import toast from "react-hot-toast";
 
 const PricingTable = () => {
   const [billingCycle, setBillingCycle] = useState("monthly");
@@ -26,6 +28,7 @@ const PricingTable = () => {
   const [payuParams, setPayuParams] = useState(null);
   const [userInfo, setUserInfo] = useState(null);
   const [userInfoLoading, setUserInfoLoading] = useState(true);
+  const [id, setId] = useState(null);
 
   const plans = ["essential", "plus", "premium", "expert", "ultimate"];
   const planNames = {
@@ -66,34 +69,110 @@ const PricingTable = () => {
       return;
     }
 
-    setLoading(planType);
+    // setLoading(planType);
     setSelectedPlan(planType);
     const planData = pricingData[billingCycle][planType];
+    setId(planData.subscriptionId)
+    setDialogData(planData.subscriptionId);
+    setDialogOpen(true);
+    return;
+
 
     // Open dialog and start loading
-    setDialogOpen(true);
+
     setDialogLoading(true);
     setDialogError(null);
     setDialogData(null);
 
-    try {
-      const response = await apiPost(
-        `user/v1/buy/order/${planData.subscriptionId}`
-      );
-      console.log(response);
+    // try {
+    //   const response = await apiPost(
+    //     `user/v1/buy/order/rzpay/${planData.subscriptionId}`
+    //   );
 
-      if (response.status === "success") {
-        setDialogData(response.data.params);
-        setPayuParams(response.data.params);
-      } else {
-        throw new Error("Failed to fetch subscription details");
+    //   if (response.status === "success") {
+    //     setDialogData(response.data.order);
+    //   } else {
+    //     throw new Error("Failed to fetch subscription details");
+    //   }
+    // } catch (error) {
+    //   console.error("API call failed:", error);
+    //   setDialogError("Something went wrong. Please try again later.");
+    // } finally {
+    //   setDialogLoading(false);
+    //   setLoading(null);
+    // }
+
+  };
+
+  const handleBuyClick = async () => {
+    if (!id) {
+      toast.error("Invalid subscription");
+      return;
+    }
+
+    try {
+      setLoading(true);
+
+      const response = await apiPost(
+        `user/v1/buy/order/rzpay/${id}`
+      );
+
+      if (response.status !== "success") {
+        throw new Error("Order creation failed");
       }
+
+      const order = response.data.order;
+
+      // 2️⃣ Razorpay options
+      const options = {
+        key: "rzp_live_SFJU9TxbD0giiw",
+        amount: order.amount,
+        currency: order.currency,
+        name: "Dhansetu Research",
+        description: "Subscription Payment",
+        order_id: order.id,
+
+        prefill: {
+          name: "Vilas",
+          email: "vilaspgowda1000@gmail.com",
+          contact: "7892466923",
+        },
+
+        theme: {
+          color: "#F37254",
+        },
+
+        handler: async function (paymentResponse) {
+          try {
+            const verifyRes = await apiPost(
+              "user/v1/buy/verify/rzpay",
+              {
+                razorpay_order_id: paymentResponse.razorpay_order_id,
+                razorpay_payment_id: paymentResponse.razorpay_payment_id,
+                razorpay_signature: paymentResponse.razorpay_signature,
+              }
+            );
+
+            if (verifyRes.status === "success") {
+              toast.success("Payment successful 🎉");
+            } else {
+              toast.error("Payment verification failed");
+            }
+          } catch (err) {
+            console.error(err);
+            toast.error("Verification error");
+          }
+        },
+      };
+
+
+      const rzp = new window.Razorpay(options);
+      rzp.open();
     } catch (error) {
-      console.error("API call failed:", error);
-      setDialogError("Something went wrong. Please try again later.");
+      console.error(error);
+      toast.error(error.message || "Payment failed");
     } finally {
-      setDialogLoading(false);
-      setLoading(null);
+      setLoading(false);
     }
   };
 
@@ -257,6 +336,7 @@ const PricingTable = () => {
   return (
     <div>
       <Header />
+      <Script src="https://checkout.razorpay.com/v1/checkout.js" />
       <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 p-4 sm:p-8">
         <div className="max-w-7xl mx-auto">
           {/* Header */}
@@ -291,21 +371,19 @@ const PricingTable = () => {
             <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4 mb-6 sm:mb-8">
               <button
                 onClick={() => setBillingCycle("monthly")}
-                className={`px-3 py-2 rounded-full transition-all text-sm sm:text-base ${
-                  billingCycle === "monthly"
+                className={`px-3 py-2 rounded-full transition-all text-sm sm:text-base ${billingCycle === "monthly"
                     ? "bg-white text-gray-900"
                     : "text-gray-300 hover:text-white"
-                }`}
+                  }`}
               >
                 Monthly
               </button>
               <button
                 onClick={() => setBillingCycle("annually")}
-                className={`px-3 py-2 rounded-full transition-all text-sm sm:text-base ${
-                  billingCycle === "annually"
+                className={`px-3 py-2 rounded-full transition-all text-sm sm:text-base ${billingCycle === "annually"
                     ? "bg-white text-gray-900"
                     : "text-gray-300 hover:text-white"
-                }`}
+                  }`}
               >
                 Annually
               </button>
@@ -325,11 +403,10 @@ const PricingTable = () => {
               return (
                 <div
                   key={planType}
-                  className={`relative bg-gray-900/50 backdrop-blur-sm border rounded-2xl p-6 ${
-                    isPopular
+                  className={`relative bg-gray-900/50 backdrop-blur-sm border rounded-2xl p-6 ${isPopular
                       ? "border-blue-400 ring-1 ring-blue-400/20"
                       : "border-gray-700"
-                  } ${isPremiumUser ? 'opacity-75' : ''}`}
+                    } ${isPremiumUser ? 'opacity-75' : ''}`}
                 >
                   {isPopular && (
                     <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
@@ -361,11 +438,10 @@ const PricingTable = () => {
                       disabled={loading === planType || isPremiumUser}
                       className={`w-full py-2 sm:py-3 px-3 sm:px-4 rounded-lg font-medium transition-all text-sm sm:text-base ${getButtonStyle(
                         planType
-                      )} ${
-                        loading === planType
+                      )} ${loading === planType
                           ? "opacity-50 cursor-not-allowed"
                           : ""
-                      }`}
+                        }`}
                     >
                       {loading === planType ? (
                         <div className="flex items-center justify-center">
@@ -591,11 +667,11 @@ const PricingTable = () => {
                       >
                         Cancel
                       </button>
-                      {payuParams && (
-                        <div className="order-1 sm:order-2 flex-1">
-                          <PayUForm params={payuParams} />
-                        </div>
-                      )}
+                      <button
+                        className="order-2 sm:order-1 flex-1 py-3 px-6 bg-gray-800/50 border border-gray-600/50 text-gray-300 rounded-xl hover:bg-gray-700/50 hover:border-gray-500/50 transition-all duration-200 disabled:opacity-50"
+                        onClick={handleBuyClick}>
+                        Buy hello
+                      </button>
                     </div>
                   </div>
                 )}

@@ -374,7 +374,7 @@ function PaymentForm({
         const order = await response1.json();
         // console.log(order);
         const options = {
-          key: "rzp_live_vegmCeNoQ1JTfU",
+          key: "rzp_live_SFJU9TxbD0giiw",
           amount: order.amount,
           currency: order.currency,
           name: "Dhansetu Research",

@@ -69,7 +69,7 @@ class DB {
         console.log(
           chalk.red("PostgresSQL Error: "),
           error?.message,
-          error?.code
+          error?.code,
         );
         return null;
       } finally {
@@ -99,7 +99,7 @@ class DB {
   protected async retryQuery<T>(
     queryName: string,
     queryFunction: () => T,
-    retryTimes: number = DB_RETRY_QUERY
+    retryTimes: number = DB_RETRY_QUERY,
   ) {
     try {
       for (let i = 0; i < retryTimes; i++) {
@@ -108,20 +108,20 @@ class DB {
           return queryRes;
         }
         await waitForNSeconds(
-          randNum(DB_RETRY_WAIT_MIN_SEC, DB_RETRY_WAIT_MAX_SEC)
+          randNum(DB_RETRY_WAIT_MIN_SEC, DB_RETRY_WAIT_MAX_SEC),
         );
       }
       console.log(
         chalk.red(
-          `Failed query ${queryName} for retries of ${retryTimes} times`
-        )
+          `Failed query ${queryName} for retries of ${retryTimes} times`,
+        ),
       );
       return null;
     } catch (error: any) {
       console.log(
         chalk.red("PostgresSQL Error: "),
         error?.message,
-        error?.code
+        error?.code,
       );
       return null;
     }
@@ -143,7 +143,7 @@ class UserDB extends DB {
             "users" as u 
           WHERE
             u."email_id" = $1::varchar;`,
-          [emailId]
+          [emailId],
         );
         if (res.rowCount !== 1) {
           return -1;
@@ -156,7 +156,7 @@ class UserDB extends DB {
             "users_subs" as us
           WHERE
             us."user_id" = $1::int;`,
-          [userData.id]
+          [userData.id],
         );
         if (resSub.rowCount === 0) {
           userData.sub = { type: "free", expire: null };
@@ -172,7 +172,7 @@ class UserDB extends DB {
         console.log(
           chalk.red("PostgresSQL Error: "),
           error?.message,
-          error?.code
+          error?.code,
         );
         return null;
       } finally {
@@ -187,7 +187,7 @@ class UserDB extends DB {
     clerkId: string,
     firstName: string,
     lastName: string,
-    imgURL: string
+    imgURL: string,
   ) {
     return await this.retryQuery("createClientUser", async () => {
       let pClient;
@@ -201,7 +201,7 @@ class UserDB extends DB {
             ($1::varchar, $2::varchar, $3::varchar, $4::varchar, $5::varchar)
           RETURNING "id";
             `,
-          [emailId, clerkId, firstName, lastName, imgURL]
+          [emailId, clerkId, firstName, lastName, imgURL],
         );
         if (res.rowCount !== 1) {
           return -1;
@@ -212,7 +212,7 @@ class UserDB extends DB {
         console.log(
           chalk.red("PostgresSQL Error: "),
           error?.message,
-          error?.code
+          error?.code,
         );
         return null;
       } finally {
@@ -241,7 +241,7 @@ class UserDB extends DB {
             "admin" as ad ON art."admin_id" = ad."id"
           LIMIT $1::int
           OFFSET $2::int;`,
-          [USER_ARTICLE_OFFSET, offset * USER_ARTICLE_OFFSET]
+          [USER_ARTICLE_OFFSET, offset * USER_ARTICLE_OFFSET],
         );
         const allArt: Article[] = res.rows;
         await pClient.query("COMMIT");
@@ -250,7 +250,7 @@ class UserDB extends DB {
         console.log(
           chalk.red("PostgresSQL Error: "),
           error?.message,
-          error?.code
+          error?.code,
         );
         if (pClient) {
           await pClient.query("ROLLBACK");
@@ -285,7 +285,7 @@ class UserDB extends DB {
             "articles_details" as artd ON art."id" = artd."article_id"
           WHERE
             art."article_id" = $1::varchar AND artd."article_lang" = $2::lang;`,
-          [artId, lang]
+          [artId, lang],
         );
         if (res.rowCount === 0) {
           await pClient.query("ROLLBACK");
@@ -298,7 +298,7 @@ class UserDB extends DB {
         console.log(
           chalk.red("PostgresSQL Error: "),
           error?.message,
-          error?.code
+          error?.code,
         );
         if (pClient) {
           await pClient.query("ROLLBACK");
@@ -325,7 +325,7 @@ class UserDB extends DB {
             FROM "subscriptions" as sub
           WHERE
             sub."sub_id" = $1::varchar;`,
-          [subId]
+          [subId],
         );
         if (res.rowCount === 0) {
           await pClient.query("ROLLBACK");
@@ -338,7 +338,7 @@ class UserDB extends DB {
         console.log(
           chalk.red("PostgresSQL Error: "),
           error?.message,
-          error?.code
+          error?.code,
         );
         if (pClient) {
           await pClient.query("ROLLBACK");
@@ -364,7 +364,7 @@ class UserDB extends DB {
           VALUES
             ($1::int, $2::int, $3::varchar)
           RETURNING id;`,
-          [userId, subId, txnId]
+          [userId, subId, txnId],
         );
         if (res.rowCount === 0) {
           await pClient.query("ROLLBACK");
@@ -377,7 +377,7 @@ class UserDB extends DB {
         console.log(
           chalk.red("PostgresSQL Error: "),
           error?.message,
-          error?.code
+          error?.code,
         );
         if (pClient) {
           await pClient.query("ROLLBACK");
@@ -403,7 +403,7 @@ class UserDB extends DB {
           SET "status" = 'success'
           WHERE "txn_id" = $1::varchar
           RETURNING id;`,
-          [txnId]
+          [txnId],
         );
         if (res.rowCount === 0) {
           await pClient.query("ROLLBACK");
@@ -416,7 +416,7 @@ class UserDB extends DB {
         console.log(
           chalk.red("PostgresSQL Error: "),
           error?.message,
-          error?.code
+          error?.code,
         );
         if (pClient) {
           await pClient.query("ROLLBACK");
@@ -442,7 +442,7 @@ class UserDB extends DB {
           SET "status" = 'fail'
           WHERE "txn_id" = $1::varchar
           RETURNING id;`,
-          [txnId]
+          [txnId],
         );
         if (res.rowCount === 0) {
           await pClient.query("ROLLBACK");
@@ -455,7 +455,7 @@ class UserDB extends DB {
         console.log(
           chalk.red("PostgresSQL Error: "),
           error?.message,
-          error?.code
+          error?.code,
         );
         if (pClient) {
           await pClient.query("ROLLBACK");
@@ -479,7 +479,7 @@ class UserDB extends DB {
             "id", "uuid", "status", "created_at" as "createdAt"
           FROM "orders"
           WHERE "txn_id" = $1::varchar;`,
-          [txnId]
+          [txnId],
         );
         if (res.rowCount === 0) {
           return -1;
@@ -491,7 +491,7 @@ class UserDB extends DB {
         console.log(
           chalk.red("PostgresSQL Error: "),
           error?.message,
-          error?.code
+          error?.code,
         );
         return null;
       } finally {
@@ -514,7 +514,7 @@ class UserDB extends DB {
             "user_id" as "userId", "sub_id" as "subId"
           FROM "orders"
           WHERE "txn_id" = $1::varchar;`,
-          [txnId]
+          [txnId],
         );
         if (res.rowCount === 0) {
           await pClient.query("ROLLBACK");
@@ -538,7 +538,7 @@ class UserDB extends DB {
             FROM "subscriptions" as sub
           WHERE
             sub."id" = $1::int;`,
-          [resCheck.subId]
+          [resCheck.subId],
         );
         if (resSub.rowCount === 0) {
           await pClient.query("ROLLBACK");
@@ -555,7 +555,7 @@ class UserDB extends DB {
             "users" as u 
           WHERE
             u."id" = $1::int;`,
-          [resCheck.userId]
+          [resCheck.userId],
         );
         if (resUser.rowCount === 0) {
           await pClient.query("ROLLBACK");
@@ -572,7 +572,7 @@ class UserDB extends DB {
             "users_subs" as us
           WHERE
             us."user_id" = $1::int;`,
-          [userId]
+          [userId],
         );
         if (resUserSub.rowCount === 0) {
           const newUserSub = await pClient.query(
@@ -581,7 +581,7 @@ class UserDB extends DB {
           VALUES
           ($1::int, CURRENT_DATE + INTERVAL '${extendTime} month')
           RETURNING id, expire;`,
-            [userId]
+            [userId],
           );
           if (newUserSub.rowCount === 0) {
             await pClient.query("ROLLBACK");
@@ -599,7 +599,7 @@ class UserDB extends DB {
           WHERE
           "user_id" = $1::int
           RETURNING id, expire;`,
-          [userId]
+          [userId],
         );
         if (updateUserSub.rowCount === 0) {
           await pClient.query("ROLLBACK");
@@ -613,11 +613,61 @@ class UserDB extends DB {
         console.log(
           chalk.red("PostgresSQL Error: "),
           error?.message,
-          error?.code
+          error?.code,
         );
         if (pClient) {
           await pClient.query("ROLLBACK");
         }
+        return null;
+      } finally {
+        if (pClient) {
+          this.release(pClient);
+        }
+      }
+    });
+  }
+  async getUserDet(txnId: string) {
+    return await this.retryQuery("getOrder", async () => {
+      let pClient;
+      try {
+        pClient = await this.connect();
+        const res = await pClient.query(
+          `
+          SELECT 
+            "id", "uuid", "status", "user_id" as "userId", "sub_id" as "subId", "created_at" as "createdAt"
+          FROM "orders"
+          WHERE "txn_id" = $1::varchar;`,
+          [txnId],
+        );
+        if (res.rowCount === 0) {
+          return -1;
+        }
+        const resCheck: {
+          id: number;
+          status: string;
+          createdAt: string;
+          userId: number;
+          subId: number;
+          sub: Sub;
+        } = res.rows[0];
+        const resSub = await pClient.query(
+          `
+          SELECT 
+            sub."id", sub."sub_id" as "subId", sub."sub_name" as "subName",
+            sub."sub_time" as "subTime", sub."amount"
+            FROM "subscriptions" as sub
+          WHERE
+            sub."id" = $1::int;`,
+          [resCheck.subId],
+        );
+        resCheck.sub = resSub.rows[0];
+        return resCheck;
+      } catch (error: any) {
+        console.log(
+          chalk.red("PostgresSQL Error: "),
+          error?.message,
+          error?.code,
+        );
         return null;
       } finally {
         if (pClient) {
@@ -642,7 +692,7 @@ class UserDB extends DB {
             "users" as u 
           WHERE
             u."email_id" = $1::varchar;`,
-          [emailId]
+          [emailId],
         );
         if (resUser.rowCount === 0) {
           await pClient.query("ROLLBACK");
@@ -658,7 +708,7 @@ class UserDB extends DB {
             FROM "subscriptions" as sub
           WHERE
             sub."sub_id" = $1::varchar;`,
-          [subId]
+          [subId],
         );
         if (resSub.rowCount === 0) {
           await pClient.query("ROLLBACK");
@@ -673,7 +723,7 @@ class UserDB extends DB {
             "users_subs" as us
           WHERE
             us."user_id" = $1::int;`,
-          [userId]
+          [userId],
         );
         if (resUserSub.rowCount === 0) {
           const newUserSub = await pClient.query(
@@ -682,7 +732,7 @@ class UserDB extends DB {
           VALUES
           ($1::int, CURRENT_DATE + INTERVAL '${extendTime} month')
           RETURNING id, expire;`,
-            [userId]
+            [userId],
           );
           if (newUserSub.rowCount === 0) {
             await pClient.query("ROLLBACK");
@@ -701,7 +751,7 @@ class UserDB extends DB {
           WHERE
           "user_id" = $1::int
           RETURNING id, expire;`,
-          [userId]
+          [userId],
         );
         if (updateUserSub.rowCount === 0) {
           await pClient.query("ROLLBACK");
@@ -715,7 +765,7 @@ class UserDB extends DB {
         console.log(
           chalk.red("PostgresSQL Error: "),
           error?.message,
-          error?.code
+          error?.code,
         );
         if (pClient) {
           await pClient.query("ROLLBACK");
@@ -741,7 +791,7 @@ class SessionDB extends DB {
            SELECT "session_id" FROM "sessions" WHERE
            "user_name" = $1::varchar
            AND "created_at" >= CURRENT_TIMESTAMP - INTERVAL '${SESSION_EXPIRE_TIME_IN_DAYS} days';`,
-          [userName]
+          [userName],
         );
         if (res.rowCount !== 1) {
           return -1;
@@ -752,7 +802,7 @@ class SessionDB extends DB {
         console.log(
           chalk.red("PostgresSQL Error: "),
           error?.message,
-          error?.code
+          error?.code,
         );
         return null;
       } finally {
@@ -769,10 +819,10 @@ class SessionDB extends DB {
         pClient = await this.connect();
         const res1 = await pClient.query(
           `
-            UPDATE "sessions" SET "session_id" = $2::uuid
+            UPDATE "sessions" SET "session_id" = $2::uuid, "created_at" = CURRENT_TIMESTAMP
             WHERE "user_name" = $1::varchar
             RETURNING "session_id";`,
-          [userName, sessionId]
+          [userName, sessionId],
         );
         if (res1.rowCount === 1) {
           return sessionId;
@@ -781,7 +831,7 @@ class SessionDB extends DB {
           `
             INSERT INTO "sessions" ("user_name","session_id") 
             VALUES ($1::varchar, $2::uuid) RETURNING "session_id";`,
-          [userName, sessionId]
+          [userName, sessionId],
         );
         if (res.rowCount !== 1) {
           return -1;
@@ -791,7 +841,7 @@ class SessionDB extends DB {
         console.log(
           chalk.red("PostgresSQL Error: "),
           error?.message,
-          error?.code
+          error?.code,
         );
         return null;
       } finally {
@@ -817,7 +867,7 @@ class AdminDb extends DB {
             "admin" as ad 
           WHERE
             ad."user_name" = $1::varchar;`,
-          [userName]
+          [userName],
         );
         if (res.rowCount !== 1) {
           return -1;
@@ -828,7 +878,7 @@ class AdminDb extends DB {
         console.log(
           chalk.red("PostgresSQL Error: "),
           error?.message,
-          error?.code
+          error?.code,
         );
         return null;
       } finally {
@@ -842,7 +892,7 @@ class AdminDb extends DB {
     firstName: string,
     lastName: string,
     userName: string,
-    imgURL: string
+    imgURL: string,
   ) {
     return await this.retryQuery("createAdminUser", async () => {
       let pClient;
@@ -856,7 +906,7 @@ class AdminDb extends DB {
           VALUES
             ($1::varchar, $2::varchar, $3::varchar, $4::varchar)
           RETURNING "id";`,
-          [userName, firstName, lastName, imgURL]
+          [userName, firstName, lastName, imgURL],
         );
         if (res.rowCount !== 1) {
           await pClient.query("ROLLBACK");
@@ -869,7 +919,7 @@ class AdminDb extends DB {
         console.log(
           chalk.red("PostgresSQL Error: "),
           error?.message,
-          error?.code
+          error?.code,
         );
         if (pClient) {
           await pClient.query("ROLLBACK");
@@ -888,7 +938,7 @@ class AdminDb extends DB {
     artCoverImg: string,
     userName: string,
     artType: string,
-    lang: string = "en"
+    lang: string = "en",
   ) {
     return await this.retryQuery("createArticle", async () => {
       let pClient;
@@ -909,7 +959,7 @@ class AdminDb extends DB {
           WHERE
             art."article_id" = $1::varchar;
         `,
-          [artId]
+          [artId],
         );
         if (resCheck.rowCount === 1) {
           await pClient.query("ROLLBACK");
@@ -922,7 +972,7 @@ class AdminDb extends DB {
           VALUES
             ($1::int, $2::varchar, $3::varchar, $4::varchar, $5::user_type)
           RETURNING "id", "article_id" as "articleId";`,
-          [resAdmin.id, artId, artHeading, artCoverImg, artType]
+          [resAdmin.id, artId, artHeading, artCoverImg, artType],
         );
         if (res.rowCount !== 1) {
           await pClient.query("ROLLBACK");
@@ -936,7 +986,7 @@ class AdminDb extends DB {
           VALUES
             ($1::int, $2::lang, $3::text)
           RETURNING "id", "article_id" as "articleId";`,
-          [updateData.id, lang, artDetail]
+          [updateData.id, lang, artDetail],
         );
         if (resDtl.rowCount !== 1) {
           await pClient.query("ROLLBACK");
@@ -948,7 +998,7 @@ class AdminDb extends DB {
         console.log(
           chalk.red("PostgresSQL Error: "),
           error?.message,
-          error?.code
+          error?.code,
         );
         if (pClient) {
           await pClient.query("ROLLBACK");
@@ -977,7 +1027,7 @@ class AdminDb extends DB {
           FROM 
             "articles" as "art"
           LEFT JOIN 
-            "admin" as ad ON art."admin_id" = ad."id";`
+            "admin" as ad ON art."admin_id" = ad."id";`,
         );
         const allArt: Article[] = res.rows;
         await pClient.query("COMMIT");
@@ -986,7 +1036,7 @@ class AdminDb extends DB {
         console.log(
           chalk.red("PostgresSQL Error: "),
           error?.message,
-          error?.code
+          error?.code,
         );
         if (pClient) {
           await pClient.query("ROLLBACK");
@@ -1021,7 +1071,7 @@ class AdminDb extends DB {
             "articles_details" as artd ON art."id" = artd."article_id"
           WHERE
             art."article_id" = $1::varchar AND artd."article_lang" = $2::lang;`,
-          [artId, lang]
+          [artId, lang],
         );
         if (res.rowCount === 0) {
           await pClient.query("ROLLBACK");
@@ -1034,7 +1084,7 @@ class AdminDb extends DB {
         console.log(
           chalk.red("PostgresSQL Error: "),
           error?.message,
-          error?.code
+          error?.code,
         );
         if (pClient) {
           await pClient.query("ROLLBACK");
@@ -1060,7 +1110,7 @@ class AdminDb extends DB {
           WHERE
             art."article_id" = $1::varchar
           RETURNING *;`,
-          [artId]
+          [artId],
         );
         if (res.rowCount === 0) {
           await pClient.query("ROLLBACK");
@@ -1073,7 +1123,7 @@ class AdminDb extends DB {
         console.log(
           chalk.red("PostgresSQL Error: "),
           error?.message,
-          error?.code
+          error?.code,
         );
         if (pClient) {
           await pClient.query("ROLLBACK");
@@ -1093,7 +1143,7 @@ class AdminDb extends DB {
     userName: string,
     artType: string,
     artId: string,
-    lang: string = "en"
+    lang: string = "en",
   ) {
     return await this.retryQuery("updateArticle", async () => {
       let pClient;
@@ -1113,7 +1163,7 @@ class AdminDb extends DB {
           WHERE
             art."article_id" = $1::varchar;
         `,
-          [artId]
+          [artId],
         );
         if (resCheck.rowCount === 0) {
           await pClient.query("ROLLBACK");
@@ -1129,7 +1179,7 @@ class AdminDb extends DB {
           WHERE
             "article_id" = $1::varchar AND "admin_id" = $5::int
           RETURNING "id";`,
-          [artId, artHeading, artCoverImg, artType, resAdmin.id]
+          [artId, artHeading, artCoverImg, artType, resAdmin.id],
         );
         if (res.rowCount !== 1) {
           await pClient.query("ROLLBACK");
@@ -1145,7 +1195,7 @@ class AdminDb extends DB {
           WHERE
             "article_id" = $2::int AND "article_lang" = $3::lang
           RETURNING "id";`,
-          [artDetail, updateData.id, lang]
+          [artDetail, updateData.id, lang],
         );
         if (resDtl.rowCount !== 1) {
           await pClient.query("ROLLBACK");
@@ -1157,7 +1207,7 @@ class AdminDb extends DB {
         console.log(
           chalk.red("PostgresSQL Error: "),
           error?.message,
-          error?.code
+          error?.code,
         );
         if (pClient) {
           await pClient.query("ROLLBACK");

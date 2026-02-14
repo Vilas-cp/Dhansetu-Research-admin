@@ -34,8 +34,8 @@ CREATE TABLE
     "id" SERIAL PRIMARY KEY,
     "sub_id" varchar UNIQUE NOT NULL,
     "sub_name" varchar NOT NULL,
-    "sub_time" varchar NOT NULL,
-    "amount" varchar NOT NULL DEFAULT '0',
+    "sub_time" int NOT NULL DEFAULT 0,
+    "amount" int NOT NULL DEFAULT 0,
     "created_at" timestamptz DEFAULT CURRENT_TIMESTAMP
 );
 

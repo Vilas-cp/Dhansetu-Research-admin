@@ -1,4 +1,4 @@
-function mailTemplate(userName: string, amount: string, planName: string, txnId: string, paymentDate: string, paymentMethod: string) {
+function mailTemplate(userName: string, amount: string, planName: string, txnId: string, paymentDate: string) {
   return  `
   <!doctype html>
 <html lang="en">
@@ -61,7 +61,6 @@ function mailTemplate(userName: string, amount: string, planName: string, txnId:
                           <td style="vertical-align:top;">
                             <p style="margin:0;font-weight:600;color:#111827;">Amount paid</p>
                             <p style="margin:6px 0 0;font-size:18px;font-weight:700;color:#0b1220;">₹ ${amount}</p>
-                            <p style="margin:6px 0 0;color:#6b7280;font-size:12px;">Paid via ${paymentMethod}</p>
                           </td>
                           <td style="vertical-align:top;" align="right">
                             <p style="margin:0;font-weight:600;color:#111827;">Plan</p>
