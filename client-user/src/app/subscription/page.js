@@ -16,6 +16,7 @@ import Header from "@/components/Header";
 import { apiPost, apiGet } from "@/lib/api";
 import Script from "next/script";
 import toast from "react-hot-toast";
+import { useRouter } from "next/navigation";
 
 const PricingTable = () => {
   const [billingCycle, setBillingCycle] = useState("monthly");
@@ -25,10 +26,11 @@ const PricingTable = () => {
   const [dialogData, setDialogData] = useState(null);
   const [dialogError, setDialogError] = useState(null);
   const [selectedPlan, setSelectedPlan] = useState(null);
-  const [payuParams, setPayuParams] = useState(null);
   const [userInfo, setUserInfo] = useState(null);
   const [userInfoLoading, setUserInfoLoading] = useState(true);
   const [id, setId] = useState(null);
+  const router= useRouter();
+
 
   const plans = ["essential", "plus", "premium", "expert", "ultimate"];
   const planNames = {
@@ -48,6 +50,7 @@ const PricingTable = () => {
         if (data.status === "success") {
           setUserInfo(data.data.userInfo);
         }
+        console.log(data);
       } catch (error) {
         console.error("Failed to fetch user info:", error);
       } finally {
@@ -58,64 +61,44 @@ const PricingTable = () => {
     fetchUserInfo();
   }, []);
 
-  const handlePurchase = async (planType) => {
-    // Check if user already has premium subscription
-    if (userInfo?.sub?.type !== 'free') {
-      setSelectedPlan(planType);
-      setDialogOpen(true);
-      setDialogError(null);
-      setDialogData(null);
-      setDialogLoading(false);
-      return;
-    }
+  useEffect(() => {
+    // 🔓 Force-enable scrolling when this page loads
+    document.body.style.overflow = "auto";
+    document.documentElement.style.overflow = "auto";
 
-    // setLoading(planType);
+    return () => {
+      document.body.style.overflow = "auto";
+      document.documentElement.style.overflow = "auto";
+    };
+  }, []);
+
+  const handlePurchase = (planType) => {
+  if (userInfo?.sub?.type !== "free") {
     setSelectedPlan(planType);
-    const planData = pricingData[billingCycle][planType];
-    setId(planData.subscriptionId)
-    setDialogData(planData.subscriptionId);
     setDialogOpen(true);
     return;
+  }
 
-
-    // Open dialog and start loading
-
-    setDialogLoading(true);
-    setDialogError(null);
-    setDialogData(null);
-
-    // try {
-    //   const response = await apiPost(
-    //     `user/v1/buy/order/rzpay/${planData.subscriptionId}`
-    //   );
-
-    //   if (response.status === "success") {
-    //     setDialogData(response.data.order);
-    //   } else {
-    //     throw new Error("Failed to fetch subscription details");
-    //   }
-    // } catch (error) {
-    //   console.error("API call failed:", error);
-    //   setDialogError("Something went wrong. Please try again later.");
-    // } finally {
-    //   setDialogLoading(false);
-    //   setLoading(null);
-    // }
-
-  };
+  const planData = pricingData[billingCycle][planType];
+  setSelectedPlan(planType);
+  setId(planData.subscriptionId);
+  setDialogData({
+    subscriptionId: planData.subscriptionId,
+    price: planData.price,
+    planType
+  });
+  setDialogOpen(true);
+};
 
   const handleBuyClick = async () => {
     if (!id) {
       toast.error("Invalid subscription");
       return;
     }
-
     try {
-      setLoading(true);
+      setLoading(selectedPlan);
 
-      const response = await apiPost(
-        `user/v1/buy/order/rzpay/${id}`
-      );
+      const response = await apiPost(`user/v1/buy/order/rzpay/${id}`);
 
       if (response.status !== "success") {
         throw new Error("Order creation failed");
@@ -123,56 +106,59 @@ const PricingTable = () => {
 
       const order = response.data.order;
 
-      // 2️⃣ Razorpay options
       const options = {
-        key: "rzp_live_SFJU9TxbD0giiw",
+        key: "rzp_live_vegmCeNoQ1JTfU",
         amount: order.amount,
         currency: order.currency,
+        order_id: order.id,
         name: "Dhansetu Research",
         description: "Subscription Payment",
-        order_id: order.id,
 
         prefill: {
-          name: "Vilas",
-          email: "vilaspgowda1000@gmail.com",
-          contact: "7892466923",
+          name: `${userInfo?.firstName ?? ""} ${
+            userInfo?.lastName ?? ""
+          }`.trim(),
+          email: userInfo?.emailId ?? "",
+          contact: null,
         },
 
-        theme: {
-          color: "#F37254",
+        notes: {
+          clerkId: userInfo?.clerkId,
+          uuid: userInfo?.uuid,
+          plan: selectedPlan,
         },
 
-        handler: async function (paymentResponse) {
+        handler: async (paymentResponse) => {
           try {
             const verifyRes = await apiPost(
               "user/v1/buy/verify/rzpay",
-              {
-                razorpay_order_id: paymentResponse.razorpay_order_id,
-                razorpay_payment_id: paymentResponse.razorpay_payment_id,
-                razorpay_signature: paymentResponse.razorpay_signature,
-              }
+              paymentResponse,
             );
 
-            if (verifyRes.status === "success") {
+            if (verifyRes.data.successIsValid) {
               toast.success("Payment successful 🎉");
+              router.push("/dashboard");
+              closeDialog();
             } else {
               toast.error("Payment verification failed");
             }
-          } catch (err) {
-            console.error(err);
+          } catch {
             toast.error("Verification error");
           }
         },
+
+        theme: {
+          color: "#4F46E5",
+        },
       };
 
-
+      // 3️⃣ Open Razorpay
       const rzp = new window.Razorpay(options);
       rzp.open();
-    } catch (error) {
-      console.error(error);
-      toast.error(error.message || "Payment failed");
+    } catch (err) {
+      toast.error("Payment failed");
     } finally {
-      setLoading(false);
+      setLoading(null)
     }
   };
 
@@ -181,7 +167,6 @@ const PricingTable = () => {
     setDialogData(null);
     setDialogError(null);
     setSelectedPlan(null);
-    setPayuParams(null);
     setDialogLoading(false);
   };
 
@@ -194,22 +179,22 @@ const PricingTable = () => {
     }).format(price);
 
   const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleDateString('en-IN', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
+    return new Date(dateString).toLocaleDateString("en-IN", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
     });
   };
 
   const getButtonText = (planType) => {
-    if (userInfo?.sub?.type !== 'free') {
+    if (userInfo?.sub?.type !== "free") {
       return "Already Premium";
     }
     return "Buy";
   };
 
   const getButtonStyle = (planType) => {
-    if (userInfo?.sub?.type !== 'free') {
+    if (userInfo?.sub?.type !== "free") {
       return "bg-gray-600 border border-gray-500 text-gray-300 cursor-not-allowed";
     }
     if (planType === "essential" || planType === "plus")
@@ -253,72 +238,6 @@ const PricingTable = () => {
     { key: "prioritySupport", label: "Priority support" },
   ];
 
-  // Enhanced PayU Payment Form Component
-  const PayUForm = ({ params }) => {
-    return (
-      <form
-        action="https://test.payu.in/_payment"
-        method="post"
-        id="payuForm"
-        className="flex-1"
-      >
-        <input type="hidden" name="key" value={params.mkey} />
-        <input type="hidden" name="txnid" value={params.txnid} />
-        <input type="hidden" name="productinfo" value={params.productinfo} />
-        <input type="hidden" name="amount" value={params.amount} />
-        <input type="hidden" name="email" value={params.email} />
-        <input type="hidden" name="firstname" value={params.firstname} />
-        <input type="hidden" name="lastname" value={params.lastname} />
-        <input type="hidden" name="surl" value={params.surl} />
-        <input type="hidden" name="furl" value={params.furl} />
-        <input type="hidden" name="phone" value={params.phone} />
-        <input type="hidden" name="udf1" value={params.udf1} />
-        <input type="hidden" name="udf2" value={params.udf2} />
-        <input type="hidden" name="udf3" value={params.udf3} />
-        <input type="hidden" name="udf4" value={params.udf4} />
-        <input type="hidden" name="udf5" value={params.udf5} />
-        <input type="hidden" name="hash" value={params.hash} />
-
-        {/* Enhanced styled button */}
-        <button
-          type="submit"
-          className="group relative w-full py-4 px-6 flex items-center justify-center gap-3 rounded-xl 
-                     bg-gradient-to-r from-blue-600 via-blue-500 to-purple-600 
-                     hover:from-blue-700 hover:via-blue-600 hover:to-purple-700 
-                     text-white font-semibold text-base
-                     transition-all duration-200 transform hover:scale-[1.02] hover:shadow-2xl
-                     shadow-lg border border-blue-400/20"
-        >
-          {/* Animated background glow */}
-          <div
-            className="absolute inset-0 rounded-xl bg-gradient-to-r from-blue-600 to-purple-600 opacity-0 
-                          group-hover:opacity-20 transition-opacity duration-200 blur-xl"
-          ></div>
-
-          <CreditCard className="w-5 h-5 transition-transform duration-200 group-hover:scale-110" />
-          <span>Pay now</span>
-
-          {/* Small arrow icon */}
-          <div className="ml-1 transform transition-transform duration-200 group-hover:translate-x-1">
-            <svg
-              className="w-4 h-4"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M13 7l5 5m0 0l-5 5m5-5H6"
-              />
-            </svg>
-          </div>
-        </button>
-      </form>
-    );
-  };
-
   if (userInfoLoading) {
     return (
       <div>
@@ -326,7 +245,9 @@ const PricingTable = () => {
         <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center">
           <div className="text-center">
             <Loader2 className="w-8 h-8 animate-spin mx-auto text-white mb-4" />
-            <p className="text-white text-lg">Loading your account information...</p>
+            <p className="text-white text-lg">
+              Loading your account information...
+            </p>
           </div>
         </div>
       </div>
@@ -337,20 +258,27 @@ const PricingTable = () => {
     <div>
       <Header />
       <Script src="https://checkout.razorpay.com/v1/checkout.js" />
+  
       <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 p-4 sm:p-8">
         <div className="max-w-7xl mx-auto">
           {/* Header */}
           <div className="text-center mb-8 sm:mb-12">
             {/* Premium Status Banner */}
-            {userInfo?.sub?.type !== 'free' && (
+            {userInfo?.sub?.type !== "free" && (
               <div className="mb-6 mx-auto max-w-md">
                 <div className="bg-gradient-to-r from-amber-500/20 to-yellow-500/20 border border-amber-500/30 rounded-2xl p-6">
                   <div className="flex items-center justify-center mb-3">
                     <Crown className="w-6 h-6 text-amber-400 mr-2" />
-                    <span className="text-amber-400 font-semibold text-lg">Premium Active</span>
+                    <span className="text-amber-400 font-semibold text-lg">
+                      Premium Active
+                    </span>
                   </div>
                   <p className="text-white text-sm mb-2">
-                    You currently have a <span className="font-semibold capitalize">{userInfo.sub.type}</span> subscription
+                    You currently have a{" "}
+                    <span className="font-semibold capitalize">
+                      {userInfo.sub.type}
+                    </span>{" "}
+                    subscription
                   </p>
                   {userInfo.sub.expire && (
                     <p className="text-amber-300 text-xs">
@@ -398,7 +326,7 @@ const PricingTable = () => {
             {plans.map((planType) => {
               const plan = pricingData[billingCycle][planType];
               const isPopular = planType === "premium";
-              const isPremiumUser = userInfo?.sub?.type !== 'free';
+              const isPremiumUser = userInfo?.sub?.type !== "free";
 
               return (
                 <div
@@ -406,7 +334,7 @@ const PricingTable = () => {
                   className={`relative bg-gray-900/50 backdrop-blur-sm border rounded-2xl p-6 ${isPopular
                       ? "border-blue-400 ring-1 ring-blue-400/20"
                       : "border-gray-700"
-                    } ${isPremiumUser ? 'opacity-75' : ''}`}
+                  } ${isPremiumUser ? "opacity-75" : ""}`}
                 >
                   {isPopular && (
                     <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
@@ -437,8 +365,9 @@ const PricingTable = () => {
                       onClick={() => handlePurchase(planType)}
                       disabled={loading === planType || isPremiumUser}
                       className={`w-full py-2 sm:py-3 px-3 sm:px-4 rounded-lg font-medium transition-all text-sm sm:text-base ${getButtonStyle(
-                        planType
-                      )} ${loading === planType
+                        planType,
+                      )} ${
+                        loading === planType
                           ? "opacity-50 cursor-not-allowed"
                           : ""
                         }`}
@@ -506,7 +435,11 @@ const PricingTable = () => {
         {/* Enhanced Dialog/Modal */}
         {dialogOpen && (
           <div className="fixed inset-0 bg-black/60 backdrop-blur-md flex items-center justify-center p-4 z-50 animate-in fade-in duration-200">
-            <div className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 border border-gray-600/50 rounded-3xl max-w-lg w-full relative overflow-hidden shadow-2xl animate-in zoom-in-95 duration-300">
+            <div
+              className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900
+border border-gray-600/50 rounded-3xl max-w-lg w-full
+relative max-h-[90vh] overflow-y-auto shadow-2xl"
+            >
               {/* Decorative background pattern */}
               <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-transparent to-purple-500/5"></div>
 
@@ -521,38 +454,45 @@ const PricingTable = () => {
               {/* Dialog Content */}
               <div className="relative p-8">
                 {/* Already Premium State */}
-                {userInfo?.sub?.type !== 'free' && !dialogData && !dialogError && !dialogLoading && (
-                  <div className="py-12 text-center">
-                    <div className="mx-auto w-16 h-16 rounded-full bg-amber-500/10 flex items-center justify-center mb-6">
-                      <Crown className="w-8 h-8 text-amber-400" />
-                    </div>
-                    <h4 className="text-2xl font-bold text-white mb-3">
-                      You Already Have Premium!
-                    </h4>
-                    <p className="text-gray-300 mb-4 text-sm leading-relaxed">
-                      You currently have a <span className="font-semibold capitalize text-amber-400">{userInfo.sub.type}</span> subscription.
-                    </p>
-                    {userInfo.sub.expire && (
-                      <div className="bg-amber-500/10 border border-amber-500/20 rounded-xl p-4 mb-6">
-                        <div className="flex items-center justify-center gap-2">
-                          <Clock className="w-4 h-4 text-amber-400" />
-                          <span className="text-amber-300 text-sm">
-                            Expires on {formatDate(userInfo.sub.expire)}
-                          </span>
-                        </div>
+                {userInfo?.sub?.type !== "free" &&
+                  !dialogData &&
+                  !dialogError &&
+                  !dialogLoading && (
+                    <div className="py-12 text-center">
+                      <div className="mx-auto w-16 h-16 rounded-full bg-amber-500/10 flex items-center justify-center mb-6">
+                        <Crown className="w-8 h-8 text-amber-400" />
                       </div>
-                    )}
-                    <button
-                      onClick={closeDialog}
-                      className="px-6 py-3 bg-gray-800 border border-gray-600 text-gray-300 rounded-xl hover:bg-gray-700 hover:border-gray-500 transition-all duration-200"
-                    >
-                      Got it!
-                    </button>
-                  </div>
-                )}
+                      <h4 className="text-2xl font-bold text-white mb-3">
+                        You Already Have Premium!
+                      </h4>
+                      <p className="text-gray-300 mb-4 text-sm leading-relaxed">
+                        You currently have a{" "}
+                        <span className="font-semibold capitalize text-amber-400">
+                          {userInfo.sub.type}
+                        </span>{" "}
+                        subscription.
+                      </p>
+                      {userInfo.sub.expire && (
+                        <div className="bg-amber-500/10 border border-amber-500/20 rounded-xl p-4 mb-6">
+                          <div className="flex items-center justify-center gap-2">
+                            <Clock className="w-4 h-4 text-amber-400" />
+                            <span className="text-amber-300 text-sm">
+                              Expires on {formatDate(userInfo.sub.expire)}
+                            </span>
+                          </div>
+                        </div>
+                      )}
+                      <button
+                        onClick={closeDialog}
+                        className="px-6 py-3 bg-gray-800 border border-gray-600 text-gray-300 rounded-xl hover:bg-gray-700 hover:border-gray-500 transition-all duration-200"
+                      >
+                        Got it!
+                      </button>
+                    </div>
+                  )}
 
                 {/* Header with icon - Only show if not premium user */}
-                {userInfo?.sub?.type === 'free' && (
+                {userInfo?.sub?.type === "free" && (
                   <div className="text-center mb-8">
                     <h3 className="text-2xl font-bold text-white mb-2">
                       {selectedPlan && `${planNames[selectedPlan]} Plan`}
@@ -564,22 +504,25 @@ const PricingTable = () => {
                 )}
 
                 {/* Loading State */}
-                {dialogLoading && !dialogError && !dialogData && userInfo?.sub?.type === 'free' && (
-                  <div className="py-12 text-center">
-                    <div className="relative inline-flex items-center justify-center">
-                      <div className="w-12 h-12 border-4 border-blue-200 border-t-blue-500 rounded-full animate-spin"></div>
+                {dialogLoading &&
+                  !dialogError &&
+                  !dialogData &&
+                  userInfo?.sub?.type === "free" && (
+                    <div className="py-12 text-center">
+                      <div className="relative inline-flex items-center justify-center">
+                        <div className="w-12 h-12 border-4 border-blue-200 border-t-blue-500 rounded-full animate-spin"></div>
+                      </div>
+                      <p className="text-gray-300 mt-6 text-lg">
+                        Preparing your subscription...
+                      </p>
+                      <p className="text-gray-500 text-sm mt-2">
+                        This will only take a moment
+                      </p>
                     </div>
-                    <p className="text-gray-300 mt-6 text-lg">
-                      Preparing your subscription...
-                    </p>
-                    <p className="text-gray-500 text-sm mt-2">
-                      This will only take a moment
-                    </p>
-                  </div>
-                )}
+                  )}
 
                 {/* Error State */}
-                {dialogError && userInfo?.sub?.type === 'free' && (
+                {dialogError && userInfo?.sub?.type === "free" && (
                   <div className="py-12 text-center">
                     <div className="mx-auto w-16 h-16 rounded-full bg-red-500/10 flex items-center justify-center mb-6">
                       <AlertCircle className="w-8 h-8 text-red-400" />
@@ -600,81 +543,74 @@ const PricingTable = () => {
                 )}
 
                 {/* Success State with Subscription Details */}
-                {dialogData && !dialogError && userInfo?.sub?.type === 'free' && (
-                  <div>
-                    {/* Subscription Summary Card */}
-                    <div className="bg-gradient-to-br from-gray-800/80 to-gray-700/40 backdrop-blur-sm rounded-2xl p-6 mb-8 border border-gray-600/30">
-                      <h4 className="text-lg font-semibold text-white mb-4 flex items-center">
-                        <ShieldCheck className="w-5 h-5 text-green-400 mr-2" />
-                        Subscription Summary
-                      </h4>
-                      <div className="space-y-3">
-                        <div className="flex justify-between items-center py-2 border-b border-gray-600/30">
-                          <span className="text-gray-400">Plan</span>
-                          <span className="text-white font-medium">
-                            {planNames[selectedPlan]}
-                          </span>
-                        </div>
-                        <div className="flex justify-between items-center py-2 border-b border-gray-600/30">
-                          <span className="text-gray-400">Billing Cycle</span>
-                          <span className="text-white font-medium capitalize">
-                            {billingCycle}
-                          </span>
-                        </div>
-                        <div className="flex justify-between items-center py-2 border-b border-gray-600/30">
-                          <span className="text-gray-400">Amount</span>
-                          <span className="text-2xl font-bold text-white">
-                            {formatPrice(
-                              pricingData[billingCycle][selectedPlan].price
-                            )}
-                          </span>
-                        </div>
-                        {dialogData.subscriptionId && (
-                          <div className="flex justify-between items-center py-2">
-                            <span className="text-gray-400">
-                              Subscription ID
-                            </span>
-                            <span className="text-white font-mono text-xs bg-gray-700/50 px-2 py-1 rounded">
-                              {dialogData.subscriptionId}
+                {dialogData &&
+                  !dialogError &&
+                  userInfo?.sub?.type === "free" && (
+                    <div>
+                      {/* Subscription Summary Card */}
+                      <div className="bg-gradient-to-br from-gray-800/80 to-gray-700/40 backdrop-blur-sm rounded-2xl p-6 mb-8 border border-gray-600/30">
+                        <h4 className="text-lg font-semibold text-white mb-4 flex items-center">
+                          <ShieldCheck className="w-5 h-5 text-green-400 mr-2" />
+                          Subscription Summary
+                        </h4>
+                        <div className="space-y-3">
+                          <div className="flex justify-between items-center py-2 border-b border-gray-600/30">
+                            <span className="text-gray-400">Plan</span>
+                            <span className="text-white font-medium">
+                              {planNames[selectedPlan]}
                             </span>
                           </div>
-                        )}
-                      </div>
-                    </div>
-
-                    {/* Security Notice */}
-                    <div className="hidden md:block bg-blue-500/10 border border-blue-500/20 rounded-xl p-4 mb-8">
-                      <div className="flex items-start gap-3">
-                        <ShieldCheck className="w-5 h-5 text-blue-400 mt-0.5 flex-shrink-0" />
-                        <div>
-                          <p className="text-blue-300 text-sm font-medium">
-                            Secure Payment
-                          </p>
-                          <p className="text-blue-400/80 text-xs mt-1">
-                            Your payment is protected by bank-grade encryption
-                            and security measures.
-                          </p>
+                          <div className="flex justify-between items-center py-2 border-b border-gray-600/30">
+                            <span className="text-gray-400">Billing Cycle</span>
+                            <span className="text-white font-medium capitalize">
+                              {billingCycle}
+                            </span>
+                          </div>
+                          <div className="flex justify-between items-center py-2 border-b border-gray-600/30">
+                            <span className="text-gray-400">Amount</span>
+                            <span className="text-2xl font-bold text-white">
+                              {formatPrice(
+                                pricingData[billingCycle][selectedPlan].price,
+                              )}
+                            </span>
+                          </div>
                         </div>
                       </div>
-                    </div>
 
-                    {/* Action Buttons */}
-                    <div className="flex flex-col sm:flex-row gap-4">
-                      <button
-                        onClick={closeDialog}
-                        disabled={dialogLoading}
-                        className="order-2 sm:order-1 flex-1 py-3 px-6 bg-gray-800/50 border border-gray-600/50 text-gray-300 rounded-xl hover:bg-gray-700/50 hover:border-gray-500/50 transition-all duration-200 disabled:opacity-50"
-                      >
-                        Cancel
-                      </button>
-                      <button
-                        className="order-2 sm:order-1 flex-1 py-3 px-6 bg-gray-800/50 border border-gray-600/50 text-gray-300 rounded-xl hover:bg-gray-700/50 hover:border-gray-500/50 transition-all duration-200 disabled:opacity-50"
-                        onClick={handleBuyClick}>
-                        Buy hello
-                      </button>
+                      {/* Security Notice */}
+                      <div className="hidden md:block bg-blue-500/10 border border-blue-500/20 rounded-xl p-4 mb-8">
+                        <div className="flex items-start gap-3">
+                          <ShieldCheck className="w-5 h-5 text-blue-400 mt-0.5 flex-shrink-0" />
+                          <div>
+                            <p className="text-blue-300 text-sm font-medium">
+                              Secure Payment
+                            </p>
+                            <p className="text-blue-400/80 text-xs mt-1">
+                              Your payment is protected by bank-grade encryption
+                              and security measures.
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Action Buttons */}
+                      <div className="flex flex-col sm:flex-row gap-4">
+                        <button
+                          onClick={closeDialog}
+                          disabled={dialogLoading}
+                          className="order-2 sm:order-1 flex-1 py-3 px-6 bg-gray-800/50 border border-gray-600/50 text-gray-300 rounded-xl hover:bg-gray-700/50 hover:border-gray-500/50 transition-all duration-200 disabled:opacity-50"
+                        >
+                          Cancel
+                        </button>
+                        <button
+                          className="order-2 sm:order-1 flex-1 py-3 px-6 bg-gray-800/50 border border-gray-600/50 text-gray-300 rounded-xl hover:bg-gray-700/50 hover:border-gray-500/50 transition-all duration-200 disabled:opacity-50"
+                          onClick={handleBuyClick}
+                        >
+                          Buy
+                        </button>
+                      </div>
                     </div>
-                  </div>
-                )}
+                  )}
               </div>
             </div>
           </div>

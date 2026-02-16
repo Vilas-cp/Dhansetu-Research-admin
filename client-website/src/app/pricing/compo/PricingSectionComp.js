@@ -7,8 +7,13 @@ import {
   AlertCircle,
   CreditCard,
   ShieldCheck,
+  User,
+  Mail,
+  Phone,
 } from "lucide-react";
 import pricingData from "./data";
+import { BASE_URL } from "@/components/api/url";
+import toast from "react-hot-toast";
 
 const PricingTable = () => {
   const [billingCycle, setBillingCycle] = useState("monthly");
@@ -18,7 +23,14 @@ const PricingTable = () => {
   const [dialogData, setDialogData] = useState(null);
   const [dialogError, setDialogError] = useState(null);
   const [selectedPlan, setSelectedPlan] = useState(null);
-  const [payuParams, setPayuParams] = useState(null);
+  const [id, setId] = useState(null);
+  const [showFormView, setShowFormView] = useState(false);
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    phone: "",
+  });
+  const [formErrors, setFormErrors] = useState({});
 
   const plans = [
     "basicIndex",
@@ -47,6 +59,14 @@ const PricingTable = () => {
     quarterly: "Quarterly",
     halfYearly: "Half-Yearly",
   };
+  function openNewPage(link) {
+    if (window) {
+      const isOpen = window.open(link);
+      if (isOpen === null) {
+        window.location.href = link;
+      }
+    }
+  }
 
   const handlePurchase = async (planType) => {
     setLoading(planType);
@@ -57,32 +77,12 @@ const PricingTable = () => {
     setDialogOpen(true);
     setDialogLoading(true);
     setDialogError(null);
-    setDialogData(null);
+    setDialogData(planData);
+    setId(planData.subscriptionId);
+    setShowFormView(false);
 
-    try {
-      const response = await fetch(
-        `https://your-backend-domain.com/user/v1/buy/order/${planData.subscriptionId}`,
-        {
-          method: "POST",
-          credentials: "include",
-          headers: { "Content-Type": "application/json" },
-        }
-      );
-      console.log(response);
-
-      if (response.status === "success") {
-        setDialogData(response.data.params);
-        setPayuParams(response.data.params);
-      } else {
-        throw new Error("Failed to fetch subscription details");
-      }
-    } catch (error) {
-      console.error("API call failed:", error);
-      setDialogError("Something went wrong. Please try again later.");
-    } finally {
-      setDialogLoading(false);
-      setLoading(null);
-    }
+    setDialogLoading(false);
+    setLoading(null);
   };
 
   const closeDialog = () => {
@@ -90,8 +90,156 @@ const PricingTable = () => {
     setDialogData(null);
     setDialogError(null);
     setSelectedPlan(null);
-    setPayuParams(null);
     setDialogLoading(false);
+    setShowFormView(false);
+    setFormData({ name: "", email: "", phone: "" });
+    setFormErrors({});
+  };
+
+  const showForm = () => {
+    setShowFormView(true);
+  };
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+    // Clear error for this field when user starts typing
+    if (formErrors[name]) {
+      setFormErrors((prev) => ({
+        ...prev,
+        [name]: "",
+      }));
+    }
+  };
+
+  const validateForm = () => {
+    const errors = {};
+
+    if (!formData.name.trim()) {
+      errors.name = "Name is required";
+    }
+
+    if (!formData.email.trim()) {
+      errors.email = "Email is required";
+    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+      errors.email = "Email is invalid";
+    }
+
+    if (!formData.phone.trim()) {
+      errors.phone = "Phone number is required";
+    } else if (!/^\d{10}$/.test(formData.phone.replace(/\s/g, ""))) {
+      errors.phone = "Phone number must be 10 digits";
+    }
+
+    return errors;
+  };
+
+  const handleFormSubmit = async (e) => {
+    e.preventDefault();
+
+    const errors = validateForm();
+    if (Object.keys(errors).length > 0) {
+      setFormErrors(errors);
+      return;
+    }
+
+    // console.log("Form Submitted:", {
+    //   ...formData,
+    //   plan: planNames[selectedPlan],
+    //   billingCycle: billingCycleLabels[billingCycle],
+    //   amount: pricingData[billingCycle][selectedPlan].price,
+    //   subscriptionId: id,
+    // });
+    setDialogLoading(true);
+    try {
+      const response1 = await fetch(`${BASE_URL}web/v1/buy/order/rzpay/${id}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      
+     
+      const res = await response1.json();
+        if (res.status !== "success") {
+        toast.error("Order creation failed");
+        return;
+      }
+
+      
+      const options = {
+        key: "rzp_live_vegmCeNoQ1JTfU",
+        amount: res.data.order.amount,
+        currency: res.data.order.currency,
+        name: "Dhansetu Research",
+        description: "Strategy Transaction",
+        order_id: res.data.order.id,
+        prefill: {
+          name: formData.name,
+          email: formData.email,
+          contact: formData.phone,
+        },
+        theme: {
+          color: "#F37254",
+        },
+        handler: async function (response) {
+          try {
+            const res2 = await fetch(`${BASE_URL}web/v1/buy/verify/rzpay`, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(response),
+            });
+            const resOut2 = await res2.json();
+
+            console.log(resOut2);
+            if (resOut2.status === "ok") {
+              toast.success(
+                `Thank you for purchasing the strategy, we'll be in touch with you shortly.`,
+                {
+                  duration: 4000,
+                },
+              );
+              const newRow = {
+                yourName: formData.name,
+                email: formData.email,
+                mobile: formData.phone,
+                plan: planNames[selectedPlan],
+                billingCycle: billingCycleLabels[billingCycle],
+                rzorderid: response.razorpay_order_id,
+                rzpaymentid: response.razorpay_payment_id,
+                rzsign: response.razorpay_signature,
+              };
+              closeDialog();
+              window.localStorage.setItem("newRow", JSON.stringify(newRow));
+              setDialogLoading(false);
+              openNewPage(`/pricing/success`);
+            } else {
+              toast.error("Internal Server Error, 404!!", {
+                duration: 4000,
+              });
+            }
+          } catch (error) {
+            console.log(error);
+            
+            toast.error("Error verifying payment!!", {
+              duration: 4000,
+            });
+          }
+        },
+      };
+
+      const rzp = new Razorpay(options);
+      rzp.open();
+    } catch (error) {
+      toast.error("Backend server is down or unreachable.");
+    } finally {
+      setDialogLoading(false);
+    }
   };
 
   const formatPrice = (price) =>
@@ -112,72 +260,6 @@ const PricingTable = () => {
     if (planType === "premium")
       return "bg-white text-gray-900 hover:bg-gray-100";
     return "bg-white text-gray-900 hover:bg-gray-100";
-  };
-
-  // Enhanced PayU Payment Form Component
-  const PayUForm = ({ params }) => {
-    return (
-      <form
-        action="https://test.payu.in/_payment"
-        method="post"
-        id="payuForm"
-        className="flex-1"
-      >
-        <input type="hidden" name="key" value={params.mkey} />
-        <input type="hidden" name="txnid" value={params.txnid} />
-        <input type="hidden" name="productinfo" value={params.productinfo} />
-        <input type="hidden" name="amount" value={params.amount} />
-        <input type="hidden" name="email" value={params.email} />
-        <input type="hidden" name="firstname" value={params.firstname} />
-        <input type="hidden" name="lastname" value={params.lastname} />
-        <input type="hidden" name="surl" value={params.surl} />
-        <input type="hidden" name="furl" value={params.furl} />
-        <input type="hidden" name="phone" value={params.phone} />
-        <input type="hidden" name="udf1" value={params.udf1} />
-        <input type="hidden" name="udf2" value={params.udf2} />
-        <input type="hidden" name="udf3" value={params.udf3} />
-        <input type="hidden" name="udf4" value={params.udf4} />
-        <input type="hidden" name="udf5" value={params.udf5} />
-        <input type="hidden" name="hash" value={params.hash} />
-
-        {/* Enhanced styled button */}
-        <button
-          type="submit"
-          className="group relative w-full py-4 px-6 flex items-center justify-center gap-3 rounded-xl 
-                     bg-gradient-to-r from-blue-600 via-blue-500 to-purple-600 
-                     hover:from-blue-700 hover:via-blue-600 hover:to-purple-700 
-                     text-white font-semibold text-base
-                     transition-all duration-200 transform hover:scale-[1.02] hover:shadow-2xl
-                     shadow-lg border border-blue-400/20"
-        >
-          {/* Animated background glow */}
-          <div
-            className="absolute inset-0 rounded-xl bg-gradient-to-r from-blue-600 to-purple-600 opacity-0 
-                          group-hover:opacity-20 transition-opacity duration-200 blur-xl"
-          ></div>
-
-          <CreditCard className="w-5 h-5 transition-transform duration-200 group-hover:scale-110" />
-          <span>Pay now</span>
-
-          {/* Small arrow icon */}
-          <div className="ml-1 transform transition-transform duration-200 group-hover:translate-x-1">
-            <svg
-              className="w-4 h-4"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M13 7l5 5m0 0l-5 5m5-5H6"
-              />
-            </svg>
-          </div>
-        </button>
-      </form>
-    );
   };
 
   return (
@@ -263,7 +345,7 @@ const PricingTable = () => {
 
                     <div className="mb-4 sm:mb-6">
                       <span className="text-2xl sm:text-3xl font-bold text-white">
-                        {formatPrice(plan.price)}/- + gst 
+                        {formatPrice(plan.price)}/- + gst
                       </span>
                       <div className="text-xs sm:text-sm text-gray-400 mt-1">
                         billed {billingCycleLabels[billingCycle]}
@@ -274,7 +356,7 @@ const PricingTable = () => {
                       onClick={() => handlePurchase(planType)}
                       disabled={loading === planType}
                       className={`w-full py-2 sm:py-3 px-3 sm:px-4 rounded-lg font-medium transition-all text-sm sm:text-base ${getButtonStyle(
-                        planType
+                        planType,
                       )} ${
                         loading === planType
                           ? "opacity-50 cursor-not-allowed"
@@ -322,7 +404,7 @@ const PricingTable = () => {
               {/* Decorative background pattern */}
               <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-transparent to-purple-500/5"></div>
 
-              {/* Close button - Fixed with better positioning and z-index */}
+              {/* Close button */}
               <button
                 onClick={closeDialog}
                 className="absolute top-4 right-4 z-50 p-2 rounded-full bg-gray-800/80 hover:bg-gray-700/80 text-gray-300 hover:text-white transition-all duration-200 border border-gray-600/50 hover:border-gray-500/50"
@@ -338,7 +420,9 @@ const PricingTable = () => {
                     {selectedPlan && `${planNames[selectedPlan]} Plan`}
                   </h3>
                   <p className="text-gray-400 text-sm">
-                    Complete your subscription
+                    {showFormView
+                      ? "Enter your details"
+                      : "Complete your subscription"}
                   </p>
                 </div>
 
@@ -378,8 +462,112 @@ const PricingTable = () => {
                   </div>
                 )}
 
+                {/* Form View */}
+                {dialogData && !dialogError && showFormView && (
+                  <form onSubmit={handleFormSubmit} className="space-y-6">
+                    {/* Name Field */}
+                    <div>
+                      <label className="block text-sm font-medium text-gray-300 mb-2">
+                        Full Name *
+                      </label>
+                      <div className="relative">
+                        <User className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-500" />
+                        <input
+                          type="text"
+                          name="name"
+                          value={formData.name}
+                          onChange={handleInputChange}
+                          placeholder="Enter your full name"
+                          className={`w-full pl-11 pr-4 py-3 bg-gray-800/50 border ${
+                            formErrors.name
+                              ? "border-red-500"
+                              : "border-gray-600/50"
+                          } rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-transparent transition-all`}
+                        />
+                      </div>
+                      {formErrors.name && (
+                        <p className="mt-1 text-sm text-red-400">
+                          {formErrors.name}
+                        </p>
+                      )}
+                    </div>
+
+                    {/* Email Field */}
+                    <div>
+                      <label className="block text-sm font-medium text-gray-300 mb-2">
+                        Email Address *
+                      </label>
+                      <div className="relative">
+                        <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-500" />
+                        <input
+                          type="email"
+                          name="email"
+                          value={formData.email}
+                          onChange={handleInputChange}
+                          placeholder="Enter your email"
+                          className={`w-full pl-11 pr-4 py-3 bg-gray-800/50 border ${
+                            formErrors.email
+                              ? "border-red-500"
+                              : "border-gray-600/50"
+                          } rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-transparent transition-all`}
+                        />
+                      </div>
+                      {formErrors.email && (
+                        <p className="mt-1 text-sm text-red-400">
+                          {formErrors.email}
+                        </p>
+                      )}
+                    </div>
+
+                    {/* Phone Field */}
+                    <div>
+                      <label className="block text-sm font-medium text-gray-300 mb-2">
+                        Phone Number *
+                      </label>
+                      <div className="relative">
+                        <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-500" />
+                        <input
+                          type="tel"
+                          name="phone"
+                          value={formData.phone}
+                          onChange={handleInputChange}
+                          placeholder="Enter 10-digit phone number"
+                          className={`w-full pl-11 pr-4 py-3 bg-gray-800/50 border ${
+                            formErrors.phone
+                              ? "border-red-500"
+                              : "border-gray-600/50"
+                          } rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-transparent transition-all`}
+                        />
+                      </div>
+                      {formErrors.phone && (
+                        <p className="mt-1 text-sm text-red-400">
+                          {formErrors.phone}
+                        </p>
+                      )}
+                    </div>
+
+                    {/* Action Buttons */}
+                    <div className="flex flex-col sm:flex-row gap-4 pt-4">
+                      <button
+                        type="button"
+                        onClick={() => setShowFormView(false)}
+                        className="order-2 sm:order-1 flex-1 py-3 px-6 bg-gray-800/50 border border-gray-600/50 text-gray-300 rounded-xl hover:bg-gray-700/50 hover:border-gray-500/50 transition-all duration-200"
+                      >
+                        Back
+                      </button>
+                      <button
+                        type="submit"
+                        disabled={dialogLoading}
+                        className="order-1 sm:order-2 flex-1 py-3 px-6 bg-gradient-to-r from-blue-600 to-blue-500 text-white rounded-xl hover:from-blue-500 hover:to-blue-400 transition-all duration-200 font-medium shadow-lg shadow-blue-500/25"
+                      >
+                        Submit
+                      </button>
+                    </div>
+                  </form>
+                )}
+
                 {/* Success State with Subscription Details */}
-                {dialogData && !dialogError && (
+                {dialogData && !dialogError && !showFormView && (
                   <div>
                     {/* Subscription Summary Card */}
                     <div className="bg-gradient-to-br from-gray-800/80 to-gray-700/40 backdrop-blur-sm rounded-2xl p-6 mb-8 border border-gray-600/30">
@@ -404,20 +592,10 @@ const PricingTable = () => {
                           <span className="text-gray-400">Amount</span>
                           <span className="text-2xl font-bold text-white">
                             {formatPrice(
-                              pricingData[billingCycle][selectedPlan].price
+                              pricingData[billingCycle][selectedPlan].price,
                             )}
                           </span>
                         </div>
-                        {dialogData.subscriptionId && (
-                          <div className="flex justify-between items-center py-2">
-                            <span className="text-gray-400">
-                              Subscription ID
-                            </span>
-                            <span className="text-white font-mono text-xs bg-gray-700/50 px-2 py-1 rounded">
-                              {dialogData.subscriptionId}
-                            </span>
-                          </div>
-                        )}
                       </div>
                     </div>
 
@@ -446,11 +624,13 @@ const PricingTable = () => {
                       >
                         Cancel
                       </button>
-                      {payuParams && (
-                        <div className="order-1 sm:order-2 flex-1">
-                          <PayUForm params={payuParams} />
-                        </div>
-                      )}
+                      <button
+                        onClick={showForm}
+                        disabled={dialogLoading}
+                        className="order-1 sm:order-2 flex-1 py-3 px-6 bg-gradient-to-r from-blue-600 to-blue-500 text-white rounded-xl hover:from-blue-500 hover:to-blue-400 transition-all duration-200 font-medium shadow-lg shadow-blue-500/25"
+                      >
+                        Continue to Form
+                      </button>
                     </div>
                   </div>
                 )}

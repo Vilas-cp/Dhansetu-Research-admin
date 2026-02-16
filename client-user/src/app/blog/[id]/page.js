@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { Lock, Crown, Star, Sparkles, ArrowRight, X, Shield, Zap, Users, BookOpen } from "lucide-react";
 import { apiGet } from "@/lib/api";
-import Link from "next/link";
+
 import Header from "@/components/Header";
 import { Lora } from "next/font/google";
 const lora = Lora({

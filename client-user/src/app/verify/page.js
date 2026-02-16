@@ -25,7 +25,6 @@ export default function Page() {
    
         
         const verifyRes = await apiPost("user/v1/login",{clerkId:userId,emailId,firstName,lastName,imgURL});
-        console.log(verifyRes);
         
         if (verifyRes?.status === "success") {
           router.push(`/`);
