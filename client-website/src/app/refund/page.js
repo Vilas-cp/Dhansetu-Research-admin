@@ -18,24 +18,47 @@ const Page = () => {
           <h2 className="text-left text-[6vh] font-bold text-black   pt-[30px]">
             Refund Policy
           </h2>
-          <li className="text-left text-[#555555] pt-[10px]">
-            On certain conditions we may initiate your refund.
-          </li>
-          <li className="text-left text-[#555555] pt-[10px]">
-            Wrong commitment from our executive side.
-          </li>
-          <li className="text-left text-[#555555] pt-[10px]">
-            If we are unable to provide you or activate your service before 72
-            hours.
-          </li>
-          <li className="text-left text-[#555555] pt-[10px]">
-            Payment from the customer below 18 or 65+.
-          </li>
-          <li className="text-left text-[#555555] pt-[10px]">
+          <p className="pt-[20px]">
             {
-              "If anyone from our company committed for Demate Handling services. (We do not provide demate handling / investment advisor or such type of services).."
+              "All sales are final, and we do not offer refunds for the paid period of services already availed by the client. Complaints or dissatisfaction regarding the quality of services during the paid period shall not entitle the client to any refund or compensation. It is important to understand that we do not provide a 100% guarantee on our calls."
+            }
+          </p>
+          <p className="pt-[10px]">
+            {
+              "As per SEBI guidelines, if a client requests to cancel the subscription, a refund shall only be issued for the unused portion of the subscription period. The refund will be calculated on a pro-rata basis, deducting the charges for the services already availed, including applicable taxes and administrative fees."
+            }
+          </p>
+          <p className="pt-[10px]">
+            {
+              "Refunds will not be provided for the period of services already availed, irrespective of the client's satisfaction with the recommendations or the outcome of trades.Always remember Trading/Investment in Securities Markets are always subjected to Market Risk."
+            }
+          </p>
+          <p className="pt-[20px] font-semibold">
+            {
+              "We strongly recommend that before making a payment, our visitors, and potential clients, please:"
+            }
+          </p>
+          <li className="text-left pt-[5px]">
+            {
+              "Read all information about our services and support given to our clients. Read our Terms and Conditions."
             }
           </li>
+          <li className="text-left pt-[5px]">
+            {"Read our Privacy Policy and Refund Policy."}
+          </li>
+          <li className="text-left pt-[5px]">
+            {"There is no refund possible in any case whatsoever."}
+          </li>
+          <p className="pt-[40px]">
+            {
+              "Kindly make the payment after reading all terms and conditions, disclaimers and refund policy."
+            }
+          </p>
+          <p className="pt-[10px]">
+            If you still have any query, contact us on:
+            <span className="font-semibold"> +91 7697722464 </span>
+            or mail us: <span className="font-semibold"> galaxyvivek4@gmail.com </span>
+          </p>
         </div>
       </div>
       <hr className="pb-[30px]"></hr>

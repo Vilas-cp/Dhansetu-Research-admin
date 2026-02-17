@@ -32,6 +32,7 @@ const Header1 = () => {
     { href: "/refund", label: "Refund Policy" },
     { href: "/complaint", label: "Complaint" },
     { href: "/disclosure", label: "Disclosure" },
+    { href: "/investor-charter", label: "Investor Charter" },
   ];
 
   return (
