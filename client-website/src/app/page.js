@@ -30,7 +30,6 @@ export default function Home() {
     false,
     false,
     false,
-    false,
   ]);
   let isLoaded = true;
   for (let index = 0; index < loading.length; index++) {
@@ -43,7 +42,7 @@ export default function Home() {
         // console.log("hi");
         setLoading((prevLoad) => {
           const newLoad = [...prevLoad];
-          newLoad[7] = true;
+          newLoad[6] = true;
           return newLoad;
         });
       };
@@ -75,8 +74,8 @@ export default function Home() {
         <IndustryWeServeSection setLoading={setLoading} indexLoad={3} />
         <OurValuesSection setLoading={setLoading} indexLoad={4} />
         <AppFormComp />
-        <Testimonials setLoading={setLoading} indexLoad={5} />
-        <ContactUsSection setLoading={setLoading} indexLoad={6} />
+        {/* <Testimonials setLoading={setLoading} indexLoad={5} /> */}
+        <ContactUsSection setLoading={setLoading} indexLoad={5} />
         
         <Footer />
       </main>

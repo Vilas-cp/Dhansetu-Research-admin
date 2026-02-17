@@ -10,10 +10,10 @@ const table1 = [
     srNo: "1.",
     rF: "Directly from Investors",
     pend: "0",
-    rec: "1",
+    rec: "0",
     totPend: "0",
     pend3: "0",
-    avg: "10"
+    avg: "N.A"
   },
   {
     srNo: "2.",
@@ -21,7 +21,7 @@ const table1 = [
     pend: "0",
     rec: "0",
     totPend: "0",
-    pend3: "1",
+    pend3: "0",
     avg: "N.A."
   },
   {
@@ -47,142 +47,38 @@ const table1 = [
 const table2 = [
   {
     srNo: "1.",
-    mon: "October 2024",
+    mon: "January 2026",
     car: "00",
     rec: "00",
     res: "00",
-    pend: "00",
-  },
-  {
-    srNo: "2.",
-    mon: "November 2024",
-    car: "00",
-    rec: "00",
-    res: "00",
-    pend: "00",
-  },
-  {
-    srNo: "3.",
-    mon: "December 2024",
-    car: "00",
-    rec: "00",
-    res: "00",
-    pend: "00",
-  },
-  {
-    srNo: "4.",
-    mon: "January 2025",
-    car: "00",
-    rec: "00",
-    res: "00",
-    pend: "00",
-  },
-  {
-    srNo: "5.",
-    mon: "February 2025",
-    car: "00",
-    rec: "01",
-    res: "01",
-    pend: "00",
-  },
-  {
-    srNo: "6.",
-    mon: "March 2025",
-    car: "00",
-    rec: "00",
-    res: "00",
-    pend: "00",
-  },
-  {
-    srNo: "7.",
-    mon: "April 2025",
-    car: "00",
-    rec: "00",
-    res: "00",
-    pend: "00",
-  },
-  {
-    srNo: "8.",
-    mon: "May 2025",
-    car: "00",
-    rec: "01",
-    res: "01",
-    pend: "00",
-  },
-  {
-    srNo: "9.",
-    mon: "June  2025",
-    car: "00",
-    rec: "01",
-    res: "01",
-    pend: "00",
-  },
-  {
-    srNo: "10.",
-    mon: "July  2025",
-    car: "00",
-    rec: "01",
-    res: "00",
-    pend: "01",
-  },
-  {
-    srNo: "11.",
-    mon: "August 2025",
-    car: "00",
-    rec: "00",
-    res: "00",
-    pend: "00",
-  },
-  {
-    srNo: "12.",
-    mon: "September 2025",
-    car: "00",
-    rec: "01",
-    res: "01",
     pend: "00",
   },
   {
     srNo: "",
     mon: "Grand Total",
     car: "00",
-    rec: "05",
-    res: "04",
-    pend: "01",
+    rec: "00",
+    res: "00",
+    pend: "00",
   },
 ];
 
 const table3 = [
   {
     srNo: "1.",
-    yr: "2023-2024",
+    yr: "2025-2026",
     car: "00",
     rec: "00",
     res: "00",
     pend: "00",
   },
   {
-    srNo: "2.",
-    yr: "2024-2025",
-    car: "00",
-    rec: "04",
-    res: "04",
-    pend: "00",
-  },
-  {
-    srNo: "3.",
-    yr: "2025-2026",
-    car: "00",
-    rec: "04",
-    res: "03",
-    pend: "01",
-  },
-  {
     srNo: "",
     yr: "Grand Total",
     car: "00",
-    rec: "08",
-    res: "07",
-    pend: "01",
+    rec: "00",
+    res: "00",
+    pend: "00",
   },
 ];
 
@@ -207,7 +103,7 @@ const Complaint = () => {
             Complaint Status
           </h2>
           <p>Formats for investors complaints data to be disclosed monthly by RAs on their website/mobile application:</p>
-          <h3 className="text-[#002366] text-2xl font-bold">Data for the month ending - September 2025</h3>
+          <h3 className="text-[#002366] text-2xl font-bold">Data for the month ending - Jan 2026</h3>
           <div className="w-full overflow-x-auto">
             <table className="border-collapse w-full">
               <thead>
@@ -216,9 +112,9 @@ const Complaint = () => {
                   <Th2>{`Received from`}</Th2>
                   <Th2>{`Pending at the end of last month`}</Th2>
                   <Th2>{`Received`}</Th2>
-                  <Th2>{`Total Pending#`}</Th2>
+                  <Th2>{`Total Pending`}</Th2>
                   <Th2>{`Pending complaints > 3months`}</Th2>
-                  <Th2>{`Average Resolution time^ (in days)`}</Th2>
+                  <Th2>{`Average Resolution time (in days)`}</Th2>
                 </tr>
               </thead>
               <tbody>
