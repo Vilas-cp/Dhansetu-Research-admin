@@ -425,17 +425,17 @@ v1Routes.get("/article/:artid", async (req, res) => {
 
 v1Routes.post("/buy/verify/rzpay", async (req, res) => {
   try {
-    // const { sessionId, userName } = req.signedCookies;
-    // if (!sessionId || !userName) {
-    //   res.status(400).send({
-    //     status: "fail",
-    //     data: {
-    //       message: "SessionId not found",
-    //     },
-    //   });
-    //   return;
-    // }
-    const userName = req.body.userName;
+    const { sessionId, userName } = req.signedCookies;
+    if (!sessionId || !userName) {
+      res.status(400).send({
+        status: "fail",
+        data: {
+          message: "SessionId not found",
+        },
+      });
+      return;
+    }
+    // const userName = req.body.userName;
     const userDb = new UserDB();
     const userInfo = await userDb.getClientUser(userName);
     if (userInfo === null) {

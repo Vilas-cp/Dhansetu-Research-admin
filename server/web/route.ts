@@ -2,7 +2,6 @@ import chalk from "chalk";
 import express from "express";
 import { SessionDB, UserDB } from "../db/db";
 import { envConfigs, serverConfigs } from "../configs/configs";
-import { v4 } from "uuid";
 import { MailHandler } from "../helpers/notifications";
 import Razorpay from "razorpay";
 import { validateWebhookSignature } from "razorpay/dist/utils/razorpay-utils";
@@ -135,39 +134,16 @@ v1Routes.post("/test", async (req, res) => {
   }
 });
 
+const subDetails = {
+  "pre-1": {
+    amount: 1,
+  },
+};
+
+type KeySub = keyof typeof subDetails;
 
 v1Routes.post("/buy/verify/rzpay", async (req, res) => {
   try {
-    const { sessionId, userName } = req.signedCookies;
-    if (!sessionId || !userName) {
-      res.status(400).send({
-        status: "fail",
-        data: {
-          message: "SessionId not found",
-        },
-      });
-      return;
-    }
-    const userDb = new UserDB();
-    const userInfo = await userDb.getClientUser(userName);
-    if (userInfo === null) {
-      res.status(400).send({
-        status: "fail",
-        data: {
-          message: "Database error, or Database is offline.",
-        },
-      });
-      return;
-    }
-    if (userInfo === -1) {
-      res.status(400).send({
-        status: "fail",
-        data: {
-          message: "User does not exists.",
-        },
-      });
-      return;
-    }
     const { razorpay_order_id, razorpay_payment_id, razorpay_signature } =
       req.body;
     console.log(req.body);
@@ -186,37 +162,6 @@ v1Routes.post("/buy/verify/rzpay", async (req, res) => {
         successIsValid: isValidSignature,
       },
     });
-    const txnId = razorpay_order_id;
-    const orderInfo = await userDb.getOrder(txnId);
-    if (orderInfo === null || orderInfo === -1) {
-      return;
-    }
-    if (orderInfo.status === "success") {
-      return;
-    }
-    const orderUpdate = await userDb.verifyOrder(txnId);
-    if (orderUpdate === null || orderUpdate === -1) {
-      return;
-    }
-    const addUserSub = await userDb.addUserSub(txnId);
-    if (addUserSub === null || addUserSub === -1) {
-      return;
-    }
-    const userDet = await userDb.getUserDet(txnId);
-    if (userDet === null || userDet === -1) {
-      return;
-    }
-    const emailId = userInfo.emailId;
-    const mailHelp = new MailHandler();
-    await mailHelp.sendMail(
-      emailId,
-      userDet.sub.amount.toString(),
-      userDet.sub.subName,
-      (new Date()).toISOString(),
-      txnId,
-      userInfo.firstName + userInfo.lastName,
-    );
-    console.log(chalk.yellow(`User: ${emailId}, payment verified!`));
     return;
   } catch (error: any) {
     console.log(
@@ -234,56 +179,8 @@ v1Routes.post("/buy/verify/rzpay", async (req, res) => {
 
 v1Routes.post("/buy/order/rzpay/:subId", async (req, res) => {
   try {
-    const { sessionId, userName } = req.signedCookies;
-    if (!sessionId || !userName) {
-      res.status(400).send({
-        status: "fail",
-        data: {
-          message: "SessionId not found",
-        },
-      });
-      return;
-    }
-    const userDb = new UserDB();
-    const userInfo = await userDb.getClientUser(userName);
-    if (userInfo === null) {
-      res.status(400).send({
-        status: "fail",
-        data: {
-          message: "Database error, or Database is offline.",
-        },
-      });
-      return;
-    }
-    if (userInfo === -1) {
-      res.status(400).send({
-        status: "fail",
-        data: {
-          message: "User does not exists.",
-        },
-      });
-      return;
-    }
-    const subId = req.params.subId;
-    const subInfo = await userDb.getSubInfo(subId);
-    if (subInfo === null) {
-      res.status(400).send({
-        status: "fail",
-        data: {
-          message: "Database error, or Database is offline.",
-        },
-      });
-      return;
-    }
-    if (subInfo == -1) {
-      res.status(400).send({
-        status: "fail",
-        data: {
-          message: "Wrong subId given.",
-        },
-      });
-      return;
-    }
+    const subId: KeySub = req.params.subId as KeySub;
+    const subInfo: { amount: number } = subDetails["pre-1"];
     const razorpay = new Razorpay({
       key_id: RAZORPAY_KEY_ID,
       key_secret: RAZORPAY_KEY_SECRET,
@@ -296,29 +193,6 @@ v1Routes.post("/buy/order/rzpay/:subId", async (req, res) => {
       notes: {},
     };
     const order = await razorpay.orders.create(options);
-    const createOrder = await userDb.createOrder(
-      userInfo.id,
-      subInfo.id,
-      order.id,
-    );
-    if (createOrder === null) {
-      res.status(400).send({
-        status: "fail",
-        data: {
-          message: "Database error, or Database is offline.",
-        },
-      });
-      return;
-    }
-    if (createOrder == -1) {
-      res.status(400).send({
-        status: "fail",
-        data: {
-          message: "Error while creating order in Database.",
-        },
-      });
-      return;
-    }
     res.status(200).send({
       status: "success",
       data: {
