@@ -126,7 +126,7 @@ const Aboutus = () => {
 
         <AboutUs />
         <ContactUsSection setLoading={null} indexLoad={0} />
-        <hr className="pb-[30px]" />
+        {/* <hr className="pb-[30px]" /> */}
         <Footer />
       </div>
     </>

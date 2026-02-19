@@ -178,6 +178,7 @@ export default function Footer() {
 
             {/* Copyright */}
             <div className="pt-8 border-t border-[#2a5d6c] text-center text-sm text-gray-200">
+              <p><span className="text-red-500 font-bold">Disclaimer:</span> Investment are subject to market risk, read all related documents carefully before investing.</p>
               <p>© 2026 Dhansetu Research. All Rights Reserved.</p>
             </div>
           </div>
