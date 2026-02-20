@@ -137,6 +137,120 @@ const PricingTable = () => {
     return errors;
   };
 
+  // const handleFormSubmit = async (e) => {
+  //   e.preventDefault();
+
+  //   const errors = validateForm();
+  //   if (Object.keys(errors).length > 0) {
+  //     setFormErrors(errors);
+  //     return;
+  //   }
+
+  //   // console.log("Form Submitted:", {
+  //   //   ...formData,
+  //   //   plan: planNames[selectedPlan],
+  //   //   billingCycle: billingCycleLabels[billingCycle],
+  //   //   amount: pricingData[billingCycle][selectedPlan].price,
+  //   //   subscriptionId: id,
+  //   // });
+  //   setDialogLoading(true);
+  //   try {
+  //     const userData = {
+  //       name: formData.name,
+  //       email: formData.email,
+  //       contact: formData.phone,
+  //     };
+
+  //     console.log(userData);
+  //     const response1 = await fetch(
+  //       `${BASE_URL}web/v1/buy/order/rzpay/${billingCycle}/${selectedPlan}`,
+  //       {
+  //         method: "POST",
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //         },
+  //         body:JSON.stringify(userData)
+  //       },
+  //     );
+
+  //     const res = await response1.json();
+  //     if (res.status !== "success") {
+  //       toast.error("Order creation failed");
+  //       return;
+  //     }
+
+  //     const options = {
+  //       key: "rzp_test_SGug2wijgN296J",
+  //       amount: res.data.order.amount,
+  //       currency: res.data.order.currency,
+  //       name: "Dhansetu Research",
+  //       description: "Strategy Transaction",
+  //       order_id: res.data.order.id,
+  //       prefill: {
+  //         name: formData.name,
+  //         email: formData.email,
+  //         contact: formData.phone,
+  //       },
+  //       theme: {
+  //         color: "#F37254",
+  //       },
+  //       handler: async function (response) {
+  //         try {
+  //           const res2 = await fetch(`${BASE_URL}web/v1/buy/verify/rzpay`, {
+  //             method: "POST",
+  //             headers: {
+  //               "Content-Type": "application/json",
+  //             },
+  //             body: JSON.stringify(response),
+  //           });
+  //           const resOut2 = await res2.json();
+
+  //           console.log(resOut2);
+  //           if (resOut2.data.successIsValid) {
+  //             toast.success(
+  //               `Thank you for purchasing the strategy, we'll be in touch with you shortly.`,
+  //               {
+  //                 duration: 4000,
+  //               },
+  //             );
+  //             const newRow = {
+  //               yourName: formData.name,
+  //               email: formData.email,
+  //               mobile: formData.phone,
+  //               plan: planNames[selectedPlan],
+  //               billingCycle: billingCycleLabels[billingCycle],
+  //               rzorderid: response.razorpay_order_id,
+  //               rzpaymentid: response.razorpay_payment_id,
+  //               rzsign: response.razorpay_signature,
+  //             };
+  //             closeDialog();
+  //             window.localStorage.setItem("newRow", JSON.stringify(newRow));
+  //             setDialogLoading(false);
+  //             openNewPage(`/pricing/success`);
+  //           } else {
+  //             toast.error("Internal Server Error, 404!!", {
+  //               duration: 4000,
+  //             });
+  //           }
+  //         } catch (error) {
+  //           console.log(error);
+
+  //           toast.error("Error verifying payment!!", {
+  //             duration: 4000,
+  //           });
+  //         }
+  //       },
+  //     };
+
+  //     const rzp = new Razorpay(options);
+  //     rzp.open();
+  //   } catch (error) {
+  //     toast.error("Backend server is down or unreachable.");
+  //   } finally {
+  //     setDialogLoading(false);
+  //   }
+  // };
+
   const handleFormSubmit = async (e) => {
     e.preventDefault();
 
@@ -146,36 +260,36 @@ const PricingTable = () => {
       return;
     }
 
-    // console.log("Form Submitted:", {
-    //   ...formData,
-    //   plan: planNames[selectedPlan],
-    //   billingCycle: billingCycleLabels[billingCycle],
-    //   amount: pricingData[billingCycle][selectedPlan].price,
-    //   subscriptionId: id,
-    // });
     setDialogLoading(true);
+    const userData = {
+      name: formData.name,
+      email: formData.email,
+      contact: formData.phone,
+    };
     try {
-      const response1 = await fetch(`${BASE_URL}web/v1/buy/order/rzpay/${id}`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
+      const response1 = await fetch(
+        `${BASE_URL}web/v1/buy/order/rzpay/${billingCycle}/${selectedPlan}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(userData),
         },
-      });
-      
-     
+      );
+
       const res = await response1.json();
-        if (res.status !== "success") {
+      if (res.status !== "success") {
         toast.error("Order creation failed");
+        setDialogLoading(false);
         return;
       }
 
-      
       const options = {
-        key: "rzp_live_vegmCeNoQ1JTfU",
+        key: "rzp_test_SGug2wijgN296J",
         amount: res.data.order.amount,
         currency: res.data.order.currency,
         name: "Dhansetu Research",
-        description: "Strategy Transaction",
         order_id: res.data.order.id,
         prefill: {
           name: formData.name,
@@ -187,57 +301,51 @@ const PricingTable = () => {
         },
         handler: async function (response) {
           try {
-            const res2 = await fetch(`${BASE_URL}web/v1/buy/verify/rzpay`, {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
+            const verifyRes = await fetch(
+              `${BASE_URL}web/v1/buy/verify/rzpay`,
+              {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  ...response, 
+                  email: formData.email,
+                  name: formData.name, 
+                  contact:formData.phone
+                }),
               },
-              body: JSON.stringify(response),
-            });
-            const resOut2 = await res2.json();
+            );
 
-            console.log(resOut2);
-            if (resOut2.status === "ok") {
-              toast.success(
-                `Thank you for purchasing the strategy, we'll be in touch with you shortly.`,
-                {
-                  duration: 4000,
-                },
+            const verifyData = await verifyRes.json();
+
+            if (verifyData.data.successIsValid) {
+              toast.success("Payment successful!");
+              localStorage.setItem(
+                "newRow",
+                JSON.stringify({ ...formData, plan: planNames[selectedPlan] }),
               );
-              const newRow = {
-                yourName: formData.name,
-                email: formData.email,
-                mobile: formData.phone,
-                plan: planNames[selectedPlan],
-                billingCycle: billingCycleLabels[billingCycle],
-                rzorderid: response.razorpay_order_id,
-                rzpaymentid: response.razorpay_payment_id,
-                rzsign: response.razorpay_signature,
-              };
               closeDialog();
-              window.localStorage.setItem("newRow", JSON.stringify(newRow));
-              setDialogLoading(false);
-              openNewPage(`/pricing/success`);
+              setTimeout(() => openNewPage("/pricing/success"), 100);
             } else {
-              toast.error("Internal Server Error, 404!!", {
-                duration: 4000,
-              });
+              toast.error("Payment verification failed");
             }
-          } catch (error) {
-            console.log(error);
-            
-            toast.error("Error verifying payment!!", {
-              duration: 4000,
-            });
+          } catch {
+            toast.error("Verification error");
+          } finally {
+            setDialogLoading(false);
           }
         },
       };
 
       const rzp = new Razorpay(options);
+
+      rzp.on("payment.failed", () => {
+        toast.error("Payment cancelled");
+        setDialogLoading(false);
+      });
+
       rzp.open();
-    } catch (error) {
-      toast.error("Backend server is down or unreachable.");
-    } finally {
+    } catch {
+      toast.error("Backend server is unreachable");
       setDialogLoading(false);
     }
   };

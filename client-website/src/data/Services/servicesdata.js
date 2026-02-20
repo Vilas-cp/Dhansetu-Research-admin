@@ -21,11 +21,11 @@ const Servicescontent = [
     routing: `/services/algo-trading-support`,
   },
   {
-    title: "Premium RA + Algo Combo",
+    title: "RA + Algo Combo",
     description: `MT4 and MT5 indicators, master advisors, calculators, and even money management formulas are the main Trading tools.`,
     imgSrc: `https://cdn-icons-png.flaticon.com/512/5455/5455768.png`,
     footerNote: "Read more",
-    routing: `/services/premium-ra-algo-support`,
+    routing: `/services/ra-algo-support`,
   },
 ];
 export default Servicescontent;

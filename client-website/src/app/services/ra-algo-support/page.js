@@ -13,7 +13,7 @@ const Page = () => {
       <Header1 />
       <div className="pt-[125px]">
         <h1 className="w-full bg-[#aee9e7] flex justify-center items-center h-[35vh] text-[#102b5c] font-[999] text-[5vh] xl:text-[8vh] ">
-        Premium RA + Algo Combo
+         RA + Algo Combo
         </h1>
       </div>
       <AlgoSection />

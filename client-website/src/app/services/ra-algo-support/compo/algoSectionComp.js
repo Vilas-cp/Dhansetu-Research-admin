@@ -9,13 +9,13 @@ function SectionCompPara({ text }) {
 
 const SectionCompParaData = [
   {
-    text: `Our Premium RA + Algo Combo is an end-to-end trading solution that combines expert research, 
+    text: `Our RA + Algo Combo is an end-to-end trading solution that combines expert research, 
 fully automated execution, and robust risk management — all in one package.`,
   },
   {
     text: `At Dhansetu Research, we go beyond standard algo trading by offering a comprehensive solution 
 where research meets automation. From portfolio customization to performance tracking, here's what 
-you get with our Premium RA + Algo Combo:`,
+you get with our RA + Algo Combo:`,
   },
 ];
 

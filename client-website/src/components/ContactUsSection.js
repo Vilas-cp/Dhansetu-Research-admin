@@ -91,7 +91,7 @@ function ContactUsSection({ setLoading, indexLoad }) {
         Embrace Dhansetu Research for emotionless, efficient trading.
       </h2>
       <p className="text-center text-black px-[25%] text-lg tracking-wider p1">
-        {`Join thousands of traders who've chosen Dhansetu Research as their bridge to financial freedom.Let our research, technology, and experience work for you — so you can trade confidently, automatically, and profitably`}
+        {`Join traders who've chosen Dhansetu Research as their bridge to financial freedom.Let our research, technology, and experience work for you — so you can trade confidently and automatically`}
       </p>
       <a
         href="/contact"

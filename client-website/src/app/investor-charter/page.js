@@ -179,7 +179,7 @@ const Page = () => {
                 }
               </p>
 
-              <ol className="list-[upper-roman] space-y-2 pl-6">
+              <ol className="list-[lower-roman] space-y-2 pl-6">
                 <li>
                   {
                     "SCORES 2.0 (a web based centralized grievance redressal system of SEBI for facilitating effective grievance redressal in time-bound manner) (https://scores.sebi.gov.in)"
@@ -289,7 +289,7 @@ const Page = () => {
                 <strong>{"Do's"}</strong>
               </li>
 
-              <ol className="list-[upper-roman] pl-6 space-y-2">
+              <ol className="list-[lower-roman] pl-6 space-y-2">
                 <li>{"Always deal with SEBI registered Research Analyst."}</li>
                 <li>
                   {
@@ -352,7 +352,7 @@ const Page = () => {
               <li className="pt-[20px]">
                 <strong>{"Don'ts"}</strong>
               </li>
-              <ol className="list-[upper-roman] pl-6 space-y-2">
+              <ol className="list-[lower-roman] pl-6 space-y-2">
                 <li>
                   {
                     "Do not provide funds for investment to the Research Analyst."
