@@ -30,11 +30,11 @@ app.use((_, res, next) => {
 });
 
 const whitelist = [
-  "http://localhost:3000",
-  "https://blog.dhanseturesearch.com",
-  "https://adminblog.dhanseturesearch.com",
+  // "http://localhost:3000",
+  "https://blog.dhanseturesearch.in",
+  "https://adminblog.dhanseturesearch.in",
   "https://dhanseturesearch.com",
-  "https://test.payu.in",
+  // "https://test.payu.in",
 ];
 // const whitelist = ["http://localhost:3000"];
 const corsOptions: CorsOptions = {

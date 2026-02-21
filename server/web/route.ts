@@ -5,6 +5,7 @@ import { envConfigs, serverConfigs } from "../configs/configs";
 import { MailHandler } from "../helpers/notifications";
 import Razorpay from "razorpay";
 import { validateWebhookSignature } from "razorpay/dist/utils/razorpay-utils";
+import { OptId, pricing, TimeId } from "../helpers/price";
 const v1Routes = express.Router();
 const webRoutes = express.Router();
 
@@ -134,14 +135,6 @@ v1Routes.post("/test", async (req, res) => {
   }
 });
 
-const subDetails = {
-  "pre-1": {
-    amount: 1,
-  },
-};
-
-type KeySub = keyof typeof subDetails;
-
 v1Routes.post("/buy/verify/rzpay", async (req, res) => {
   try {
     const { razorpay_order_id, razorpay_payment_id, razorpay_signature } =
@@ -177,20 +170,44 @@ v1Routes.post("/buy/verify/rzpay", async (req, res) => {
   }
 });
 
-v1Routes.post("/buy/order/rzpay/:subId", async (req, res) => {
+const timesId: TimeId[] = ["monthly", "quarterly", "halfYearly"];
+const optsId: OptId[] = [
+  "basicIndex",
+  "moderateIndex",
+  "advanceIndex",
+  "stockOption",
+  "stockFuture",
+  "equityResearch",
+  "longTermEquity",
+  "mcx",
+];
+
+v1Routes.post("/buy/order/rzpay/:timeId/:optId", async (req, res) => {
   try {
-    const subId: KeySub = req.params.subId as KeySub;
-    const subInfo: { amount: number } = subDetails["pre-1"];
+    const timeId: TimeId = req.params.timeId as TimeId;
+    const optId: OptId = req.params.optId as OptId;
+    if (!(timesId.includes(timeId) || optsId.includes(optId))) {
+      res.status(400).send({
+        status: "fail",
+        data: {
+          message: "timeId or optId is wrong!",
+        },
+      });
+      return;
+    }
+    const userDetails = req.body;
+    console.log(userDetails);
+    const price = pricing[timeId][optId].price;
     const razorpay = new Razorpay({
       key_id: RAZORPAY_KEY_ID,
       key_secret: RAZORPAY_KEY_SECRET,
     });
-    const amount = subInfo.amount;
+    const amount = price + (price * 0.18);
     const options = {
       amount: amount * 100,
       currency: "INR",
-      receipt: "no_receipt",
-      notes: {},
+      receipt: "web_receipt",
+      notes: { userName: userDetails?.name, userEmail: userDetails?.email, userNo: userDetails?.contact, type: "web" },
     };
     const order = await razorpay.orders.create(options);
     res.status(200).send({

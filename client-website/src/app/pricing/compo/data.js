@@ -103,7 +103,7 @@ const pricingData = {
       subscriptionId: 'basic_index_option_quarterly_001',
       price: 16000,
       features: {
-        researchCalls: '3–5 Index Option Calls/Week',
+        researchCalls: '3-5 Index Option Calls/Week',
         algo: 'Basic Index Option Algo',
         brokerAccounts: '1 Broker Account',
         telegram: 'Telegram Alerts',

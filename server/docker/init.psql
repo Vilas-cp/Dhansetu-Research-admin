@@ -111,6 +111,18 @@ CREATE TABLE "articles_details" (
   UNIQUE ("article_id", "article_lang")
 );
 
+CREATE TABLE "payment_details" (
+  "id" SERIAL PRIMARY KEY,
+  "uuid" uuid NOT NULL DEFAULT gen_random_uuid(),
+  "rzpay_order_id" varchar NOT NULL,
+  "rzpay_payment_id" varchar NOT NULL,
+  "rzpay_sign" varchar NOT NULL,
+  "user_email" lang NOT NULL,
+  "user_" TEXT NOT NULL,
+  "created_at" timestamptz DEFAULT CURRENT_TIMESTAMP,
+  UNIQUE ("article_id", "article_lang")
+);
+
 ALTER TABLE "articles"
 ADD FOREIGN KEY ("admin_id") REFERENCES "admin" ("id") ON DELETE CASCADE;
 
@@ -118,7 +130,6 @@ ALTER TABLE "articles_details"
 ADD FOREIGN KEY ("article_id") REFERENCES "articles" ("id") ON DELETE CASCADE;
 
 
-INSERT INTO "subscriptions" (sub_id, sub_name, sub_time, amount) VALUES ('pre-monthly', 'Premium Monthly', 1, 1);
-INSERT INTO "subscriptions" (sub_id, sub_name, sub_time, amount) VALUES ('pre-quarterly', 'Premium Quarterly', 4, 4);
-INSERT INTO "subscriptions" (sub_id, sub_name, sub_time, amount) VALUES ('pre-half-yearly', 'Premium Half Yearly', 6, 6);
-INSERT INTO "subscriptions" (sub_id, sub_name, sub_time, amount) VALUES ('pre-yearly', 'Premium Yearly', 12, 12);
+INSERT INTO "subscriptions" (sub_id, sub_name, sub_time, amount) VALUES ('pre-monthly', 'Premium Monthly', 1, 1000);
+INSERT INTO "subscriptions" (sub_id, sub_name, sub_time, amount) VALUES ('pre-quarterly', 'Premium Quarterly', 3, 2400);
+INSERT INTO "subscriptions" (sub_id, sub_name, sub_time, amount) VALUES ('pre-half-yearly', 'Premium Half Yearly', 6, 3840);

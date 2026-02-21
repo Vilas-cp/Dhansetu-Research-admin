@@ -577,12 +577,12 @@ v1Routes.post("/buy/order/rzpay/:subId", async (req, res) => {
       key_id: RAZORPAY_KEY_ID,
       key_secret: RAZORPAY_KEY_SECRET,
     });
-    const amount = subInfo.amount;
+    const amount = subInfo.amount + (subInfo.amount * 0.18);
     const options = {
       amount: amount * 100,
       currency: "INR",
-      receipt: "no_receipt",
-      notes: {},
+      receipt: "blog_receipt",
+      notes: {userEmail: userName, userName: `${userInfo.firstName} ${userInfo.lastName}`, userId: userInfo.uuid},
     };
     const order = await razorpay.orders.create(options);
     const createOrder = await userDb.createOrder(
