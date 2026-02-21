@@ -3,10 +3,9 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { apiGet } from "@/lib/api";
-import { useVerifySession } from "@/hooks/userVerifySession";
+
 
 export default function ArticlePage() {
-  useVerifySession();
   const { id } = useParams();
   const [article, setArticle] = useState(null);
   const [blocks, setBlocks] = useState([]);
