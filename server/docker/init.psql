@@ -113,14 +113,13 @@ CREATE TABLE "articles_details" (
 
 CREATE TABLE "payment_details" (
   "id" SERIAL PRIMARY KEY,
-  "uuid" uuid NOT NULL DEFAULT gen_random_uuid(),
-  "rzpay_order_id" varchar NOT NULL,
-  "rzpay_payment_id" varchar NOT NULL,
+  "rzpay_order_id" varchar UNIQUE NOT NULL,
+  "rzpay_payment_id" varchar UNIQUE NOT NULL,
   "rzpay_sign" varchar NOT NULL,
-  "user_email" lang NOT NULL,
-  "user_" TEXT NOT NULL,
-  "created_at" timestamptz DEFAULT CURRENT_TIMESTAMP,
-  UNIQUE ("article_id", "article_lang")
+  "user_email" varchar NOT NULL,
+  "user_name" varchar NOT NULL,
+  "user_no" varchar NOT NULL,
+  "created_at" timestamptz DEFAULT CURRENT_TIMESTAMP
 );
 
 ALTER TABLE "articles"
