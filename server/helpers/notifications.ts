@@ -28,7 +28,13 @@ class MailHandler {
   }
 
   async sendMail(senderMailId: string, amount: string, subName: string, paymentDate: string, txnId: string, userName: string) {
-    const emailHTML = mailTemplate(userName, amount, subName, txnId, paymentDate);
+    const emailHTML = mailTemplate(
+      userName,
+      amount,
+      subName,
+      txnId,
+      moment(paymentDate).format("MMMM Do YYYY, h:mm:ss a"),
+    );
     // console.log("In");
     const mailOptions = {
       from: `Dhansetu <${MailHandler.mailId}>`,

@@ -1,6 +1,6 @@
 import chalk from "chalk";
 import express from "express";
-import { SessionDB, UserDB } from "../db/db";
+import { SessionDB, UserDB, WebDB } from "../db/db";
 import { envConfigs, serverConfigs } from "../configs/configs";
 import { MailHandler } from "../helpers/notifications";
 import Razorpay from "razorpay";
@@ -139,7 +139,8 @@ v1Routes.post("/buy/verify/rzpay", async (req, res) => {
   try {
     const { razorpay_order_id, razorpay_payment_id, razorpay_signature } =
       req.body;
-    console.log(req.body);
+    // console.log(req.body);
+    const webDb = new WebDB();
     const secret = RAZORPAY_KEY_SECRET || "no_secret";
     const body = razorpay_order_id + "|" + razorpay_payment_id;
     const isValidSignature = validateWebhookSignature(
@@ -148,6 +149,31 @@ v1Routes.post("/buy/verify/rzpay", async (req, res) => {
       secret,
     );
     console.log(`Is Valid ${razorpay_order_id}`, isValidSignature);
+    if (!isValidSignature) {
+      res.status(400).send({
+        status: "fail",
+        data: {
+          message: "Razorpay payment verification failed!",
+        },
+      });
+      return;
+    }
+    const timeId: TimeId = req.body?.timeId as TimeId;
+    const optId: OptId = req.body?.optId as OptId;
+    const price = pricing[timeId][optId].price;
+    const amount = (price + price * 0.18).toString();
+    if (!(timesId.includes(timeId) || optsId.includes(optId))) {
+      res.status(400).send({
+        status: "fail",
+        data: {
+          message: "timeId or optId is wrong!",
+        },
+      });
+      return;
+    }
+    const userEmailId = req.body?.email || "no email";
+    const userName = req.body?.name || "no name";
+    const userNo = req.body?.contact || "no contact";
     res.status(200).send({
       status: "success",
       data: {
@@ -155,6 +181,17 @@ v1Routes.post("/buy/verify/rzpay", async (req, res) => {
         successIsValid: isValidSignature,
       },
     });
+    await webDb.insertPaymentRecord(
+      razorpay_order_id,
+      razorpay_payment_id,
+      razorpay_signature,
+      userEmailId,
+      userName,
+      userNo,
+      optId, 
+      timeId, 
+      amount
+    );
     return;
   } catch (error: any) {
     console.log(
@@ -196,18 +233,23 @@ v1Routes.post("/buy/order/rzpay/:timeId/:optId", async (req, res) => {
       return;
     }
     const userDetails = req.body;
-    console.log(userDetails);
+    // console.log(userDetails);
     const price = pricing[timeId][optId].price;
     const razorpay = new Razorpay({
       key_id: RAZORPAY_KEY_ID,
       key_secret: RAZORPAY_KEY_SECRET,
     });
-    const amount = price + (price * 0.18);
+    const amount = price + price * 0.18;
     const options = {
       amount: amount * 100,
       currency: "INR",
       receipt: "web_receipt",
-      notes: { userName: userDetails?.name, userEmail: userDetails?.email, userNo: userDetails?.contact, type: "web" },
+      notes: {
+        userName: userDetails?.name,
+        userEmail: userDetails?.email,
+        userNo: userDetails?.contact,
+        type: "web",
+      },
     };
     const order = await razorpay.orders.create(options);
     res.status(200).send({

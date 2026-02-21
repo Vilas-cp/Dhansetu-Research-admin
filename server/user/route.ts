@@ -458,7 +458,7 @@ v1Routes.post("/buy/verify/rzpay", async (req, res) => {
     }
     const { razorpay_order_id, razorpay_payment_id, razorpay_signature } =
       req.body;
-    console.log(req.body);
+    // console.log(req.body);
     const secret = RAZORPAY_KEY_SECRET || "no_secret";
     const body = razorpay_order_id + "|" + razorpay_payment_id;
     const isValidSignature = validateWebhookSignature(
@@ -503,7 +503,7 @@ v1Routes.post("/buy/verify/rzpay", async (req, res) => {
       userDet.sub.subName,
       (new Date()).toISOString(),
       txnId,
-      userInfo.firstName + userInfo.lastName,
+      `${userInfo.firstName} ${userInfo.lastName}`,
     );
     console.log(chalk.yellow(`User: ${emailId}, payment verified!`));
     return;

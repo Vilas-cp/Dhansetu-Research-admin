@@ -119,6 +119,9 @@ CREATE TABLE "payment_details" (
   "user_email" varchar NOT NULL,
   "user_name" varchar NOT NULL,
   "user_no" varchar NOT NULL,
+  "opt_id" varchar NOT NULL,
+  "time_id" varchar NOT NULL,
+  "amount" varchar NOT NULL,
   "created_at" timestamptz DEFAULT CURRENT_TIMESTAMP
 );
 

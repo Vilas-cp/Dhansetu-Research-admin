@@ -780,6 +780,54 @@ class UserDB extends DB {
   }
 }
 
+class WebDB extends DB {
+  async insertPaymentRecord(
+    rzOrderId: string,
+    rzPaymentId: string,
+    rzSign: string,
+    userEmail: string,
+    userName: string,
+    userNo: string,
+    optId: string,
+    timeId: string,
+    amount: string,
+  ) {
+    return await this.retryQuery("insertPaymentRecord", async () => {
+      let pClient;
+      try {
+        pClient = await this.connect();
+        const res = await pClient.query(
+          `
+          INSERT INTO
+            "payment_details" ("rzpay_order_id", "rzpay_payment_id", "rzpay_sign", "user_email", "user_name", "user_no", "opt_id", 
+            "time_id", "amount")
+          VALUES
+            ($1::varchar, $2::varchar, $3::varchar, $4::varchar, $5::varchar, $6::varchar, $7::varchar, $8::varchar, $9::varchar)
+          RETURNING "id";
+            `,
+          [rzOrderId, rzPaymentId, rzSign, userEmail, userName, userNo, optId, timeId, amount],
+        );
+        if (res.rowCount !== 1) {
+          return -1;
+        }
+        const userData: { id: number } = res.rows[0];
+        return userData;
+      } catch (error: any) {
+        console.log(
+          chalk.red("PostgresSQL Error: "),
+          error?.message,
+          error?.code,
+        );
+        return null;
+      } finally {
+        if (pClient) {
+          this.release(pClient);
+        }
+      }
+    });
+  }
+}
+
 class SessionDB extends DB {
   async getSessionId(userName: string) {
     return await this.retryQuery("getSessionId", async () => {
@@ -1222,4 +1270,4 @@ class AdminDb extends DB {
   }
 }
 
-export { DB, UserDB, SessionDB, AdminDb };
+export { DB, UserDB, SessionDB, AdminDb, WebDB };
