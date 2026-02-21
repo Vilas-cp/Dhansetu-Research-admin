@@ -1,13 +1,13 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useVerifySession } from "@/hooks/userVerifySession";
-import { 
-  TrendingUp, 
-  Users, 
-  FileText, 
+import {
+  TrendingUp,
+  Users,
+  FileText,
   Eye,
   PlusCircle,
-  ArrowUpRight
+  ArrowUpRight,
 } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -19,15 +19,13 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
-
 import Header from "../../components/Header";
 
 export default function Dashboard() {
+  useVerifySession();
+
   const [data, setData] = useState([]);
   // useVerifySession();
-
- 
- 
 
   const quickActions = [
     {
@@ -56,7 +54,7 @@ export default function Dashboard() {
   return (
     <div className="min-h-screen bg-gray-50">
       <Header currentPage="dashboard" />
-      
+
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Welcome Section */}
         <div className="mb-8">
@@ -68,8 +66,6 @@ export default function Dashboard() {
           </p>
         </div>
 
-      
-
         {/* Quick Actions */}
         <div className="mb-8">
           <h2 className="text-xl font-semibold text-gray-900 mb-4">
@@ -79,10 +75,15 @@ export default function Dashboard() {
             {quickActions.map((action) => {
               const Icon = action.icon;
               return (
-                <Card key={action.title} className="group hover:shadow-lg transition-all duration-200 border-0 shadow-md">
+                <Card
+                  key={action.title}
+                  className="group hover:shadow-lg transition-all duration-200 border-0 shadow-md"
+                >
                   <CardHeader>
                     <div className="flex items-center justify-between">
-                      <div className={`w-12 h-12 rounded-lg ${action.color} flex items-center justify-center group-hover:scale-110 transition-transform`}>
+                      <div
+                        className={`w-12 h-12 rounded-lg ${action.color} flex items-center justify-center group-hover:scale-110 transition-transform`}
+                      >
                         <Icon className="w-6 h-6 text-white" />
                       </div>
                       <ArrowUpRight className="w-5 h-5 text-gray-400 group-hover:text-gray-600 transition-colors" />
@@ -171,4 +172,4 @@ export default function Dashboard() {
       </main>
     </div>
   );
-};
+}

@@ -2,9 +2,11 @@
 
 import React, { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
-import { apiGet } from "@/lib/api"; 
+import { apiGet } from "@/lib/api";
+import { useVerifySession } from "@/hooks/userVerifySession";
 
 export default function ArticlePage() {
+  useVerifySession();
   const { id } = useParams();
   const [article, setArticle] = useState(null);
   const [blocks, setBlocks] = useState([]);
@@ -12,22 +14,19 @@ export default function ArticlePage() {
 
   useEffect(() => {
     console.log(id);
-    
+
     if (!id) return;
 
     const fetchArticle = async () => {
       try {
-        
-        const res = await apiGet(`admin/v1/article/${id}`); 
+        const res = await apiGet(`admin/v1/article/${id}`);
         console.log(res);
-        
+
         setArticle(res.data.res);
 
         if (res?.data.res.artDetail) {
-
           try {
             setBlocks(JSON.parse(res.data.res.artDetail));
-            
           } catch (err) {
             console.error("Failed to parse artDetail:", err);
           }
@@ -42,16 +41,15 @@ export default function ArticlePage() {
     fetchArticle();
   }, [id]);
 
-
   const processHtmlContent = (htmlContent) => {
     if (!htmlContent) return "";
-    
+
     // Unescape quotes and fix any escaped characters
     let cleanHtml = htmlContent
-      .replace(/\\"/g, '"')  // Fix escaped quotes
-      .replace(/\\'/g, "'")  // Fix escaped single quotes
+      .replace(/\\"/g, '"') // Fix escaped quotes
+      .replace(/\\'/g, "'") // Fix escaped single quotes
       .replace(/\\\\/g, "\\"); // Fix double escapes
-    
+
     return cleanHtml;
   };
 
@@ -103,8 +101,8 @@ export default function ArticlePage() {
                   <div
                     key={block.id}
                     className="quill-content"
-                    dangerouslySetInnerHTML={{ 
-                      __html: processHtmlContent(block.content) 
+                    dangerouslySetInnerHTML={{
+                      __html: processHtmlContent(block.content),
                     }}
                   />
                 );
@@ -132,7 +130,7 @@ export default function ArticlePage() {
                         dangerouslySetInnerHTML={{
                           __html: block.content.replace(
                             'width="560" height="315"',
-                            'width="100%" height="100%" style="position:absolute;top:0;left:0;"'
+                            'width="100%" height="100%" style="position:absolute;top:0;left:0;"',
                           ),
                         }}
                       />
@@ -153,60 +151,60 @@ export default function ArticlePage() {
           line-height: 1.6;
           color: #374151;
         }
-        
+
         .quill-content p {
           margin-bottom: 1rem;
           font-size: 16px;
           line-height: 1.6;
         }
-        
+
         .quill-content ol {
           margin: 1rem 0;
           padding-left: 1.5rem;
           list-style-type: decimal;
         }
-        
+
         .quill-content ul {
           margin: 1rem 0;
           padding-left: 1.5rem;
           list-style-type: disc;
         }
-        
+
         .quill-content li {
           margin-bottom: 0.5rem;
           font-size: 16px;
           line-height: 1.6;
           display: list-item;
         }
-        
+
         .quill-content li[data-list="ordered"] {
           list-style-type: decimal;
         }
-        
+
         .quill-content li[data-list="bullet"] {
           list-style-type: disc;
         }
-        
+
         .quill-content .ql-ui {
           display: none; /* Hide Quill's internal UI elements */
         }
-        
+
         .quill-content strong {
           font-weight: 600;
         }
-        
+
         .quill-content em {
           font-style: italic;
         }
-        
+
         .quill-content u {
           text-decoration: underline;
         }
-        
+
         .quill-content s {
           text-decoration: line-through;
         }
-        
+
         .quill-content blockquote {
           border-left: 4px solid #e5e7eb;
           padding-left: 1rem;
@@ -214,7 +212,7 @@ export default function ArticlePage() {
           font-style: italic;
           color: #6b7280;
         }
-        
+
         .quill-content code {
           background-color: #f3f4f6;
           padding: 0.2rem 0.4rem;
@@ -222,7 +220,7 @@ export default function ArticlePage() {
           font-family: ui-monospace, monospace;
           font-size: 0.875rem;
         }
-        
+
         .quill-content pre {
           background-color: #1f2937;
           color: #f9fafb;
@@ -231,36 +229,38 @@ export default function ArticlePage() {
           overflow-x: auto;
           margin: 1rem 0;
         }
-        
+
         .quill-content pre code {
           background: none;
           padding: 0;
           color: inherit;
         }
-        
-        .quill-content h1, .quill-content h2, .quill-content h3 {
+
+        .quill-content h1,
+        .quill-content h2,
+        .quill-content h3 {
           font-weight: 600;
           margin: 1.5rem 0 1rem 0;
           line-height: 1.3;
         }
-        
+
         .quill-content h1 {
           font-size: 1.875rem;
         }
-        
+
         .quill-content h2 {
           font-size: 1.5rem;
         }
-        
+
         .quill-content h3 {
           font-size: 1.25rem;
         }
-        
+
         .quill-content a {
           color: #2563eb;
           text-decoration: underline;
         }
-        
+
         .quill-content a:hover {
           color: #1d4ed8;
         }

@@ -29,37 +29,39 @@ const PricingTable = () => {
   const [userInfo, setUserInfo] = useState(null);
   const [userInfoLoading, setUserInfoLoading] = useState(true);
   const [id, setId] = useState(null);
+  const [serverError, setServerError] = useState(false);
   const router= useRouter();
 
 
-  const plans = ["essential", "plus", "premium", "expert", "ultimate"];
-  const planNames = {
-    essential: "Essential",
-    plus: "Plus",
-    premium: "Premium",
-    expert: "Expert",
-    ultimate: "Ultimate",
-  };
+  const plans = ["monthly","quarterly","halfyearly"];
+  
 
   // Fetch user info on component mount
   useEffect(() => {
-    const fetchUserInfo = async () => {
-      try {
-        setUserInfoLoading(true);
-        const data = await apiGet("user/v1/info");
-        if (data.status === "success") {
-          setUserInfo(data.data.userInfo);
-        }
-        console.log(data);
-      } catch (error) {
-        console.error("Failed to fetch user info:", error);
-      } finally {
-        setUserInfoLoading(false);
-      }
-    };
+  const fetchUserInfo = async () => {
+    try {
+      setUserInfoLoading(true);
+      setServerError(false);
 
-    fetchUserInfo();
-  }, []);
+      const data = await apiGet("user/v1/info");
+
+      if (data.status === "success") {
+        setUserInfo(data.data.userInfo);
+      } else {
+        throw new Error("Invalid response");
+      }
+    } catch (error) {
+      console.error("Failed to fetch user info:", error);
+      setServerError(true);
+      setUserInfo(null);
+    } finally {
+      setUserInfoLoading(false);
+    }
+  };
+
+  fetchUserInfo();
+}, []);
+
 
   useEffect(() => {
     // 🔓 Force-enable scrolling when this page loads
@@ -78,8 +80,8 @@ const PricingTable = () => {
     setDialogOpen(true);
     return;
   }
-
-  const planData = pricingData[billingCycle][planType];
+  console.log(planType)
+  const planData = pricingData[planType];
   setSelectedPlan(planType);
   setId(planData.subscriptionId);
   setDialogData({
@@ -107,7 +109,7 @@ const PricingTable = () => {
       const order = response.data.order;
 
       const options = {
-        key: "rzp_live_vegmCeNoQ1JTfU",
+        key: "rzp_test_SGug2wijgN296J",
         amount: order.amount,
         currency: order.currency,
         order_id: order.id,
@@ -158,6 +160,7 @@ const PricingTable = () => {
     } catch (err) {
       toast.error("Payment failed");
     } finally {
+      setDialogLoading(false);
       setLoading(null)
     }
   };
@@ -238,6 +241,32 @@ const PricingTable = () => {
     { key: "prioritySupport", label: "Priority support" },
   ];
 
+  if (serverError) {
+  return (
+    <div>
+      <Header />
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center p-6">
+        <div className="max-w-md w-full bg-gray-900/60 border border-gray-700 rounded-2xl p-8 text-center">
+          <AlertCircle className="w-10 h-10 text-red-400 mx-auto mb-4" />
+          <h2 className="text-xl font-semibold text-white mb-2">
+            Server Unavailable
+          </h2>
+          <p className="text-gray-400 text-sm mb-6">
+            Our servers are currently unreachable. Please try again in a few minutes.
+          </p>
+          <button
+            onClick={() => window.location.reload()}
+            className="px-6 py-3 bg-white text-gray-900 rounded-xl font-medium hover:bg-gray-100 transition"
+          >
+            Retry
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+
   if (userInfoLoading) {
     return (
       <div>
@@ -295,36 +324,12 @@ const PricingTable = () => {
               of ambition
             </h1>
 
-            {/* Billing Toggle */}
-            <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4 mb-6 sm:mb-8">
-              <button
-                onClick={() => setBillingCycle("monthly")}
-                className={`px-3 py-2 rounded-full transition-all text-sm sm:text-base ${billingCycle === "monthly"
-                    ? "bg-white text-gray-900"
-                    : "text-gray-300 hover:text-white"
-                  }`}
-              >
-                Monthly
-              </button>
-              <button
-                onClick={() => setBillingCycle("annually")}
-                className={`px-3 py-2 rounded-full transition-all text-sm sm:text-base ${billingCycle === "annually"
-                    ? "bg-white text-gray-900"
-                    : "text-gray-300 hover:text-white"
-                  }`}
-              >
-                Annually
-              </button>
-              <span className="bg-orange-500 text-white px-2 py-1 rounded-full text-xs sm:text-sm">
-                Save up to 17% 🔥
-              </span>
-            </div>
           </div>
 
           {/* Pricing Cards */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6 mb-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6 mb-8">
             {plans.map((planType) => {
-              const plan = pricingData[billingCycle][planType];
+              const plan = pricingData[planType];
               const isPopular = planType === "premium";
               const isPremiumUser = userInfo?.sub?.type !== "free";
 
@@ -346,7 +351,7 @@ const PricingTable = () => {
 
                   <div className="text-center">
                     <h3 className="text-lg sm:text-xl font-semibold text-white mb-3 sm:mb-4">
-                      {planNames[planType]}
+                      {planType}
                     </h3>
 
                     <div className="mb-4 sm:mb-6">
@@ -495,7 +500,7 @@ relative max-h-[90vh] overflow-y-auto shadow-2xl"
                 {userInfo?.sub?.type === "free" && (
                   <div className="text-center mb-8">
                     <h3 className="text-2xl font-bold text-white mb-2">
-                      {selectedPlan && `${planNames[selectedPlan]} Plan`}
+                      {selectedPlan && `${selectedPlan.toUpperCase()} Plan`}
                     </h3>
                     <p className="text-gray-400 text-sm">
                       Complete your subscription
@@ -557,7 +562,7 @@ relative max-h-[90vh] overflow-y-auto shadow-2xl"
                           <div className="flex justify-between items-center py-2 border-b border-gray-600/30">
                             <span className="text-gray-400">Plan</span>
                             <span className="text-white font-medium">
-                              {planNames[selectedPlan]}
+                              {selectedPlan.toUpperCase()}
                             </span>
                           </div>
                           <div className="flex justify-between items-center py-2 border-b border-gray-600/30">
@@ -570,7 +575,7 @@ relative max-h-[90vh] overflow-y-auto shadow-2xl"
                             <span className="text-gray-400">Amount</span>
                             <span className="text-2xl font-bold text-white">
                               {formatPrice(
-                                pricingData[billingCycle][selectedPlan].price,
+                                pricingData[selectedPlan].price,
                               )}
                             </span>
                           </div>

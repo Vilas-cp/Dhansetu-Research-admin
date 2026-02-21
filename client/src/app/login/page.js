@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState,useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Eye, EyeOff, Mail, Lock, Loader2, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -23,6 +23,21 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
+
+  useEffect(() => {
+    const checkSession = async () => {
+      try {
+        const res = await apiPost("admin/v1/verify");
+        if (res.status === "success") {
+          router.replace("/dashboard");
+        }
+      } catch {
+        // user not logged in → stay here
+      }
+    };
+
+    checkSession();
+  }, [router]);
 
   async function handleSubmit(e) {
     e.preventDefault();

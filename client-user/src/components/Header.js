@@ -79,9 +79,11 @@ const Header = () => {
           {/* Mobile Layout: Logo on left, user menu on right */}
           <div className="flex items-center md:absolute md:left-1/2 md:transform md:-translate-x-1/2">
             <Link href="/dashboard" className="flex items-center space-x-2">
-              <span className="text-2xl md:text-4xl font-bold text-gray-900">
-                <span className={lora.className}>Dhansetu</span>
-              </span>
+              <img
+                src="/logo/side-text.png"
+                className="h-12 w-auto"
+                alt="Logo"
+              />
             </Link>
           </div>
 

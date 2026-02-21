@@ -14,7 +14,6 @@ const UserProfilePage = () => {
       try {
         setLoading(true);
         const data = await apiGet("user/v1/info");
-        console.log(data);
         
         if (data.status === "success") {
           setUserInfo(data.data.userInfo);
