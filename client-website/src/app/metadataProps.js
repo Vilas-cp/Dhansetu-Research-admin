@@ -94,7 +94,7 @@ const metadataProps = {
   pricing: {
     title: "Transparent Pricing for Quality Services - DhansetuResearch",
     description: `Explore our transparent pricing for high-quality services. 
-    Get the best value for your investment with clear and competitive pricing options.`,
+    Get the  value for your investment with clear and competitive pricing options.`,
   },
   indicator: {
     title: "Indicator  - DhansetuResearch",

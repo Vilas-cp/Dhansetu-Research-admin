@@ -15,7 +15,7 @@ const Header1 = () => {
   const navLinks = [
     { href: "/", label: "Home" },
     { href: "/about", label: "About" },
-    { href: "/https://blog.dhanseturesearch.com/", label: "Market course" },
+    { href: "https://blog.dhanseturesearch.in/", label: "Market course" },
     { href: "/pricing", label: "Pricing" },
     { href: "/payment", label: "Payment" },
   ];
@@ -33,6 +33,7 @@ const Header1 = () => {
     { href: "/complaint", label: "Complaint" },
     { href: "/disclosure", label: "Disclosure" },
     { href: "/investor-charter", label: "Investor Charter" },
+    {href:"/grievance-redressal",label:"Grievance Redressal"}
   ];
 
   return (
@@ -59,6 +60,7 @@ const Header1 = () => {
                 <a
                   key={link.href}
                   href={link.href}
+                  target={link.label === "Market course" ? "_blank" : undefined}
                   className="textdesign text-base"
                 >
                   {link.label}

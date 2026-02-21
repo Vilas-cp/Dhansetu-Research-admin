@@ -13,8 +13,6 @@ function TypeAnimationComp() {
         1000,
         "REPUTATION",
         1000,
-        "EXCELLENCE",
-        1000,
       ]}
       speed={30}
       deletionSpeed={30}

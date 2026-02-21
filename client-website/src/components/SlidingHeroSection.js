@@ -138,7 +138,7 @@ function SlidingHeroSection({ setLoading, indexLoad }) {
                       fillMode="forwards"
                     >
                       <p className="xl:text-[50px] text-[3vh] font-medium text-white">
-                        Best Support From Team
+                         Support From Team
                       </p>
                     </MovingComponent>
                     <CTA type="middle" />

@@ -95,7 +95,7 @@ function ContactUsSection({ setLoading, indexLoad }) {
       </p>
       <a
         href="/contact"
-        className="bg-red-400 contact-us-but cursor-pointer transition-colors duration-300 ease-in-out hover:bg-black p-6 text-xl font-bold rounded-lg text-white !mt-10 !mb-0"
+        className="bg-[#4169e1] contact-us-but cursor-pointer transition-colors duration-300 ease-in-out hover:bg-black p-6 text-xl font-bold rounded-lg text-white !mt-10 !mb-0"
       >
         Contact us Now
       </a>
