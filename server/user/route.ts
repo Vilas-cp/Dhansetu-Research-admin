@@ -164,7 +164,9 @@ v1Routes.post("/verify", async (req, res) => {
     console.log(chalk.yellow(`User: ${userName}, is verified!`));
   } catch (error: any) {
     console.log(
-      chalk.red(`Error: ${error?.message}, for user id ${req.body?.userName}`),
+      chalk.red(
+        `Error: ${error?.message}, for user id ${req.signedCookies?.userName}`,
+      ),
     );
     res.status(400).send({
       status: "fail",
@@ -217,7 +219,9 @@ v1Routes.get("/info", async (req, res) => {
     });
   } catch (error: any) {
     console.log(
-      chalk.red(`Error: ${error?.message}, for user id ${req.body?.userName}`),
+      chalk.red(
+        `Error: ${error?.message}, for user id ${req.signedCookies?.userName}`,
+      ),
     );
     res.status(400).send({
       status: "fail",
@@ -242,7 +246,9 @@ v1Routes.post("/test", async (req, res) => {
     });
   } catch (error: any) {
     console.log(
-      chalk.red(`Error: ${error?.message}, for user id ${req.body?.userName}`),
+      chalk.red(
+        `Error: ${error?.message}, for user id ${req.signedCookies?.userName}`,
+      ),
     );
     res.status(400).send({
       status: "fail",
@@ -283,7 +289,9 @@ v1Routes.post("/logout", async (req, res) => {
     console.log(chalk.yellow(`User: ${userName}, is logged out as user!`));
   } catch (error: any) {
     console.log(
-      chalk.red(`Error: ${error?.message}, for user id ${req.body?.userName}`),
+      chalk.red(
+        `Error: ${error?.message}, for user id ${req.signedCookies?.userName}`,
+      ),
     );
     res.status(400).send({
       status: "fail",
@@ -317,7 +325,9 @@ v1Routes.get("/articles/all", async (req, res) => {
     });
   } catch (error: any) {
     console.log(
-      chalk.red(`Error: ${error?.message}, for user id ${req.body?.userName}`),
+      chalk.red(
+        `Error: ${error?.message}, for user id ${req.signedCookies?.userName}`,
+      ),
     );
     res.status(400).send({
       status: "fail",
@@ -411,7 +421,9 @@ v1Routes.get("/article/:artid", async (req, res) => {
     });
   } catch (error: any) {
     console.log(
-      chalk.red(`Error: ${error?.message}, for user id ${req.body?.userName}`),
+      chalk.red(
+        `Error: ${error?.message}, for user id ${req.signedCookies?.userName}`,
+      ),
     );
     res.status(400).send({
       status: "fail",
@@ -509,7 +521,9 @@ v1Routes.post("/buy/verify/rzpay", async (req, res) => {
     return;
   } catch (error: any) {
     console.log(
-      chalk.red(`Error: ${error?.message}, for user id ${req.body?.userName}`),
+      chalk.red(
+        `Error: ${error?.message}, for user id ${req.signedCookies?.userName}`,
+      ),
     );
     res.status(400).send({
       status: "fail",
@@ -587,6 +601,7 @@ v1Routes.post("/buy/order/rzpay/:subId", async (req, res) => {
       notes: {
         userEmail: userName,
         userName: `${userInfo.firstName} ${userInfo.lastName}`,
+        userId: userInfo.uuid,
       },
     };
     const order = await razorpay.orders.create(options);
@@ -623,7 +638,9 @@ v1Routes.post("/buy/order/rzpay/:subId", async (req, res) => {
     return;
   } catch (error: any) {
     console.log(
-      chalk.red(`Error: ${error?.message}, for user id ${req.body?.userName}`),
+      chalk.red(
+        `Error: ${error?.message}, for user id ${req.signedCookies?.userName}`,
+      ),
     );
     res.status(400).send({
       status: "fail",
@@ -697,7 +714,7 @@ v1Routes.post("/buy/order/rzpay/:subId", async (req, res) => {
 //       console.log(chalk.yellow(`User: ${emailId}, payment verified!`));
 //     } catch (error: any) {
 //       console.log(
-//         chalk.red(`Error: ${error?.message}, for user id ${req.body?.userName}`),
+//         chalk.red(`Error: ${error?.message}, for user id ${req.signedCookies?.userName}`),
 //       );
 //       res.status(400).send({
 //         status: "fail",
@@ -723,7 +740,7 @@ v1Routes.post("/buy/order/rzpay/:subId", async (req, res) => {
 //       console.log(chalk.yellow(`User: ${userName}, payment fail!`));
 //     } catch (error: any) {
 //       console.log(
-//         chalk.red(`Error: ${error?.message}, for user id ${req.body?.userName}`),
+//         chalk.red(`Error: ${error?.message}, for user id ${req.signedCookies?.userName}`),
 //       );
 //       res.status(400).send({
 //         status: "fail",
@@ -845,7 +862,7 @@ v1Routes.post("/buy/order/rzpay/:subId", async (req, res) => {
 //       });
 //     } catch (error: any) {
 //       console.log(
-//         chalk.red(`Error: ${error?.message}, for user id ${req.body?.userName}`),
+//         chalk.red(`Error: ${error?.message}, for user id ${req.signedCookies?.userName}`),
 //       );
 //       res.status(400).send({
 //         status: "fail",

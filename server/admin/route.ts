@@ -106,7 +106,9 @@ v1Routes.post("/login", async (req, res) => {
     console.log(chalk.yellow(`User: ${userName}, is logged in as Admin!`));
   } catch (error: any) {
     console.log(
-      chalk.red(`Error: ${error?.message}, for user id ${req.body?.userName}`)
+      chalk.red(
+        `Error: ${error?.message}, for user id ${req.signedCookies?.userName}`,
+      ),
     );
     res.status(400).send({
       status: "fail",
@@ -151,7 +153,9 @@ v1Routes.post("/verify", async (req, res) => {
     console.log(chalk.yellow(`User: ${userName}, is verified!`));
   } catch (error: any) {
     console.log(
-      chalk.red(`Error: ${error?.message}, for user id ${req.body?.userName}`)
+      chalk.red(
+        `Error: ${error?.message}, for user id ${req.signedCookies?.userName}`,
+      ),
     );
     res.status(400).send({
       status: "fail",
@@ -192,7 +196,9 @@ v1Routes.post("/logout", async (req, res) => {
     console.log(chalk.yellow(`User: ${userName}, is logged out as Admin!`));
   } catch (error: any) {
     console.log(
-      chalk.red(`Error: ${error?.message}, for user id ${req.body?.userName}`)
+      chalk.red(
+        `Error: ${error?.message}, for user id ${req.signedCookies?.userName}`,
+      ),
     );
     res.status(400).send({
       status: "fail",
@@ -231,7 +237,7 @@ v1Routes.post("/create/user", async (req, res) => {
       adFirstName,
       adLastName,
       adUserName,
-      adImgUrl
+      adImgUrl,
     );
     if (adminCrtRes === null) {
       res.status(400).send({
@@ -261,7 +267,9 @@ v1Routes.post("/create/user", async (req, res) => {
     console.log(chalk.yellow(`User: ${adUserName}, is created as Admin!`));
   } catch (error: any) {
     console.log(
-      chalk.red(`Error: ${error?.message}, for user id ${req.body?.userName}`)
+      chalk.red(
+        `Error: ${error?.message}, for user id ${req.signedCookies?.userName}`,
+      ),
     );
     res.status(400).send({
       status: "fail",
@@ -315,7 +323,9 @@ v1Routes.get("/userinfo/:emailId", async (req, res) => {
     });
   } catch (error: any) {
     console.log(
-      chalk.red(`Error: ${error?.message}, for user id ${req.body?.userName}`)
+      chalk.red(
+        `Error: ${error?.message}, for user id ${req.signedCookies?.userName}`,
+      ),
     );
     res.status(400).send({
       status: "fail",
@@ -415,7 +425,9 @@ v1Routes.post("/givesub", async (req, res) => {
     });
   } catch (error: any) {
     console.log(
-      chalk.red(`Error: ${error?.message}, for user id ${req.body?.userName}`)
+      chalk.red(
+        `Error: ${error?.message}, for user id ${req.signedCookies?.userName}`,
+      ),
     );
     res.status(400).send({
       status: "fail",
@@ -447,7 +459,7 @@ v1Routes.post("/article/create", async (req, res) => {
       artDetail,
       coverImgURL,
       userName,
-      artType
+      artType,
     );
     if (artRes === null) {
       res.status(400).send({
@@ -485,7 +497,9 @@ v1Routes.post("/article/create", async (req, res) => {
     });
   } catch (error: any) {
     console.log(
-      chalk.red(`Error: ${error?.message}, for user id ${req.body?.userName}`)
+      chalk.red(
+        `Error: ${error?.message}, for user id ${req.signedCookies?.userName}`,
+      ),
     );
     res.status(400).send({
       status: "fail",
@@ -518,7 +532,7 @@ v1Routes.put("/article/:artid", async (req, res) => {
       coverImgURL,
       userName,
       artType,
-      artId
+      artId,
     );
     if (artRes === null) {
       res.status(400).send({
@@ -555,7 +569,9 @@ v1Routes.put("/article/:artid", async (req, res) => {
     });
   } catch (error: any) {
     console.log(
-      chalk.red(`Error: ${error?.message}, for user id ${req.body?.userName}`)
+      chalk.red(
+        `Error: ${error?.message}, for user id ${req.signedCookies?.userName}`,
+      ),
     );
     res.status(400).send({
       status: "fail",
@@ -608,7 +624,9 @@ v1Routes.delete("/article/:artid", async (req, res) => {
     });
   } catch (error: any) {
     console.log(
-      chalk.red(`Error: ${error?.message}, for user id ${req.body?.userName}`)
+      chalk.red(
+        `Error: ${error?.message}, for user id ${req.signedCookies?.userName}`,
+      ),
     );
     res.status(400).send({
       status: "fail",
@@ -651,7 +669,9 @@ v1Routes.get("/articles/all", async (req, res) => {
     });
   } catch (error: any) {
     console.log(
-      chalk.red(`Error: ${error?.message}, for user id ${req.body?.userName}`)
+      chalk.red(
+        `Error: ${error?.message}, for user id ${req.signedCookies?.userName}`,
+      ),
     );
     res.status(400).send({
       status: "fail",
@@ -705,7 +725,9 @@ v1Routes.get("/article/:artid", async (req, res) => {
     });
   } catch (error: any) {
     console.log(
-      chalk.red(`Error: ${error?.message}, for user id ${req.body?.userName}`)
+      chalk.red(
+        `Error: ${error?.message}, for user id ${req.signedCookies?.userName}`,
+      ),
     );
     res.status(400).send({
       status: "fail",

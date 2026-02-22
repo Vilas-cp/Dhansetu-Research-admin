@@ -45,7 +45,9 @@ v1Routes.post("/verify", async (req, res) => {
     console.log(chalk.yellow(`User: ${userName}, is verified!`));
   } catch (error: any) {
     console.log(
-      chalk.red(`Error: ${error?.message}, for user id ${req.body?.userName}`),
+      chalk.red(
+        `Error: ${error?.message}, for user id ${req.signedCookies?.userName}`,
+      ),
     );
     res.status(400).send({
       status: "fail",
@@ -98,7 +100,9 @@ v1Routes.get("/info", async (req, res) => {
     });
   } catch (error: any) {
     console.log(
-      chalk.red(`Error: ${error?.message}, for user id ${req.body?.userName}`),
+      chalk.red(
+        `Error: ${error?.message}, for user id ${req.signedCookies?.userName}`,
+      ),
     );
     res.status(400).send({
       status: "fail",
@@ -123,7 +127,9 @@ v1Routes.post("/test", async (req, res) => {
     });
   } catch (error: any) {
     console.log(
-      chalk.red(`Error: ${error?.message}, for user id ${req.body?.userName}`),
+      chalk.red(
+        `Error: ${error?.message}, for user id ${req.signedCookies?.userName}`,
+      ),
     );
     res.status(400).send({
       status: "fail",
@@ -188,14 +194,16 @@ v1Routes.post("/buy/verify/rzpay", async (req, res) => {
       userEmailId,
       userName,
       userNo,
-      optId, 
-      timeId, 
-      amount
+      optId,
+      timeId,
+      amount,
     );
     return;
   } catch (error: any) {
     console.log(
-      chalk.red(`Error: ${error?.message}, for user id ${req.body?.userName}`),
+      chalk.red(
+        `Error: ${error?.message}, for user id ${req.signedCookies?.userName}`,
+      ),
     );
     res.status(400).send({
       status: "fail",
@@ -262,7 +270,9 @@ v1Routes.post("/buy/order/rzpay/:timeId/:optId", async (req, res) => {
     return;
   } catch (error: any) {
     console.log(
-      chalk.red(`Error: ${error?.message}, for user id ${req.body?.userName}`),
+      chalk.red(
+        `Error: ${error?.message}, for user id ${req.signedCookies?.userName}`,
+      ),
     );
     res.status(400).send({
       status: "fail",
