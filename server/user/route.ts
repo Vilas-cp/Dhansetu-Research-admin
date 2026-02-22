@@ -593,6 +593,7 @@ v1Routes.post("/buy/order/rzpay/:subId", async (req, res) => {
       key_secret: RAZORPAY_KEY_SECRET,
     });
     const amount = subInfo.amount + subInfo.amount * 0.18;
+    console.log(subInfo);
     console.log(userInfo);
     const options = {
       amount: amount * 100,
