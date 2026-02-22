@@ -501,7 +501,7 @@ v1Routes.post("/buy/verify/rzpay", async (req, res) => {
       emailId,
       userDet.sub.amount.toString(),
       userDet.sub.subName,
-      (new Date()).toISOString(),
+      new Date().toISOString(),
       txnId,
       `${userInfo.firstName} ${userInfo.lastName}`,
     );
@@ -534,6 +534,7 @@ v1Routes.post("/buy/order/rzpay/:subId", async (req, res) => {
       return;
     }
     const userDb = new UserDB();
+    console.log(userName);
     const userInfo = await userDb.getClientUser(userName);
     if (userInfo === null) {
       res.status(400).send({
@@ -564,7 +565,7 @@ v1Routes.post("/buy/order/rzpay/:subId", async (req, res) => {
       });
       return;
     }
-    if (subInfo == -1) {
+    if (subInfo === -1) {
       res.status(400).send({
         status: "fail",
         data: {
@@ -577,12 +578,16 @@ v1Routes.post("/buy/order/rzpay/:subId", async (req, res) => {
       key_id: RAZORPAY_KEY_ID,
       key_secret: RAZORPAY_KEY_SECRET,
     });
-    const amount = subInfo.amount + (subInfo.amount * 0.18);
+    const amount = subInfo.amount + subInfo.amount * 0.18;
+    console.log(userInfo);
     const options = {
       amount: amount * 100,
       currency: "INR",
       receipt: "blog_receipt",
-      notes: {userEmail: userName, userName: `${userInfo.firstName} ${userInfo.lastName}`},
+      notes: {
+        userEmail: userName,
+        userName: `${userInfo.firstName} ${userInfo.lastName}`,
+      },
     };
     const order = await razorpay.orders.create(options);
     const createOrder = await userDb.createOrder(
