@@ -582,7 +582,7 @@ v1Routes.post("/buy/order/rzpay/:subId", async (req, res) => {
       amount: amount * 100,
       currency: "INR",
       receipt: "blog_receipt",
-      notes: {userEmail: userName, userName: `${userInfo.firstName} ${userInfo.lastName}`, userId: userInfo.uuid},
+      notes: {userEmail: userName, userName: `${userInfo.firstName} ${userInfo.lastName}`},
     };
     const order = await razorpay.orders.create(options);
     const createOrder = await userDb.createOrder(
