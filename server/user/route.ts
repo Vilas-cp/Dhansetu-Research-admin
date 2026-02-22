@@ -548,7 +548,7 @@ v1Routes.post("/buy/order/rzpay/:subId", async (req, res) => {
       return;
     }
     const userDb = new UserDB();
-    console.log(userName);
+    // console.log(userName);
     const userInfo = await userDb.getClientUser(userName);
     if (userInfo === null) {
       res.status(400).send({
@@ -593,8 +593,8 @@ v1Routes.post("/buy/order/rzpay/:subId", async (req, res) => {
       key_secret: RAZORPAY_KEY_SECRET,
     });
     const amount = subInfo.amount + subInfo.amount * 0.18;
-    console.log(subInfo);
-    console.log(userInfo);
+    // console.log(subInfo);
+    // console.log(userInfo);
     const options = {
       amount: amount * 100,
       currency: "INR",
