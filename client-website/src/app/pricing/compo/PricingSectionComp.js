@@ -14,8 +14,10 @@ import {
 import pricingData from "./data";
 import { BASE_URL } from "@/components/api/url";
 import toast from "react-hot-toast";
+import { useRouter } from "next/navigation";
 
 const PricingTable = () => {
+  const router=useRouter();
   const [billingCycle, setBillingCycle] = useState("monthly");
   const [loading, setLoading] = useState(null);
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -25,6 +27,7 @@ const PricingTable = () => {
   const [selectedPlan, setSelectedPlan] = useState(null);
   const [id, setId] = useState(null);
   const [showFormView, setShowFormView] = useState(false);
+  const [orderId,setOrderId]=useState(null);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -170,7 +173,6 @@ const PricingTable = () => {
         setDialogLoading(false);
         return;
       }
-
       const options = {
         key: "rzp_test_SGug2wijgN296J",
         amount: res.data.order.amount,
@@ -207,12 +209,8 @@ const PricingTable = () => {
 
             if (verifyData.data.successIsValid) {
               toast.success("Payment successful!");
-              localStorage.setItem(
-                "newRow",
-                JSON.stringify({ ...formData, plan: planNames[selectedPlan] }),
-              );
               closeDialog();
-              setTimeout(() => openNewPage("/pricing/success"), 100);
+              router.push(`/pricing/success?id=${res.data.order.id}`);
             } else {
               toast.error("Payment verification failed");
             }

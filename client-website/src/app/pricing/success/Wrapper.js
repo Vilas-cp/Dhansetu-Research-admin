@@ -1,20 +1,66 @@
 "use client";
+
 import React, { useEffect, useRef, useState } from "react";
 import html2canvas from "html2canvas";
+import { useRouter, useSearchParams } from "next/navigation";
+import { BASE_URL } from "@/components/api/url";
 
 function Wrapper() {
+  const search = useSearchParams();
+  const id=search.get('id')
+  const router = useRouter();
+
   const [newRow, setNewRow] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
   const mainRef = useRef(null);
   const downloadRef = useRef(null);
 
-  useEffect(() => {
-    const stored = window.localStorage.getItem("newRow");
-    if (!stored) {
-      window.location.href = "/";
-      return;
+  const fetchOrderDetails = async () => {
+    try {
+      const res = await fetch(`${BASE_URL}web/v1/buy/details/${id}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      const result = await res.json();
+      const order = result?.data?.orderDetails;
+
+      if (order === -1) {
+        setError("Invalid Order ID");
+        setLoading(false);
+        return;
+      }
+
+      setNewRow({
+        yourName: order.userName,
+        email: order.userEmail,
+        mobile: order.userNo,
+        plan: order.optId,
+        billingCycle: order.timeId,
+        rzorderid: order.rzOrderId,
+        rzpaymentid: order.rzPayId,
+        rzsign: "N/A",
+        amount: order.amount,
+        paymentTime: order.paymentTime,
+      });
+
+      setLoading(false);
+    } catch (err) {
+      console.error(err);
+      setError("Something went wrong while fetching order details");
+      setLoading(false);
     }
-    setNewRow(JSON.parse(stored));
-  }, []);
+  };
+
+  useEffect(() => {
+    if (id) {
+      fetchOrderDetails();
+    }
+  }, [id]);
 
   function downloadPageHandle() {
     if (!mainRef.current || !downloadRef.current) return;
@@ -26,7 +72,27 @@ function Wrapper() {
     });
   }
 
-  if (!newRow) return null;
+  if (loading) {
+    return (
+      <div className="h-screen flex items-center justify-center text-xl">
+        Loading order details...
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="h-screen flex flex-col items-center justify-center text-red-600 text-xl">
+        <p>{error}</p>
+        <button
+          className="mt-4 underline"
+          onClick={() => router.push("/")}
+        >
+          Go Home
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div ref={mainRef} className="pb-[30px] bg-white">
