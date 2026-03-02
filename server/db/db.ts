@@ -805,7 +805,58 @@ class WebDB extends DB {
             ($1::varchar, $2::varchar, $3::varchar, $4::varchar, $5::varchar, $6::varchar, $7::varchar, $8::varchar, $9::varchar)
           RETURNING "id";
             `,
-          [rzOrderId, rzPaymentId, rzSign, userEmail, userName, userNo, optId, timeId, amount],
+          [
+            rzOrderId,
+            rzPaymentId,
+            rzSign,
+            userEmail,
+            userName,
+            userNo,
+            optId,
+            timeId,
+            amount,
+          ],
+        );
+        if (res.rowCount !== 1) {
+          return -1;
+        }
+        const userData: { id: number } = res.rows[0];
+        return userData;
+      } catch (error: any) {
+        console.log(
+          chalk.red("PostgresSQL Error: "),
+          error?.message,
+          error?.code,
+        );
+        return null;
+      } finally {
+        if (pClient) {
+          this.release(pClient);
+        }
+      }
+    });
+  }
+  async getSuccessOrderDetails(rzOrderId: string) {
+    return await this.retryQuery("getSuccessOrderDetails", async () => {
+      let pClient;
+      try {
+        pClient = await this.connect();
+        const res = await pClient.query(
+          `
+          SELECT 
+            pd."rzpay_order_id" as "rzOrderId",
+            pd."rzpay_payment_id" as "rzPayId",
+            pd."user_email" as "userEmail",
+            pd."user_name" as "userName",
+            pd."user_no" as "userNo",
+            pd."opt_id" as "optId",
+            pd."time_id" as "timeId",
+            pd."amount",
+            pd."created_at" as "paymentTime",
+            pd."id"
+          FROM "payment_details" as pd
+            WHERE pd."rzpay_order_id" = $1::varchar;`,
+          [rzOrderId],
         );
         if (res.rowCount !== 1) {
           return -1;

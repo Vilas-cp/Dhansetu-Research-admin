@@ -227,6 +227,45 @@ const optsId: OptId[] = [
   "mcx",
 ];
 
+v1Routes.get("/buy/details/:rzpayid", async (req, res) => {
+  try {
+    const rzpayId = req.params.rzpayid;
+    // console.log(req.body);
+    const webDb = new WebDB();
+    const orderDetails = await webDb.getSuccessOrderDetails(rzpayId);
+    if (orderDetails === null) {
+      res.status(400).send({
+        status: "fail",
+        data: {
+          message: "Database is offline, or server error!",
+        },
+      });
+      return;
+    }
+    res.status(200).send({
+      status: "success",
+      data: {
+        orderDetails,
+      },
+    });
+    return;
+  } catch (error: any) {
+    console.log(
+      chalk.red(
+        `Error: ${error?.message}, for user id ${req.signedCookies?.userName}`,
+      ),
+    );
+    res.status(400).send({
+      status: "fail",
+      error: error,
+      data: {
+        message: "Internal Server Error!",
+      },
+    });
+  }
+});
+
+
 v1Routes.post("/buy/order/rzpay/:timeId/:optId", async (req, res) => {
   try {
     const timeId: TimeId = req.params.timeId as TimeId;
