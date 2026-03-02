@@ -125,6 +125,20 @@ CREATE TABLE "payment_details" (
   "created_at" timestamptz DEFAULT CURRENT_TIMESTAMP
 );
 
+CREATE TABLE "contact_form" (
+  "id" SERIAL PRIMARY KEY,
+  "rzpay_order_id" varchar UNIQUE NOT NULL,
+  "rzpay_payment_id" varchar UNIQUE NOT NULL,
+  "rzpay_sign" varchar NOT NULL,
+  "user_email" varchar NOT NULL,
+  "user_name" varchar NOT NULL,
+  "user_no" varchar NOT NULL,
+  "opt_id" varchar NOT NULL,
+  "time_id" varchar NOT NULL,
+  "amount" varchar NOT NULL,
+  "created_at" timestamptz DEFAULT CURRENT_TIMESTAMP
+);
+
 ALTER TABLE "articles"
 ADD FOREIGN KEY ("admin_id") REFERENCES "admin" ("id") ON DELETE CASCADE;
 
