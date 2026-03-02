@@ -18,6 +18,7 @@ const Header1 = () => {
     { href: "https://blog.dhanseturesearch.in/", label: "Market course" },
     { href: "/pricing", label: "Pricing" },
     { href: "/payment", label: "Payment" },
+    {href:"/faqs",label:"FAQS"}
   ];
 
   const servicesLinks = [

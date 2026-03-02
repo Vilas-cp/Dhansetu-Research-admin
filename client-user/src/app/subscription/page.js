@@ -356,14 +356,10 @@ const PricingTable = () => {
 
                     <div className="mb-4 sm:mb-6">
                       <span className="text-2xl sm:text-3xl font-bold text-white">
-                        {formatPrice(plan.price)}
+                        {formatPrice(plan.price)} + 18% GST
                       </span>
-                      <span className="text-gray-400 text-sm sm:text-base">
-                        /{billingCycle === "monthly" ? "mo" : "yr"}
-                      </span>
-                      <div className="text-xs sm:text-sm text-gray-400 mt-1">
-                        billed {billingCycle}
-                      </div>
+                      
+                     
                     </div>
 
                     <button

@@ -5,7 +5,7 @@ function SidePopup() {
     <div className="fixed z-[100] w-auto right-0 -translate-y-1/2 top-1/2 h-auto ">
       <div className="flex flex-col justify-evenly space-y-2 py-2 items-center pr-1">
         <a
-          href="#"
+          href="faqs"
           target="_blank"
           title="Dhansetu Research Docs"
         >
