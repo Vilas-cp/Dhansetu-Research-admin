@@ -7,6 +7,8 @@ import { apiGet } from "@/lib/api";
 
 import Header from "@/components/Header";
 import { Lora } from "next/font/google";
+import ShareBlog from "@/components/ui/share";
+import CopyLinkButton from "@/components/ui/copylink";
 const lora = Lora({
   subsets: ["latin"],
   weight: ["700"],
@@ -369,21 +371,27 @@ export default function ArticlePage() {
           </h1>
 
           {/* Author Info */}
-          <div className="flex items-center mb-12 pb-8 border-b border-slate-200">
-            <img
-              src={article.adImgURL}
-              alt={article.adFirstName}
-              className="w-10 h-10 sm:w-10 sm:h-10 rounded-full mr-5 flex-shrink-0 ring-4 ring-white shadow-lg"
-            />
-            <div>
-              <p className="text-xl font-semibold text-slate-900">
-                {article.adFirstName} {article.adLastName}
-              </p>
-              <p className="text-base text-slate-500">
-                @{article.adUserName}
-              </p>
-            </div>
-          </div>
+         <div className="flex items-center justify-between mb-12 pb-8 border-b border-slate-200">
+  {/* Author Info */}
+  <div className="flex items-center">
+    <img
+      src={article.adImgURL}
+      alt={article.adFirstName}
+      className="w-10 h-10 sm:w-10 sm:h-10 rounded-full mr-5 flex-shrink-0 ring-4 ring-white shadow-lg"
+    />
+    <div>
+      <p className="text-xl font-semibold text-slate-900">
+        {article.adFirstName} {article.adLastName}
+      </p>
+      <p className="text-base text-slate-500">
+        @{article.adUserName}
+      </p>
+    </div>
+  </div>
+
+  {/* Copy Link Button */}
+  <CopyLinkButton />
+</div>
 
           {/* Render Blocks */}
           <div className="space-y-8 sm:space-y-10">
@@ -433,6 +441,10 @@ export default function ArticlePage() {
               return null;
             })}
           </div>
+            <ShareBlog
+            title={article.artHeading}
+            url={typeof window !== "undefined" ? window.location.href : ""}
+          />
         </div>
       </div>
 
@@ -491,8 +503,8 @@ export default function ArticlePage() {
 
         .quill-content h1, .quill-content h2, .quill-content h3 {
           font-weight: 600;
-          margin: 3rem 0 1.5rem 0;
-          line-height: 1.3;
+          margin: 2rem 0 1.5rem 0;
+          line-height: 1;
           color: #1e293b;
         }
 

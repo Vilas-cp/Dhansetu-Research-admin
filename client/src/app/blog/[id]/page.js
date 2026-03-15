@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { apiGet } from "@/lib/api";
-
+import ShareBlog from "@/components/ui/share";
 
 export default function ArticlePage() {
   const { id } = useParams();
@@ -140,6 +140,10 @@ export default function ArticlePage() {
               return null;
             })}
           </div>
+          <ShareBlog
+            title={article.artHeading}
+            url={typeof window !== "undefined" ? window.location.href : ""}
+          />
         </div>
       </div>
 
