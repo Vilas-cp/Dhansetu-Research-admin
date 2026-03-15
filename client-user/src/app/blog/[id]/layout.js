@@ -29,7 +29,7 @@ export async function generateMetadata({ params }) {
         url: `https://blog.dhanseturesearch.in/blog/${id}`,
         images: [
           {
-            url: data.artCover ?? "/logo/side-text.png",
+            url: data.artCover ?? "https://blog.dhanseturesearch.in/logo/side-text.png",
             width: 1200,
             height: 630,
             alt: `${data.artTitle}'s image`,
@@ -41,7 +41,7 @@ export async function generateMetadata({ params }) {
         card: "summary_large_image",
         title,
         description,
-        images: [data.artCover || "/logo/side-text.png"],
+        images: [data.artCover || "https://blog.dhanseturesearch.in/logo/side-text.png"],
       },
     };
   } catch (error) {
