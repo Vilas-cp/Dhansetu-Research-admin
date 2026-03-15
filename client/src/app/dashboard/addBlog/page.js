@@ -7,9 +7,11 @@ import { apiPost } from "@/lib/api";
 import toast from "react-hot-toast";
 import Header from "@/components/Header";
 import { useRouter } from "next/navigation";
-
+import { useVerifySession } from "@/hooks/userVerifySession";
 
 export default function BlogEditor() {
+  
+useVerifySession("/addBlog");
   const [blocks, setBlocks] = useState([]);
   const [title, setTitle] = useState("");
   const [thumbnailUrl, setThumbnailUrl] = useState("");

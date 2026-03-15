@@ -8,12 +8,14 @@ import AddBlockButtons from "../../addBlog/components/AddBlockButtons";
 import PostSummary from "../../addBlog/components/PostSummary";
 import { apiPost, apiPut, apiGet } from "@/lib/api";
 import Header from "@/components/Header";
+import { useVerifySession } from "@/hooks/userVerifySession";
 
 export default function BlogEditor() {
+ 
   const params = useParams();
   const router = useRouter();
   const articleId = params?.id;
-
+   useVerifySession(`/editblog/${articleId}`);
   const [blocks, setBlocks] = useState([]);
   const [title, setTitle] = useState("");
   const [thumbnailUrl, setThumbnailUrl] = useState("");

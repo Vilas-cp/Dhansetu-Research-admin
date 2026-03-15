@@ -25,6 +25,7 @@ import { apiDelete, apiGet } from "@/lib/api";
 import { useRouter } from "next/navigation";
 import Header from "@/components/Header";
 import toast from "react-hot-toast";
+import { useVerifySession } from "@/hooks/userVerifySession";
 
 // Share Dialog Component
 const ShareDialog = ({ isOpen, onClose, articleLink, onCopy, copied }) => (
@@ -138,8 +139,9 @@ const ArticleCard = ({ article, index, isLast, onShare, onEdit, onDelete }) => (
     }`}
   >
     <Link
-      href={`/blog/${article.artId}`}
+      href={`https://blog.dhanseturesearch.in/blog/${article.artId}`}
       className="flex-1 min-w-0 flex items-start"
+      target="_blank"
     >
       <div className="flex-1">
         <h2 className="text-lg font-semibold text-gray-900 group-hover:text-gray-500 transition-colors duration-200 mb-2">
@@ -181,6 +183,7 @@ const EmptyState = () => (
 );
 
 const ArticlesGrid = () => {
+  useVerifySession("/blogs")
   const [showShareDialog, setShowShareDialog] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [currentArticleLink, setCurrentArticleLink] = useState("");
@@ -209,7 +212,7 @@ const ArticlesGrid = () => {
   const handleShareClick = (e, articleId) => {
     e.preventDefault();
     e.stopPropagation();
-    const articleLink = `${window.location.origin}/blog/${articleId}`;
+    const articleLink = `https://blog.dhanseturesearch.in/blog/${articleId}`;
     setCurrentArticleLink(articleLink);
     setShowShareDialog(true);
     setCopied(false);

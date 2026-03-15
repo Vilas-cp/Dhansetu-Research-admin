@@ -1,6 +1,7 @@
 "use client";
 
 import Header from "@/components/Header";
+import { useVerifySession } from "@/hooks/userVerifySession";
 import { apiGet, apiPost } from "@/lib/api";
 import React, { useState } from "react";
 import toast from "react-hot-toast";
@@ -33,6 +34,7 @@ const subscriptionPlans = [
 ];
 
 const Page = () => {
+  useVerifySession("/users");
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState(null);

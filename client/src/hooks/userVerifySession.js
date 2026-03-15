@@ -1,8 +1,8 @@
 import { useEffect } from "react";
-import { useRouter } from "next/navigation"; 
-import {apiPost} from "@/lib/api"; 
+import { useRouter } from "next/navigation";
+import { apiPost } from "@/lib/api";
 
-export function useVerifySession() {
+export function useVerifySession( url ) {
   const router = useRouter();
 
   useEffect(() => {
@@ -10,9 +10,13 @@ export function useVerifySession() {
       try {
         const res = await apiPost("admin/v1/verify");
         console.log(res);
-        
+
         if (res.status === "success") {
-          router.replace("/dashboard");
+          if (url) {
+            router.replace(`/dashboard${url}`);
+          } else {
+            router.replace(`/dashboard`);
+          }
         } else {
           router.replace("/login");
         }
