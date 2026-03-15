@@ -369,6 +369,8 @@ v1Routes.get("/article/:artid", async (req, res) => {
         status: "success",
         data: {
           res: artRes,
+          artTitle: artRes.artHeading,
+          artCover: artRes.coverImgURL,
           access: true,
         },
       });
@@ -383,9 +385,11 @@ v1Routes.get("/article/:artid", async (req, res) => {
         status: "success",
         data: {
           message: "Please login!",
+          artTitle: artRes.artHeading,
+          artCover: artRes.coverImgURL,
+          access: false,
+          userLoggedIn: false,
         },
-        access: false,
-        userLoggedIn: false,
       });
       return;
     }
@@ -403,6 +407,8 @@ v1Routes.get("/article/:artid", async (req, res) => {
       res.status(200).send({
         status: "success",
         data: {
+          artTitle: artRes.artHeading,
+          artCover: artRes.coverImgURL,
           message:
             "You need premium subscription accont to view this blog. Please buy it, or renew it.",
           access: false,
@@ -415,6 +421,8 @@ v1Routes.get("/article/:artid", async (req, res) => {
       status: "success",
       data: {
         res: artRes,
+        artTitle: artRes.artHeading,
+        artCover: artRes.coverImgURL,
         access: true,
         userLoggedIn: true,
       },
