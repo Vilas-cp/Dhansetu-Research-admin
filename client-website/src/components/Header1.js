@@ -170,7 +170,7 @@ const Header1 = () => {
             {/* Auth Buttons Desktop */}
             <div className="hidden lg:flex items-center space-x-3">
               <a
-                href="https://client.dhanseturesearch.com/login"
+                href="https://blog.dhanseturesearch.in/sign-in"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="px-6 py-2.5 bg-[#002366] text-white font-semibold rounded-lg hover:bg-[#003399] transform hover:scale-105 transition-all duration-300 shadow-md hover:shadow-lg"
@@ -178,7 +178,7 @@ const Header1 = () => {
                 Login
               </a>
               <a
-                href="https://client.dhanseturesearch.com/signup"
+                href="https://blog.dhanseturesearch.in/sign-up"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="px-6 py-2.5 bg-gradient-to-r from-[#ff3221] to-[#ff5544] text-white font-semibold rounded-lg hover:from-[#ff4532] hover:to-[#ff6655] transform hover:scale-105 transition-all duration-300 shadow-md hover:shadow-lg"
