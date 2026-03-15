@@ -100,13 +100,6 @@ export default function ArticlePage() {
        
         
         <div className="text-center space-y-8 relative z-10">
-          {/* Elegant spinner */}
-          {/* <div className="relative">
-            <div className="w-20 h-20 rounded-full border-4 border-transparent bg-gradient-to-r from-indigo-500 to-purple-500 animate-spin mx-auto">
-              <div className="absolute inset-2 bg-white rounded-full"></div>
-            </div>
-            <div className="absolute inset-0 w-20 h-20 rounded-full bg-gradient-to-r from-indigo-400/30 to-purple-400/30 blur-xl animate-pulse mx-auto"></div>
-          </div> */}
           
           <div className="space-y-3">
             <h2 className="text-2xl font-light text-gray-700 tracking-wide">Preparing your content</h2>
@@ -336,19 +329,6 @@ export default function ArticlePage() {
     <div className="min-h-screen  pt-2">
       <Header/>
       <div className=" mx-auto  shadow-xl  overflow-hidden pt-2">
-        {/* Premium Badge */}
-        {/* <div className="px-4 sm:px-6 lg:px-8 pt-6">
-          <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center space-x-3">
-              <div className="w-8 h-8 bg-gradient-to-r from-amber-400 to-orange-500 rounded-full flex items-center justify-center">
-                <Crown className="w-4 h-4 text-white" />
-              </div>
-              <span className="text-sm font-semibold bg-gradient-to-r from-amber-500 to-orange-500 bg-clip-text text-transparent px-4 py-2 bg-amber-50 rounded-full border border-amber-200">
-                Premium Content
-              </span>
-            </div>
-          </div>
-        </div> */}
 
         {/* Cover Image */}
         {article.coverImgURL && (
