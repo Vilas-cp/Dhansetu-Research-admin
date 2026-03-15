@@ -15,7 +15,7 @@ const Header1 = () => {
   const navLinks = [
     { href: "/", label: "Home" },
     { href: "/about", label: "About" },
-    { href: "https://blog.dhanseturesearch.in/", label: "Market course" },
+    { href: "https://blog.dhanseturesearch.in/", label: "Academy" },
     { href: "/pricing", label: "Pricing" },
     { href: "/payment", label: "Payment" },
     {href:"/faqs",label:"FAQS"}
@@ -288,7 +288,7 @@ const Header1 = () => {
                 {/* Mobile Auth Buttons */}
                 <div className="mt-6 grid grid-cols-2 gap-3">
                   <a
-                    href="https://client.dhanseturesearch.com/login"
+                    href="https://blog.dhanseturesearch.in/sign-in"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="px-4 py-3 bg-[#002366] text-white text-center font-semibold rounded-lg hover:bg-[#003399] transition-all duration-200 shadow-md"
@@ -296,7 +296,7 @@ const Header1 = () => {
                     Login
                   </a>
                   <a
-                    href="https://client.dhanseturesearch.com/signup"
+                    href="https://blog.dhanseturesearch.in/sign-up"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="px-4 py-3 bg-gradient-to-r from-[#ff3221] to-[#ff5544] text-white text-center font-semibold rounded-lg hover:from-[#ff4532] hover:to-[#ff6655] transition-all duration-200 shadow-md"
