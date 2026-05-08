@@ -33,22 +33,27 @@ const Page = () => {
               "Refunds will not be provided for the period of services already availed, irrespective of the client's satisfaction with the recommendations or the outcome of trades.Always remember Trading/Investment in Securities Markets are always subjected to Market Risk."
             }
           </p>
+          <p className="pt-[15px] font-bold italic border-l-4 border-[#002366] pl-4 ml-0 md:ml-[-20px] text-gray-800">
+            {"Note: Refunds will be initiated one month after the confirmation date."}
+          </p>
           <p className="pt-[20px] font-semibold">
             {
               "We strongly recommend that before making a payment, our visitors, and potential clients, please:"
             }
           </p>
-          <li className="text-left pt-[5px]">
-            {
-              "Read all information about our services and support given to our clients. Read our Terms and Conditions."
-            }
-          </li>
-          <li className="text-left pt-[5px]">
-            {"Read our Privacy Policy and Refund Policy."}
-          </li>
-          <li className="text-left pt-[5px]">
-            {"There is no refund possible in any case whatsoever."}
-          </li>
+          <ul className="list-disc pl-5 space-y-2 pt-[10px]">
+            <li className="text-left">
+              {
+                "Read all information about our services and support given to our clients. Read our Terms and Conditions."
+              }
+            </li>
+            <li className="text-left">
+              {"Read our Privacy Policy and Refund Policy."}
+            </li>
+            <li className="text-left">
+              {"There is no refund possible in any case whatsoever."}
+            </li>
+          </ul>
           <p className="pt-[40px]">
             {
               "Kindly make the payment after reading all terms and conditions, disclaimers and refund policy."
