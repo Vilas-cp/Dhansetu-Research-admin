@@ -149,7 +149,7 @@ function Header() {
       </NavbarContent>
       <NavbarContent justify="end">
         <NavbarItem>
-          <Button as={Link} color="primary" href="https://provisionpro.dhanseturesearch.in/authentication/user-register" target="_blank" rel="noopener noreferrer" variant="solid">
+          <Button as={Link} color="primary" href="https://provisionpro.dhanseturesearch.in/authentication/user-register" target="_blank" rel="noopener noreferrer" variant="flat">
             E-KYC
           </Button>
         </NavbarItem>

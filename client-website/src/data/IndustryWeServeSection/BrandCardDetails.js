@@ -3,9 +3,9 @@ const brandCardDetails = [
     imgSrc: "/iws-section/1.jpeg",
     logoImgSrc:
       "https://live.21lab.co/nanosoft/wp-content/uploads/2018/08/box-w.svg",
-    description: "Login",
+    description: "E-KYC",
     bgColor: "#8a49a1",
-    linkTo: "https://client.dhanseturesearch.com/login",
+    linkTo: "https://provisionpro.dhanseturesearch.in/authentication/user-register",
   },
   {
     imgSrc: "/iws-section/2.jpeg",
@@ -22,7 +22,7 @@ const brandCardDetails = [
       "https://live.21lab.co/nanosoft/wp-content/uploads/2018/08/uni-w.svg",
     description: "Enjoy automated trading.",
     bgColor: "#71cbcc",
-    linkTo: "https://client.dhanseturesearch.com/login",
+    linkTo: "https://provisionpro.dhanseturesearch.in/authentication/user-register",
   },
 ];
 
