@@ -148,12 +148,9 @@ function Header() {
         </NavbarItem>
       </NavbarContent>
       <NavbarContent justify="end">
-        <NavbarItem className="hidden lg:flex">
-          <Link href="https://client.dhanseturesearch.com/login">Login</Link>
-        </NavbarItem>
         <NavbarItem>
-          <Button as={Link} color="primary" href="https://client.dhanseturesearch.com/signup" variant="flat">
-            Register
+          <Button as={Link} color="primary" href="https://provisionpro.dhanseturesearch.in/authentication/user-register" target="_blank" rel="noopener noreferrer" variant="solid">
+            E-KYC
           </Button>
         </NavbarItem>
       </NavbarContent>
